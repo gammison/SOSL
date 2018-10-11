@@ -6,7 +6,7 @@
 *)
 
 type operator = Add | Sub | Mul | Div
-type setTypes = int | set (*more types could be added in future*)
+type setTypes = int | set (*more set types could be added here in future*)
 
 type expr =
 Binop of expr * operator * expr
