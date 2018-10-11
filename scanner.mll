@@ -4,8 +4,6 @@
 
 *)
 
-
-
 { open Parser }
 
 rule token =

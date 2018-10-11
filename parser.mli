@@ -4,7 +4,6 @@
 
 *)
 
-
 type token =
   | PLUS
   | MINUS
