@@ -88,7 +88,6 @@ let rec string_of_stmt = function
     | Return(expr)      -> "return " ^ string_of_expr expr ^ ";\n"
     | If(e, s)          -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
     | If(e, s1, s2)     -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_stmt s2 (*if else*)
-    | For(e1,e1,e3,s)   -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
     | For(e1,e2,e3,s)   -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
     | Foreach(e1,s1)    -> "foreach(" ^ string_of_expr eq ^ ")\n" ^ string_of_stmt s1
     | Assign(s, e)      -> s ^ " = " string_of_expr ^ ";\n"
