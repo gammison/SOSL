@@ -80,12 +80,13 @@ let string_binop_expr = function
     | Arr(l)            -> "[" ^ String.concat " " (List.map string_of_expr l) ^ "]"
     | SetAccess(s,e)    -> s ^ "{" ^ string_of_expr e ^ "}"
     | ArrAccess(a,e)    -> a ^ "[" ^ string_of_expr a^ "]"
+    | Noexpr            -> "Noexpr"
 
 let rec string_of_stmt = function
     Block(stmts)        -> "Block{\n" ^ String.conocat "" (List.map string_of_stmt stmts) ^ "}\n"
     | Expr(expr)        -> string_of_expr ^ ";\n"
     | Return(expr)      -> "return " ^ string_of_expr expr ^ ";\n"
-    | If(e, s)          -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
+    | If(e, s, Block([]))          -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
     | If(e, s1, s2)     -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_stmt s2 (*if else*)
     | For(e1,e2,e3,s)   -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
     | Foreach(e1,s1)    -> "foreach(" ^ string_of_expr eq ^ ")\n" ^ string_of_stmt s1
@@ -101,7 +102,7 @@ let rec string_of_typ = function
     | SetType(s)     -> string_of_typ (datatype(s))
     | ArrType(a)     -> string_of_typ (dataypte(a))
 
-let string_of_init (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
+let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
 
 let string_of_fdecl fdecl =
     fdecl.type ^ " " ^ fdecl.fname ^ "(" ^ String.concat "," (List.map (fun x -> x) fdecl.parameters) ^
