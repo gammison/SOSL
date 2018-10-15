@@ -8,26 +8,26 @@ Also check out the wiki:
 
 ## Build instructions
 To build the Scanner:
-'''Bash
+```Bash
 ocamlex scanner.mll
-'''
+```
 To build the Parser use ocamlyacc or menhir:
-'''Bash
+```Bash
 ocamlyacc parser.mly
-'''
+```
 To compile the AST types:
-'''
+```
 ocamlc -c ast.mli
-'''
+```
 
 Now compile the parser types, scanner, parser.
-'''
+```
 ocamlc -c paser.mli
 ocamlc -c scanner.ml
 ocamlc -c parser.ml
-'''
+```
 
 Now compile the compiler and final binary (missing complier step)
-'''
+```
 ocaml -o sosl parser.cmo scanner.cmo 
-'''
+```
