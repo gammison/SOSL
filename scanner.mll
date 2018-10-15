@@ -1,7 +1,7 @@
 (*                scanner.mll LOG
 
 [10/08/18] Ryan : this scanner.mll file is taken from HW1
-[]
+[10/09/18] Ryan : fundamental structure
 
 *)
 
@@ -49,14 +49,16 @@ rule token = parse
 | ":c" { COMP }
 
 (* Relational Operators *)
-| '<'  { LT } 
-| "<=" { LEQ } 
-| '>'  { GT }
-| ">=" { GEQ } 
-| "==" { EQ } 
-| "!=" { NEQ } 
-| "==" { SEQ } 
-| "!==" { NSEQ } 
+| '<'   { LT } 
+| "<="  { LEQ } 
+| '>'   { GT }
+| ">="  { GEQ } 
+| "=="  { EQ } 
+| "!="  { NEQ } 
+| "=="  { SEQ } 
+| "!==" { NSEQ }
+| "AND" { AND }
+| "OR"  { OR }
 
 (* Control Flow *)
 | "if"  { IF } 
@@ -66,6 +68,10 @@ rule token = parse
 | "in" { IN } 
 | "return" { RETURN } 
 
-| ['0'-'9']+ as lit { LITERAL(int_of_string lit) }
-| ['a'-'z']+ as id { VARIABLE(id) }
+(* Literals and EOF *)
+| ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) }
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
 | eof { EOF }
+
+
+
