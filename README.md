@@ -8,11 +8,11 @@ Also check out the wiki:
 
 ## Build instructions
 To build the Scanner:
-'''
+'''Bash
 ocamlex scanner.mll
 '''
 To build the Parser use ocamlyacc or menhir:
-'''
+'''Bash
 ocamlyacc parser.mly
 '''
 To compile the AST types:
