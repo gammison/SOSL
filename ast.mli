@@ -1,8 +1,3 @@
-(*                ast.mli LOG
-[10/11/18] Ryan : this ast.mli file is taken from HW1
-[10/09/18] Ryan : setTypes and Set
-*)
-
 type op = Add | Sub | Mul | Div | Mod | Eq
           | Union | Isec | Elof | Comp | Neq 
           | And | Or | LessEq | MoreEq
