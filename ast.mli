@@ -92,5 +92,5 @@ let rec string_of_stmt = function
     | For(e1,e2,e3,s) -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
     | Foreach(e1,s1) -> "foreach(" ^ string_of_expr eq ^ ")\n" ^ string_of_stmt s1
     | Assign(s, e) -> s ^ " = " string_of_expr ^ ";\n"
-    | SetElmAssign(s,e1,e2) -> s ^ "{" ^ string_of_expr e1 ^"} = " string_of_expr s2
-    | ArrayElmAssign(a,e1,e2) -> 
+    | SetElmAssign(s,e1,e2) -> s ^ "{" ^ string_of_expr e1 ^"} = " string_of_expr e2 ^";\n"
+    | ArrayElmAssign(a,e1,e2) -> a ^"[" ^ string_of_expr e1 ^"] = " string_of_expr e2
