@@ -1,10 +1,3 @@
-(*                scanner.mll LOG
-
-[10/08/18] Ryan : this scanner.mll file is taken from HW1
-[10/09/18] Ryan : fundamental structure
-
-*)
-
 { open Parser }
 
 rule token = parse 
