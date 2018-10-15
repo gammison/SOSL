@@ -69,9 +69,6 @@ rule token = parse
 | "return" { RETURN } 
 
 (* Literals and EOF *)
-| ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) }
+| ['0'-'9']+ as lxm { NUM_LIT(Ast.IntLit(int_of_string lxm)) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
 | eof { EOF }
-
-
-
