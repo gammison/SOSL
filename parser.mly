@@ -1,8 +1,8 @@
-(*                parser.mly LOG
+/*                parser.mly LOG
 
 [10/11/18] Ryan : this parser.mly file is taken from HW1
 
-*)
+*/
 
 %{ open Ast %}
 
