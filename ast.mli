@@ -24,10 +24,10 @@ and stmt =
     Block of stmt
     | Expr of expr
     | If of expr * stmt * stmt
-    | For of 
-    | Foreach of
+    | For of expr * stmt 
+    | Foreach of expr * stmt
     | Return of expr
     | Break
-    | SetElementAssign of
-    | ArrayElementAssign of
+    | SetElementAssign of stmt
+    | ArrayElementAssign of stmt
     | Assign of elmTypes * expr
