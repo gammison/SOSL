@@ -1,8 +1,6 @@
 (*                ast.mli LOG
-
 [10/11/18] Ryan : this ast.mli file is taken from HW1
 [10/09/18] Ryan : setTypes and Set
-
 *)
 
 type op = Add | Sub | Mul | Div | Mod | Eq
@@ -15,16 +13,16 @@ type datatype = setType of elmTypes | litType of elmTypes | arrType of elmTypes 
 
 
 type expr =
-Binop of expr * op * expr
-| intLit of int
-| charLit of char
-| boolLit of boolean
-| Set of elmTypes list
-| Arr of elmTypes list
-| SetAccess of string * expr
-| ArrayAccess of string * expr
-| fCall of string * expr list
-| Unop of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
+    Binop of expr * op * expr
+    | intLit of int
+    | charLit of char
+    | boolLit of boolean
+    | Set of elmTypes list
+    | Arr of elmTypes list
+    | SetAccess of string * expr
+    | ArrayAccess of string * expr
+    | fCall of string * expr list
+    | Unop of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
 
 and stmt =
     Block of stmt list 
@@ -67,13 +65,15 @@ let string_of_binop = function
     | And -> "AND"
     | Or -> "OR"
     | In -> "in"
+
 let string_of_op = function
     Not -> "!"
+
 let string_op_expr = function
     IntLit(l)           -> string_of_int l
     | charLit(l)        -> string_of_char l
     | BoolLit(true)     -> "true"
-    | BoolList(false)   -> "false"
+    | BoolLit(false)   -> "false"
     | Id(s)             -> s
     | Binop(e1, o, e2)  -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)        -> string_of_uop o ^ sring_of_expr e
@@ -82,6 +82,7 @@ let string_op_expr = function
     | Arr(l)            -> "[" ^ String.concat " " (List.map string_of_expr l) ^ "]"
     | SetAccess(s,e)    -> s ^ "{" ^ string_of_expr e ^ "}"
     | ArrAccess(a,e)    -> a ^ "[" ^ string_of_expr a^ "]"
+
 let rec string_of_stmt = function
     Block(stmts) -> "Block{\n" ^ String.conocat "" (List.map string_of_stmt stmts) ^ "}\n"
     | Expr(expr) -> string_of_expr ^ ";\n"
