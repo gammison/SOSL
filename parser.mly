@@ -1,8 +1,8 @@
-(*                parser.mly LOG
+/*                parser.mly LOG
 
 [10/11/18] Ryan : this parser.mly file is taken from HW1
 
-*)
+*/
 
 %{ open Ast %}
 
@@ -23,7 +23,7 @@
 %token UNION INTSEC ELEM COMP
 
 /* Relational Operators */
-%token LT LEQ GT GEQ EQ NEQ NSEQ AND OR
+%token LT LEQ GT GEQ EQ NEQ AND OR
 
 /* Control Flow */
 %token IF ELSE FOR FOREACH IN RETURN
@@ -48,6 +48,10 @@
 
 program:
     decls EOF { $1 }
+
+decls: 
+    | decls vinit { ($2 :: fst $1), snd $1 } 
+    | decls function { fst $1, ($2 :: snd $1) } 
 
 function:
   type VARIABLE LPAREN params RPAREN LBRACE stmts RBRACE {
@@ -74,12 +78,20 @@ type:
 init: 
   type VARIABLE SEMI { ($1, $2) }
 
+vinit:
+  VARIABLE ASSIGN expr SEMI { ($1, $3) }
+
+vinits:
+                 { [] }
+  | vinits vinit { $2 :: $1 }
+
 stmts:
+               { [] }
   | stmts stmt { $2 :: $1 }
 
 stmt:
     expr SEMI                                                   { Expr $1 }
-  | RETURN SEMI                                                 { Return Noexpr } (* Later *)
+  | BREAK SEMI                                                  { Break }
   | RETURN expr SEMI                                            { Return $2 }
   | LBRACE stmts RBRACE                                         { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt                                  { If($3, $5, Block([])) }
@@ -87,8 +99,34 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt     { For($3, $5, $7, $9) }
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
 
-
-
+expr:
+    NUM_LIT                                                     { IntLit($1) }
+  | CHAR_LIT                                                    { charLit($1) }
+  | TRUE                                                        { BoolLit(true) }
+  | FALSE                                                       { BoolLit(false) }
+  | VARIABLE                                                    { Id($1) }
+  | expr PLUS expr                                              { Binop($1, Add, $3) }
+  | expr MINUS expr                                             { Binop($1, Sub, $3) }
+  | expr TIMES expr                                             { Binop($1, Mul, $3) }
+  | expr DIVIDE expr                                            { Binop($1, Div, $3) }
+  | expr MOD expr                                               { Binop($1, Mod, $3) }
+  | expr EQ expr                                                { Binop($1, Eq, $3) }
+  | expr NEQ expr                                               { Binop($1, Neq, $3) }
+  | expr LT expr                                                { Binop($1, Less, $3) }
+  | expr LEQ expr                                               { Binop($1, LessEq, $3) }
+  | expr GT expr                                                { Binop($1, More, $3) }
+  | expr GEQ expr                                               { Binop($1, MoreEq, $3) }
+  | expr AND expr                                               { Binop($1, And, $3) }
+  | expr OR expr                                                { Binop($1, Or, $3) }
+  | expr UNION expr                                             { Binop($1, Union, $3) }
+  | expr INTSEC expr                                            { Binop($1, Isect, $3) }
+  | expr COMP expr                                              { Binop($1, Comp, $3) }
+  | expr ELEM expr                                              { Binop($1, ElOf, $3) }
+  | NOT expr                                                    { Unop(Not, $2) }
+  | expr ASSIGN expr                                            { Assign($1, $3) }
+  | ID LPAREN fparams RPAREN                                { Call($1, $3) }
+  | LPAREN expr RPAREN                                          { $2 }
+  | LBRACE expr RBRACE                                          { Set }
 
 
 
