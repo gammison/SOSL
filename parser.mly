@@ -1,9 +1,3 @@
-/*                parser.mly LOG
-
-[10/11/18] Ryan : this parser.mly file is taken from HW1
-
-*/
-
 %{ open Ast %}
 
 /* Delimiters */
@@ -23,15 +17,15 @@
 %token UNION INTSEC ELEM COMP
 
 /* Relational Operators */
-%token LT LEQ GT GEQ EQ NEQ AND OR
+%token LT LEQ GT GEQ EQ NEQ AND OR NOT
 
 /* Control Flow */
-%token IF ELSE FOR FOREACH IN RETURN
+%token IF ELSE FOR FOREACH IN RETURN BREAK
 
 /* Literals, Identifiers, EOF */
 %token <Ast.num> NUM_LIT
-%token <string> STRING_LIT
-%token <string> ID
+%token <char> CHAR_LIT
+%token <string> VARIABLE
 %token EOF
 
 /* Order and Associativity */
@@ -96,7 +90,7 @@ stmt:
   | LBRACE stmts RBRACE                                         { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt                                  { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
-  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt     { For($3, $5, $7, $9) }
+  | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt     { For($3, $5, $7, $9) }
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
 
 expr:
@@ -124,37 +118,10 @@ expr:
   | expr ELEM expr                                              { Binop($1, ElOf, $3) }
   | NOT expr                                                    { Unop(Not, $2) }
   | expr ASSIGN expr                                            { Assign($1, $3) }
-  | ID LPAREN fparams RPAREN                                { Call($1, $3) }
+  | VARIABLE LPAREN fparams RPAREN                              { fcall($1, List.rev $3) }
   | LPAREN expr RPAREN                                          { $2 }
   | LBRACE expr RBRACE                                          { Set }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-expr:
-expr PLUS expr { Binop($1, Add, $3) }
-| expr MINUS expr { Binop($1, Sub, $3) }
-| expr TIMES expr { Binop($1, Mul, $3) }
-| expr DIVIDE expr { Binop($1, Div, $3) }
-| expr SEQUENCE expr { Seq($1, $3) }
-| VARIABLE { Var($1) }
-| VARIABLE ASSIGN expr { Asn($1, $3) }
-| LITERAL { Lit($1) }
+fparams:
+    expr                       { [$1] }
+  | fparams COMMA expr         { $3 :: $1 }
