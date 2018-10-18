@@ -22,7 +22,7 @@ ocamlc -c ast.mli
 
 Now compile the parser types, scanner, parser.
 ```
-ocamlc -c paser.mli
+ocamlc -c parser.mli
 ocamlc -c scanner.ml
 ocamlc -c parser.ml
 ```
