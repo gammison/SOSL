@@ -82,7 +82,7 @@ stmt:
   | BREAK SEMI                                                  { Break }
   | RETURN expr SEMI                                            { Return $2 }
   | LBRACE stmts RBRACE                                         { Block(List.rev $2) }
-  | IF LPAREN expr RPAREN stmt % NOELSprecE                     { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt %prec NOELSE                     { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) }
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
