@@ -3,41 +3,41 @@ type op = Add | Sub | Mul | Div | Mod | Eq
           | And | Or | LessEq | MoreEq
           | More | Less | In
 type unop = Not (* cardinality is a delim like () *)
-type elmTypes = boolean | int | char | array| set (*more set types could be added here in future*)
+type elmTypes = boolean | int | char | array | set (*more set types could be added here in future*)
 type dataType = setType of elmTypes | litType of elmTypes | arrType of elmTypes | void
 
+type expr = 
+          | intLit              of int
+          | charLit             of char
+          | boolLit             of boolean
+          (*Need Variable: Example -- Variable of string *)
+          | Set                 of elmTypes list
+          | Arr                 of elmTypes list
+          | SetAccess           of string * expr
+          | ArrayAccess         of string * expr
+          | Call               of string * expr list
+          | Binop               of expr * op * expr
+          | Unop                of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
 
-type expr =
-    Binop of expr * op * expr
-    | intLit of int
-    | charLit of char
-    | boolLit of boolean
-    | Set of elmTypes list
-    | Arr of elmTypes list
-    | SetAccess of string * expr
-    | ArrayAccess of string * expr
-    | fCall of string * expr list
-    | Unop of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
-
-and stmt =
-    Block of stmt list 
-    | Expr of expr
-    | If of expr * stmt * stmt
-    | For of expr * expr * expr * stmt 
-    | Foreach of expr * stmt
-    | Return of expr
-    | Break
-    | SetElementAssign of string * expr * expr
-    | ArrayElementAssign of string * expr * expr
-    | Assign of string * expr
+and stmt = Block                of stmt list 
+         | Expr                 of expr
+         | If                   of expr * stmt * stmt
+         | For                  of expr * expr * expr * stmt 
+         | Foreach              of expr * stmt
+         | Return               of expr
+         | Break                (* !!IMPORTANT: What is in it? *)
+         | SetElementAssign     of string * expr * expr
+         | ArrayElementAssign   of string * expr * expr
+         | Assign               of string * expr
 
 type fdecl = { (* function declaration *)
-    ftype : datatype
-    fname : string
-    parameters: string list
-    body : stmt list
-}
-type global = string * expr (* global assignments *)
+                ftype : datatype;
+                fname : string;
+                parameters: string list; (* !!IMPORTANT: Shouldn't it have bindings? *)
+                body : stmt list;
+            }
+
+type global = string * expr (* global assignments *) (* !!IMPORTANT: Shouldn't it bind expression to datatype, not string? *)
 type program = global list * fdecl list (* a valid program is some globals and function declarations *)
 
 (* add pretty printing for the AST ie Add -> "+" *)
@@ -67,10 +67,10 @@ let string_binop_expr = function
     | charLit(l)        -> string_of_char l
     | BoolLit(true)     -> "true"
     | BoolLit(false)   -> "false"
-    | Id(s)             -> s
+    | Id(s)             -> s (* !!IMPORTANT: ID is not defined *)
     | Binop(e1, o, e2)  -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)        -> string_of_unop o ^ sring_of_expr e
-    | fCall(f, e1)      -> f ^ "(" ^ String.concat", "(List.map string_of_expr e1)^ ")"
+    | Call(f, e1)      -> f ^ "(" ^ String.concat", "(List.map string_of_expr e1)^ ")"
     | Set(l)            -> "{" ^ String.concat " " (List.map string_of_expr l) ^ "}"
     | Arr(l)            -> "[" ^ String.concat " " (List.map string_of_expr l) ^ "]"
     | SetAccess(s,e)    -> s ^ "{" ^ string_of_expr e ^ "}"
@@ -103,6 +103,6 @@ let string_of_fdecl fdecl =
     ")\n{\n" ^
     String.concat "" (List.map string_of_stm fdecl.body) ^ "}\n"
 
-let string_of_prog (vars, funcs, fCalls) =
+let string_of_prog (vars, funcs, Calls) =
     String.concat "" (List.map string_of_init vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
-    String.concat ";\n" (List.map string_of_expr fCalls)
+    String.concat ";\n" (List.map string_of_expr Calls)

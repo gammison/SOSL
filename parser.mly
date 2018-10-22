@@ -82,7 +82,7 @@ stmt:
   | BREAK SEMI                                                  { Break }
   | RETURN expr SEMI                                            { Return $2 }
   | LBRACE stmts RBRACE                                         { Block(List.rev $2) }
-  | IF LPAREN expr RPAREN stmt %prec NOELSE                     { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt % NOELSprecE                     { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) }
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
@@ -110,12 +110,11 @@ expr:
   | expr INTSEC expr                                            { Binop($1, Isect, $3) }
   | expr COMP expr                                              { Binop($1, Comp, $3) }
   | expr ELEM expr                                              { Binop($1, ElOf, $3) }
-  // | NOT expr                                                    { Unop(Not, $2) }
+  // | NOT expr                                                 { Unop(Not, $2) }
   | expr ASSIGN expr                                            { Assign($1, $3) }
   | VARIABLE LPAREN fparams RPAREN                              { fcall($1, List.rev $3) }
   | LPAREN expr RPAREN                                          { $2 }
-  // | LBRACE expr RBRACE                                          { Set }
-
+  // | LBRACE expr RBRACE                                       { Set }
 
 fparams:
     expr                       { [$1] }
