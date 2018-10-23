@@ -91,6 +91,7 @@ let rec string_of_stmt = function
     | SetElmAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " string_of_expr e2 ^";\n"
     | ArrayElmAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " string_of_expr e2 ^";\n"
     | Break                     -> "break;\n"
+    | Noexpr            -> "Noexpr"
 
 let rec string_of_typ = function
     datatype(int)           -> "int"
@@ -100,7 +101,7 @@ let rec string_of_typ = function
     | SetType(s)            -> string_of_typ (datatype(s))
     | ArrType(a)            -> string_of_typ (dataypte(a))
 
-let string_of_init (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
+let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
 
 let string_of_fdecl fdecl =
     fdecl.type ^ " " ^ fdecl.fname ^ "(" ^ String.concat "," (List.map (fun x -> x) fdecl.parameters) ^
