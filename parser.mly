@@ -35,7 +35,7 @@
 %left UNION INTSEC ELEM COMP
 %left LT LEQ GT GEQ EQ NEQ NSEQ
 %left OR AND
-%right ASSIGN
+%right ASSIGN NOT
 
 %start program
 %type <Ast.program> program
@@ -43,7 +43,7 @@
 
 program: decls EOF { $1 }
 
-decls: /* noething */  { [], []                 }
+decls: /* nothing */   { [], []                 }
      | decls vdecls    { ($2 :: fst $1), snd $1 } 
      | decls fdecls    { fst $1, ($2 :: snd $1) } 
 
@@ -75,7 +75,7 @@ stmts: /* nothing */    { [] }
 stmt:
     expr SEMI                                                   { Expr $1 }
   | BREAK SEMI                                                  { Break }
-  | RETURN expr SEMI                                            { Return $2 } (* Consider optional expressions *)
+  | RETURN expr SEMI                                            { Return $2 } /* Consider optional expressions */
   | LBRACE stmts RBRACE                                         { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE                     { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
@@ -105,20 +105,14 @@ expr:
   | expr INTSEC expr                                            { Binop($1, Isect, $3) }
   | expr COMP expr                                              { Binop($1, Comp, $3) }
   | expr ELEM expr                                              { Binop($1, ElOf, $3) }
-  // | NOT expr                                                 { Unop(Not, $2) }
-  | expr ASSIGN expr                                            { Assign($1, $3) } /* Consider Variable ASSIGN expre */
+  | NOT expr                                                    { Unop(Not, $2) }
+  | VARIABLE ASSIGN expr                                        { Assign($1, $3) } /* Consider Variable ASSIGN expre */
   | VARIABLE LPAREN fparams RPAREN                              { Call($1, List.rev $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
-  // | set                                                      { $1 }
+  | LBRACKET set RBRACKET                                       { $2 }
 
 fparams: expr                       { [$1] }
        | fparams COMMA expr         { $3 :: $1 }
 
-  /* we probably need to create a set type 
-  set: // Nothing       { [] }
-     |  
-
-  
-  
-  
-  */
+set: expr           { [$1] }
+   | set COMMA expr { $3 :: $1 }
