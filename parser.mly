@@ -35,56 +35,51 @@
 %left UNION INTSEC ELEM COMP
 %left LT LEQ GT GEQ EQ NEQ NSEQ
 %left OR AND
-%right ASSIGN
+%right ASSIGN NOT
 
 %start program
 %type <Ast.program> program
 %%
 
-program:
-    decls EOF { $1 }
+program: decls EOF { $1 }
 
-decls: 
-    | decls vinit { ($2 :: fst $1), snd $1 } 
-    | decls function { fst $1, ($2 :: snd $1) } 
+decls: /* nothing */   { [], []                 }
+     | decls vdecls    { ($2 :: fst $1), snd $1 } 
+     | decls fdecls    { fst $1, ($2 :: snd $1) } 
 
-function:
-  type VARIABLE LPAREN params RPAREN LBRACE stmts RBRACE {
-    {
-      ftype = $1;
-      fname = $2;
-      parameters = List.rev $4;
-      body = List.rev $7;
-    }
-  }
+fdecls: type VARIABLE LPAREN params RPAREN LBRACE stmts RBRACE {
+          {
+            ftype = $1;
+            fname = $2;
+            parameters = List.rev $4;
+            body = List.rev $7;
+          }
+        }
 
-params:
-  type VARIABLE {[($1,$2)]}
-| params COMMA type VARIABLE { ($3, $4) :: $1 }
+params: /* nothing */               { []             }
+      | type VARIABLE               { [($1,$2)]      }
+      | params COMMA type VARIABLE  { ($3, $4) :: $1 }
 
 
-type:
-    INT       { Int }
-  | BOOL      { Bool }
-  | VOID      { Void }
-  | CHAR      { Char }
-  | SET       { Set }
+type: INT       { Int }
+    | BOOL      { Bool }
+    | VOID      { Void }
+    | CHAR      { Char }
+    | SET       { Set }
 
-vinit:
-  VARIABLE ASSIGN expr SEMI { ($1, $3) }
+vdecls: VARIABLE ASSIGN expr SEMI { ($1, $3) }
 
-stmts:
-               { [] }
-  | stmts stmt { $2 :: $1 }
+stmts: /* nothing */    { [] }
+     | stmts stmt       { $2 :: $1 }
 
 stmt:
     expr SEMI                                                   { Expr $1 }
   | BREAK SEMI                                                  { Break }
-  | RETURN expr SEMI                                            { Return $2 }
+  | RETURN expr SEMI                                            { Return $2 } /* Consider optional expressions */
   | LBRACE stmts RBRACE                                         { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE                     { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
-  | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) }
+  | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
 
 expr:
@@ -92,7 +87,7 @@ expr:
   | CHAR_LIT                                                    { charLit($1) }
   | TRUE                                                        { BoolLit(true) }
   | FALSE                                                       { BoolLit(false) }
-  | VARIABLE                                                    { Id($1) }
+  | VARIABLE                                                    { Id($1) } /* ID is not defined */
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
   | expr TIMES expr                                             { Binop($1, Mul, $3) }
@@ -110,13 +105,14 @@ expr:
   | expr INTSEC expr                                            { Binop($1, Isect, $3) }
   | expr COMP expr                                              { Binop($1, Comp, $3) }
   | expr ELEM expr                                              { Binop($1, ElOf, $3) }
-  // | NOT expr                                                    { Unop(Not, $2) }
-  | expr ASSIGN expr                                            { Assign($1, $3) }
-  | VARIABLE LPAREN fparams RPAREN                              { fcall($1, List.rev $3) }
+  | NOT expr                                                    { Unop(Not, $2) }
+  | VARIABLE ASSIGN expr                                        { Assign($1, $3) } /* Consider Variable ASSIGN expre */
+  | VARIABLE LPAREN fparams RPAREN                              { Call($1, List.rev $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
-  // | LBRACE expr RBRACE                                          { Set }
+  | LBRACKET set RBRACKET                                       { $2 }
 
+fparams: expr                       { [$1] }
+       | fparams COMMA expr         { $3 :: $1 }
 
-fparams:
-    expr                       { [$1] }
-  | fparams COMMA expr         { $3 :: $1 }
+set: expr           { [$1] }
+   | set COMMA expr { $3 :: $1 }

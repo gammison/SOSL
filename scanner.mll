@@ -52,6 +52,7 @@ rule token = parse
 | "!==" { NSEQ }
 | "AND" { AND }
 | "OR"  { OR }
+| "!"   { NOT } 
 
 (* Control Flow *)
 | "if"  { IF } 
