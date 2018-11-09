@@ -1,6 +1,4 @@
 # "make test" Compiles everything and runs the regression tests
-
-<<<<<<< HEAD
 #.PHONY : test
 #test : all testall.sh
 #	./testall.sh

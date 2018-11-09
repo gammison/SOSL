@@ -13,14 +13,14 @@ let () =
     let set_action a () = action := a in
     let cmd_args = [
         ("-a", Arg.Unit (set_action Ast), "Print the AST");
-        ("-s", Arg.Unit (set_action Sast), "Print the SAST");
+       (* ("-s", Arg.Unit (set_action Sast), "Print the SAST");
         ("-l", Arg.Unit (set_action LLVM_IR), "Print the LLVM IR");
         ("-c", Arg.Unit (set_action Complie), 
                 "Check and print the generated LLVM IR (default)");
-    ] in
-    let usage_msg = "usage: ./sosl.native [-a|-s|-l|-c] [file.sl]" in
+    *)] in
+    let usage_msg = "usage: ./sosl.native [-a] [file.sl]" in
     let channel = ref stdin in
-Arg.parse cmd_args (fun filename -> channel := open in filename) usage_msg;
+    Arg.parse cmd_args (fun filename -> channel := open_in filename) usage_msg;
     (* setting input channel to stdin, which is reading from a file *)
     let lexbuf = Lexing.from_channel !channel in
     let ast = Soslparse.program Scanner.token lexbuf in
