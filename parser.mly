@@ -47,12 +47,13 @@ decls: /* nothing */   { [], []                 }
      | decls vdecls    { ($2 :: fst $1), snd $1 } 
      | decls fdecls    { fst $1, ($2 :: snd $1) } 
 
-fdecls: type VARIABLE LPAREN params RPAREN LBRACE stmts RBRACE {
+fdecls: type VARIABLE LPAREN params RPAREN LBRACE vdecls stmts RBRACE {
           {
             ftype = $1;
             fname = $2;
             parameters = List.rev $4;
-            body = List.rev $7;
+            local = List.rev $7;
+            body = List.rev $8;
           }
         }
 
