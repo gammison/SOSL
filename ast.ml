@@ -33,13 +33,13 @@ and stmt = Block                of stmt list
 type fdecl = { (* function declaration *)
                 ftype : datatype;
                 fname : string;
-                parameters: string list; (* !!IMPORTANT: Shouldn't it be a list of bindings *)
-                (* !!IMPORTANT: Maybe we should add bindings here *)
+                parameters: bind list; 
+                locals: bind list
                 body : stmt list;
             }
 
-type global = string * expr (* global assignments *) (* !!IMPORTANT: Shouldn't it bind expression to datatype, not string? *)
-type program = global list * fdecl list (* a valid program is some globals and function declarations *)
+type global = bind datatype(* global assignments *) 
+type program = bind list * fdecl list (* a valid program is some globals and function declarations *)
 
 (* add pretty printing for the AST ie Add -> "+" *)
 let string_of_binop = function
@@ -67,10 +67,10 @@ let string_of_unop = function
 
 let string_binop_expr = function
     IntLit(l)               -> string_of_int l
-    | charLit(l)            -> string_of_char l
+    | CharLit(l)            -> string_of_char l
     | BoolLit(true)         -> "true"
     | BoolLit(false)        -> "false"
-    | Id(s)                 -> s (* !!IMPORTANT: ID is not defined *)
+    | Variable(s)                 -> s (* !!IMPORTANT: ID is not defined *)
     | Binop(e1, o, e2)      -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)            -> string_of_unop o ^ sring_of_expr e
     | Call(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_expr e1)^ ")"
