@@ -23,13 +23,13 @@ let () =
     Arg.parse cmd_args (fun filename -> channel := open_in filename) usage_msg;
     (* setting input channel to stdin, which is reading from a file *)
     let lexbuf = Lexing.from_channel !channel in
-    let ast = Soslparse.program Scanner.token lexbuf in
+    let ast = Parser.program Scanner.token lexbuf in
     match !action with
-        Ast -> print_string (Ast.string_of_program ast)
+        (* Ast -> print_string (Ast.string_of_program ast) *)
         | _ -> let sast = Semant.check ast in (*unwritten semantic checker *)
           match !action with
             Ast       -> ()
-            | Sast    -> print_string (Sast.string_of_sprogram sast)
+            (* | Sast    -> print_string (Sast.string_of_sprogram sast) unwritten sast*)
             | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.translate sast)) (* unwritten codegen *)
             | Compile -> let m = Codegen.translate sast in
               Llvm_analysis.assert_valid_module m;

@@ -1,7 +1,7 @@
 (* Semantic checking for the MicroC compiler *)
 
 open Ast
-open Sast
+(* open Sast *)
 
 module StringMap = Map.Make(String)
 
@@ -10,7 +10,8 @@ module StringMap = Map.Make(String)
 
    Check each global variable, then check each function *)
 
-let check (globals, functions) =
+let check (globals, functions) = (globals, functions)
+(*
 
   (* Verify a list of bindings has no void types or duplicate names *)
   let check_binds (kind : string) (binds : bind list) =
@@ -185,4 +186,4 @@ let check (globals, functions) =
 	SBlock(sl) -> sl
       | _ -> raise (Failure ("internal error: block didn't become a block?"))
     }
-  in (globals, List.map check_function functions)
+  in (globals, List.map check_function functions) *)
