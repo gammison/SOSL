@@ -25,7 +25,7 @@ and stmt = Block                of stmt list
          | For                  of expr * expr * expr * stmt 
          | Foreach              of expr * stmt
          | Return               of expr
-         | Break                (* !!IMPORTANT: What is in it? *)
+         | Break                of string 
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
          | Assign               of string * expr
@@ -34,7 +34,7 @@ type fdecl = { (* function declaration *)
                 ftype : datatype;
                 fname : string;
                 parameters: bind list; 
-                locals: bind list
+                locals: bind list;
                 body : stmt list;
             }
 
@@ -94,12 +94,12 @@ let rec string_of_stmt = function
     | Noexpr            -> "Noexpr"
 
 let rec string_of_typ = function
-    datatype(int)           -> "int"
-    | datatype(char)        -> "char"
-    | datatype(bool)        -> "boolean"
-    | datatype(void)        -> "void"
-    | SetType(s)            -> string_of_typ (datatype(s))
-    | ArrType(a)            -> string_of_typ (dataypte(a))
+      dataType(Int)           -> "int"
+      | dataType(Char)        -> "char"
+      | dataType(Bool)        -> "boolean"
+      | dataType(Void)        -> "void"
+      | SetType(s)            -> string_of_type (dataType(s))
+      | ArrType(a)            -> string_of_type (dataType(a))
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
 
