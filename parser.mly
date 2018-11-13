@@ -23,7 +23,7 @@
 %token IF ELSE FOR FOREACH IN RETURN BREAK
 
 /* Literals, Identifiers, EOF */
-%token <Ast.num> NUM_LIT
+%token <int> NUM_LIT /* we are only doing ints rn, if add floats will need to make an AST.num type that handles both */
 %token <char> CHAR_LIT
 %token <string> VARIABLE
 %token EOF
