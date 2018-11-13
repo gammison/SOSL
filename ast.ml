@@ -31,14 +31,14 @@ and stmt = Block                of stmt list
          | Assign               of string * expr
 
 type fdecl = { (* function declaration *)
-                ftype : datatype;
+                ftype : dataType;
                 fname : string;
                 parameters: bind list; 
                 locals: bind list;
                 body : stmt list;
             }
 
-type global = bind datatype(* global assignments *) 
+type global = bind dataType(* global assignments *) 
 type program = bind list * fdecl list (* a valid program is some globals and function declarations *)
 
 (* add pretty printing for the AST ie Add -> "+" *)
@@ -96,10 +96,10 @@ let rec string_of_stmt = function
 let rec string_of_typ = function
       dataType(Int)           -> "int"
       | dataType(Char)        -> "char"
-      | dataType(Bool)        -> "boolean"
+      | dataType(Boolean)        -> "boolean"
       | dataType(Void)        -> "void"
-      | SetType(s)            -> string_of_type (dataType(s))
-      | ArrType(a)            -> string_of_type (dataType(a))
+      | SetType(s)            -> string_of_typ (dataType(s))
+      | ArrType(a)            -> string_of_typ (dataType(a))
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
 
