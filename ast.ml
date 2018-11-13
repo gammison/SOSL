@@ -3,13 +3,13 @@ type op = Add | Sub | Mul | Div | Mod | Eq
           | And | Or | LessEq | MoreEq
           | More | Less | In
 type unop = Not (* cardinality is a delim like () *)
-type elmTypes = boolean | int | char | array | set (* more set types could be added here in future *)
-type dataType = setType of elmTypes | litType of elmTypes | arrType of elmTypes | void
+type elmTypes = Boolean | Int | Char | Array | Set (* more set types could be added here in future *)
+type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes | Void
 
 type expr = 
-          | intLit              of int
-          | charLit             of char
-          | boolLit             of boolean
+          | IntLit              of int
+          | CharLit             of char
+          | BoolLit             of boolean
           (*Need Variable: Example -- Variable of string *)
           | Set                 of elmTypes list
           | Arr                 of elmTypes list
