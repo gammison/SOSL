@@ -5,11 +5,12 @@ type op = Add | Sub | Mul | Div | Mod | Eq
 type unop = Not (* cardinality is a delim like () *)
 type elmTypes = Boolean | Int | Char | Array | Set (* more set types could be added here in future *)
 type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes | Void
+type bind = elmTypes * string
 
 type expr = 
           | IntLit              of int
           | CharLit             of char
-          | BoolLit             of boolean
+          | BoolLit             of bool
           (*Need Variable: Example -- Variable of string *)
           | Set                 of elmTypes list
           | Arr                 of elmTypes list
@@ -38,7 +39,7 @@ type fdecl = { (* function declaration *)
                 body : stmt list;
             }
 
-type global = bind dataType(* global assignments *) 
+type global = bind dataType (* global assignments *) 
 type program = bind list * fdecl list (* a valid program is some globals and function declarations *)
 
 (* add pretty printing for the AST ie Add -> "+" *)
@@ -93,7 +94,7 @@ let rec string_of_stmt = function
     | Break                     -> "break;\n"
     | Noexpr            -> "Noexpr"
 
-let rec string_of_typ = function
+(* let rec string_of_typ = function
       dataType(Int)           -> "int"
       | dataType(Char)        -> "char"
       | dataType(Boolean)        -> "boolean"
@@ -111,3 +112,4 @@ let string_of_fdecl fdecl =
 let string_of_prog (vars, funcs, Calls) =
     String.concat "" (List.map string_of_init vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
     String.concat ";\n" (List.map string_of_expr Calls)
+*)
