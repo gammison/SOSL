@@ -23,7 +23,7 @@
 %token IF ELSE FOR FOREACH IN RETURN BREAK
 
 /* Literals, Identifiers, EOF */
-%token <Ast.num> NUM_LIT
+%token <int> NUM_LIT /* we are only doing ints rn, if add floats will need to make an AST.num type that handles both */
 %token <char> CHAR_LIT
 %token <string> VARIABLE
 %token EOF
@@ -47,12 +47,13 @@ decls: /* nothing */   { [], []                 }
      | decls vdecls    { ($2 :: fst $1), snd $1 } 
      | decls fdecls    { fst $1, ($2 :: snd $1) } 
 
-fdecls: type VARIABLE LPAREN params RPAREN LBRACE stmts RBRACE {
+fdecls: type VARIABLE LPAREN params RPAREN LBRACE vdecls stmts RBRACE {
           {
             ftype = $1;
             fname = $2;
             parameters = List.rev $4;
-            body = List.rev $7;
+            local = List.rev $7;
+            body = List.rev $8;
           }
         }
 

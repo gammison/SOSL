@@ -5,11 +5,12 @@ type op = Add | Sub | Mul | Div | Mod | Eq
 type unop = Not (* cardinality is a delim like () *)
 type elmTypes = Boolean | Int | Char | Array | Set (* more set types could be added here in future *)
 type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes | Void
+type bind = dataType * string
 
 type expr = 
           | IntLit              of int
           | CharLit             of char
-          | BoolLit             of boolean
+          | BoolLit             of bool
           (*Need Variable: Example -- Variable of string *)
           | Set                 of elmTypes list
           | Arr                 of elmTypes list
@@ -25,21 +26,21 @@ and stmt = Block                of stmt list
          | For                  of expr * expr * expr * stmt 
          | Foreach              of expr * stmt
          | Return               of expr
-         | Break                (* !!IMPORTANT: What is in it? *)
+         | Break                of string 
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
          | Assign               of string * expr
 
 type fdecl = { (* function declaration *)
-                ftype : datatype;
+                ftype : dataType;
                 fname : string;
                 parameters: bind list; 
-                locals: bind list
+                locals: bind list;
                 body : stmt list;
             }
 
-type global = bind datatype(* global assignments *) 
-type program = bind list * fdecl list (* a valid program is some globals and function declarations *)
+type global = bind (* global assignments *) 
+type program = global list * fdecl list (* a valid program is some globals and function declarations *)
 
 (* add pretty printing for the AST ie Add -> "+" *)
 let string_of_binop = function
@@ -55,22 +56,22 @@ let string_of_binop = function
     | LessEq    -> "<="
     | MoreEq    -> ">="
     | Union     -> ":u"
-    | Isect     -> ":n"
+    | Isec     -> ":n"
     | Comp      -> ":c"
-    | ElOf      -> ":i"
+    | Elof      -> ":i"
     | And       -> "AND"
     | Or        -> "OR"
     | In        -> "in"
 
-let string_of_unop = function
+(* let string_of_unop = function
     Not -> "!"
 
-let string_binop_expr = function
+ let string_binop_expr = function
     IntLit(l)               -> string_of_int l
     | CharLit(l)            -> string_of_char l
     | BoolLit(true)         -> "true"
     | BoolLit(false)        -> "false"
-    | Variable(s)                 -> s (* !!IMPORTANT: ID is not defined *)
+    | Variable(s)           -> s 
     | Binop(e1, o, e2)      -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)            -> string_of_unop o ^ sring_of_expr e
     | Call(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_expr e1)^ ")"
@@ -94,12 +95,12 @@ let rec string_of_stmt = function
     | Noexpr            -> "Noexpr"
 
 let rec string_of_typ = function
-    datatype(int)           -> "int"
-    | datatype(char)        -> "char"
-    | datatype(bool)        -> "boolean"
-    | datatype(void)        -> "void"
-    | SetType(s)            -> string_of_typ (datatype(s))
-    | ArrType(a)            -> string_of_typ (dataypte(a))
+      dataType(Int)           -> "int"
+      | dataType(Char)        -> "char"
+      | dataType(Boolean)        -> "boolean"
+      | dataType(Void)        -> "void"
+      | SetType(s)            -> string_of_typ (dataType(s))
+      | ArrType(a)            -> string_of_typ (dataType(a))
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
 
@@ -111,3 +112,4 @@ let string_of_fdecl fdecl =
 let string_of_prog (vars, funcs, Calls) =
     String.concat "" (List.map string_of_init vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
     String.concat ";\n" (List.map string_of_expr Calls)
+*)

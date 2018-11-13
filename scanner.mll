@@ -46,10 +46,8 @@ rule token = parse
 | "<="  { LEQ } 
 | '>'   { GT }
 | ">="  { GEQ } 
-| "=="  { EQ } 
+| "=="  { EQ }  (* we got rid of SEQ and NSEQ *)
 | "!="  { NEQ } 
-| "=="  { SEQ } 
-| "!==" { NSEQ }
 | "AND" { AND }
 | "OR"  { OR }
 | "!"   { NOT } 
@@ -63,6 +61,6 @@ rule token = parse
 | "return" { RETURN } 
 
 (* Literals and EOF *)
-| ['0'-'9']+ as lxm { NUM_LIT(Ast.IntLit(int_of_string lxm)) }
+| ['0'-'9']+ as lxm { NUM_LIT(int_of_string lxm)}
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
 | eof { EOF }
