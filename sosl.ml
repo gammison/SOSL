@@ -6,7 +6,7 @@
    4. Dump the program
 *)
 
-type action = Ast | Sast | LLVM_IR | Complie (* flags given on start *)
+type action = Ast | Sast | LLVM_IR | Compile (* flags given on start *)
 
 let () =
     let action = ref Compile in
