@@ -1,4 +1,4 @@
-(* COPY from MicroC codegen.ml *)
+(* COPY from MicroC codegen.ml*)
 
 (* Code generation: translate takes a semantically checked AST and
 produces LLVM IR
@@ -16,7 +16,7 @@ http://llvm.moe/ocaml/
 
 module L = Llvm
 module A = Ast
-open Sast 
+(* open Sast *)
 
 module StringMap = Map.Make(String)
 
@@ -32,14 +32,14 @@ let translate (globals, functions) =
   let i32_t      = L.i32_type    context
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context
-  and float_t    = L.double_type context
-  and void_t     = L.void_type   context in
+  and void_t     = L.void_type   context 
+  and str_t      = L.pointer_type (L.i8_type context) 
+  and array_t    = L.array_type in
 
   (* Return the LLVM type for a MicroC type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
-    | A.Float -> float_t
     | A.Void  -> void_t
   in
 
@@ -126,12 +126,12 @@ let translate (globals, functions) =
 	  | A.Sub     -> L.build_fsub
 	  | A.Mult    -> L.build_fmul
 	  | A.Div     -> L.build_fdiv 
-	  | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
+	  | A.Eq      -> L.build_fcmp L.Fcmp.Oeq
 	  | A.Neq     -> L.build_fcmp L.Fcmp.One
 	  | A.Less    -> L.build_fcmp L.Fcmp.Olt
-	  | A.Leq     -> L.build_fcmp L.Fcmp.Ole
-	  | A.Greater -> L.build_fcmp L.Fcmp.Ogt
-	  | A.Geq     -> L.build_fcmp L.Fcmp.Oge
+	  | A.LessEq  -> L.build_fcmp L.Fcmp.Ole
+	  | A.More    -> L.build_fcmp L.Fcmp.Ogt
+	  | A.MoreEq  -> L.build_fcmp L.Fcmp.Oge
 	  | A.And | A.Or ->
 	      raise (Failure "internal error: semant should have rejected and/or on float")
 	  ) e1' e2' "tmp" builder
