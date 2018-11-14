@@ -11,7 +11,7 @@ type expr =
           | IntLit              of int
           | CharLit             of char
           | BoolLit             of bool
-          (*Need Variable: Example -- Variable of string *)
+          | Variable            of string
           | Set                 of elmTypes list
           | Arr                 of elmTypes list
           | SetAccess           of string * expr
