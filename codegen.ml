@@ -39,8 +39,8 @@ let translate (globals, functions) =
   (* Return the LLVM type for a MicroC type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
-    | A.Bool  -> i1_t
-    | A.Void  -> void_t
+    | A.Boolean  -> i1_t
+    (* | A.Void  -> void_t *)
   in
 
   (* Create a map of global variables after creating each *)
@@ -111,7 +111,7 @@ let translate (globals, functions) =
    *)
 
     (* Construct code for an expression; return its value *)
-    let rec expr builder ((_, e) : sexpr) = match e with
+    let rec expr builder ((_, e) : A.expr) = match e with
         IntLit i  -> L.const_int i32_t i
       | BoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | Noexpr     -> L.const_int i32_t 0
