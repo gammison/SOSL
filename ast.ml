@@ -5,7 +5,7 @@ type op = Add | Sub | Mul | Div | Mod | Eq
 type unop = Not (* cardinality is a delim like () *)
 type elmTypes = Boolean | Int | Char | Array | Set (* more set types could be added here in future *)
 type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes | Void
-type bind = dataType * string
+type bind = elmTypes * string
 
 type expr = 
           | IntLit              of int
@@ -19,6 +19,7 @@ type expr =
           | Call               of string * expr list
           | Binop               of expr * op * expr
           | Unop                of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
+          | Noexpr               
 
 and stmt = Block                of stmt list 
          | Expr                 of expr
@@ -30,9 +31,8 @@ and stmt = Block                of stmt list
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
          | Assign               of string * expr
-
 type fdecl = { (* function declaration *)
-                ftype : dataType;
+                ftype : elmTypes;
                 fname : string;
                 parameters: bind list; 
                 locals: bind list;
@@ -66,7 +66,7 @@ let string_of_binop = function
 
 let string_of_unop = function
     Not -> "!"
-
+need to put in string_of_expr
 let string_binop_expr = function
     IntLit(l)               -> string_of_int l
     | CharLit(l)            -> string_of_char l
@@ -93,7 +93,6 @@ let rec string_of_stmt = function
     | SetElmAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " string_of_expr e2 ^";\n"
     | ArrayElmAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " string_of_expr e2 ^";\n"
     | Break                     -> "break;\n"
-    | Noexpr            -> "Noexpr"
 
 (* let rec string_of_typ = function
       dataType(Int)           -> "int"

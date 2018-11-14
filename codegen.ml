@@ -16,7 +16,7 @@ http://llvm.moe/ocaml/
 
 module L = Llvm
 module A = Ast
-(* open Sast *)
+open Ast 
 
 module StringMap = Map.Make(String)
 
@@ -63,18 +63,19 @@ let translate (globals, functions) =
 *)
   (*(* Define each function (arguments and return type) so we can 
      call it even before we've created its body *)
-  let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
+  *)
+  let function_decls : (L.llvalue * fdecl) StringMap.t =
     let function_decl m fdecl =
-      let name = fdecl.sfname
-      and formal_types = 
-	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
-      in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
+      let name = fdecl.fname
+      and parameter_types = 
+	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.parameters)
+      in let ftype = L.function_type (ltype_of_typ fdecl.ftype) parameter_types in
       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
     List.fold_left function_decl StringMap.empty functions in
   
-  (* Fill in the body of the given function *) *)
+  (* Fill in the body of the given function *)
   let build_function_body fdecl =
-    let (the_function, _) = StringMap.find fdecl.sfname function_decls in
+    let (the_function, _) = StringMap.find fdecl.fname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
     
     (*let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
@@ -97,9 +98,9 @@ let translate (globals, functions) =
 	in StringMap.add n local_var m 
       in
 
-      let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
+      let formals = List.fold_left2 add_formal StringMap.empty fdecl.parameters
           (Array.to_list (L.params the_function)) in
-      List.fold_left add_local formals fdecl.slocals 
+      List.fold_left add_local formals fdecl.locals 
     in
 
     (* Return the value for a variable or formal argument.
@@ -110,13 +111,11 @@ let translate (globals, functions) =
     in
 
     (* Construct code for an expression; return its value *)
-    let rec expr builder ((_, e) : expr) = match e with
+    let rec expr builder = function
         IntLit i  -> L.const_int i32_t i
       | BoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | Noexpr     -> L.const_int i32_t 0
       | Variable s       -> L.build_load (lookup s) s builder
-      | Assign (s, e) -> let e' = expr builder e in
-                          ignore(L.build_store e' (lookup s) builder); e'
       | Binop (e1, op, e2) ->
         let e1' = expr builder e1
         and e2' = expr builder e2 in
@@ -134,7 +133,7 @@ let translate (globals, functions) =
         | A.More    -> L.build_icmp L.Icmp.Sgt
         | A.MoreEq  -> L.build_icmp L.Icmp.Sge
         ) e1' e2' "tmp" builder
-      | Unop(op, ((t, _) as e)) ->
+      | Unop(op, e, _) ->
           let e' = expr builder e in
 	        (match op with
             A.Not                  -> L.build_not) e' "tmp" builder
@@ -214,14 +213,14 @@ let translate (globals, functions) =
     in
 
     (* Build the code for each statement in the function *)
+    *)
+    in
     let builder = stmt builder (SBlock fdecl.sbody) in
 
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
         A.Void -> L.build_ret_void
-      | A.Float -> L.build_ret (L.const_float float_t 0.0)
       | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
- *)
  in
 
  List.iter build_function_body functions;
