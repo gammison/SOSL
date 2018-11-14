@@ -72,13 +72,13 @@ let translate (globals, functions) =
       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
     List.fold_left function_decl StringMap.empty functions in
   
-  (* Fill in the body of the given function *)
+  (* Fill in the body of the given function *) *)
   let build_function_body fdecl =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
-
-    let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
+    
+    (*let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
+    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in *)
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -108,7 +108,6 @@ let translate (globals, functions) =
                    with Not_found -> StringMap.find n global_vars
 
     in
-   *)
 
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : expr) = match e with
@@ -139,6 +138,7 @@ let translate (globals, functions) =
           let e' = expr builder e in
 	        (match op with
             A.Not                  -> L.build_not) e' "tmp" builder
+    in 
     (*  | SCall ("print", [e]) | SCall ("printb", [e]) ->
 	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
 	    "printf" builder
@@ -224,5 +224,5 @@ let translate (globals, functions) =
  *)
  in
 
-  List.iter build_function_body functions;
-  the_module
+ List.iter build_function_body functions;
+ the_module
