@@ -43,6 +43,7 @@ type global = bind (* global assignments *)
 type program = global list * fdecl list (* a valid program is some globals and function declarations *)
 
 (* add pretty printing for the AST ie Add -> "+" *)
+(*
 let string_of_binop = function
     Add         -> "+"
     | Sub       -> "-"
@@ -66,7 +67,7 @@ let string_of_binop = function
 let string_of_unop = function
     Not -> "!"
 
- let string_binop_expr = function
+let string_binop_expr = function
     IntLit(l)               -> string_of_int l
     | CharLit(l)            -> string_of_char l
     | BoolLit(true)         -> "true"
@@ -78,7 +79,7 @@ let string_of_unop = function
     | Set(l)                -> "{" ^ String.concat " " (List.map string_of_expr l) ^ "}"
     | Arr(l)                -> "[" ^ String.concat " " (List.map string_of_expr l) ^ "]"
     | SetAccess(s,e)        -> s ^ "{" ^ string_of_expr e ^ "}"
-    | ArrAccess(a,e)        -> a ^ "[" ^ string_of_expr a^ "]"
+    | ArrayAccess(a,e)        -> a ^ "[" ^ string_of_expr a^ "]"
 
 let rec string_of_stmt = function
     Block(stmts)                -> "Block{\n" ^ String.conocat "" (List.map string_of_stmt stmts) ^ "}\n"
@@ -94,7 +95,7 @@ let rec string_of_stmt = function
     | Break                     -> "break;\n"
     | Noexpr            -> "Noexpr"
 
-let rec string_of_typ = function
+(* let rec string_of_typ = function
       dataType(Int)           -> "int"
       | dataType(Char)        -> "char"
       | dataType(Boolean)        -> "boolean"
@@ -112,4 +113,4 @@ let string_of_fdecl fdecl =
 let string_of_prog (vars, funcs, Calls) =
     String.concat "" (List.map string_of_init vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
     String.concat ";\n" (List.map string_of_expr Calls)
-*)
+*) *)
