@@ -63,7 +63,7 @@ let string_of_binop = function
     | Or        -> "OR"
     | In        -> "in"
 
-(* let string_of_unop = function
+let string_of_unop = function
     Not -> "!"
 
  let string_binop_expr = function
