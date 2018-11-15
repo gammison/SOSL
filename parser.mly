@@ -44,7 +44,7 @@
 program: decls EOF { $1 }
 
 decls: /* nothing */   { [], []                 }
-     | decls vdecls    { ($2 :: fst $1), snd $1 } 
+     | decls vdecl    { ($2 :: fst $1), snd $1 } 
      | decls fdecls    { fst $1, ($2 :: snd $1) } 
 
 fdecls: dtype VARIABLE LPAREN params RPAREN LBRACE vdecls stmts RBRACE {
@@ -63,8 +63,7 @@ params: /* nothing */               { []             }
 
 
 dtype: INT       { Int }
-     | BOOL      { Bool }
-     | VOID      { Void }
+     | BOOL      { Boolean}
      | CHAR      { Char }
      | SET       { Set }
 
