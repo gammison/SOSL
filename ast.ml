@@ -103,13 +103,13 @@ let rec string_of_stmt = function
       | ArrType(a)            -> string_of_typ (dataType(a))
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
-
+*)
 let string_of_fdecl fdecl =
-    fdecl.type ^ " " ^ fdecl.fname ^ "(" ^ String.concat "," (List.map (fun x -> x) fdecl.parameters) ^
+    fdecl.ftype ^ " " ^ fdecl.fname ^ "(" ^ String.concat "," (List.map (fun x -> x) fdecl.parameters) ^
     ")\n{\n" ^
     String.concat "" (List.map string_of_stm fdecl.body) ^ "}\n"
-
-let string_of_prog (vars, funcs, Calls) =
-    String.concat "" (List.map string_of_init vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
-    String.concat ";\n" (List.map string_of_expr Calls)
-*) *)
+*)
+(*
+let string_of_program (vars, funcs) = (vars, funcs)
+   (* String.concat "" (List.map string_of_int vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
+    String.concat ";\n" (List.map string_of_fdecl funcs)*)*)
