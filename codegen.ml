@@ -50,7 +50,7 @@ let translate (globals, functions) =
           _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
-(*
+
   let printf_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
@@ -60,7 +60,7 @@ let translate (globals, functions) =
       L.function_type i32_t [| i32_t |] in
   let printbig_func : L.llvalue =
       L.declare_function "printbig" printbig_t the_module in
-*)
+
   (*(* Define each function (arguments and return type) so we can 
      call it even before we've created its body *)
   *)
@@ -78,8 +78,8 @@ let translate (globals, functions) =
     let (the_function, _) = StringMap.find fdecl.fname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
     
-    (*let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in *)
+    let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
+    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -137,28 +137,27 @@ let translate (globals, functions) =
           let e' = expr builder e in
 	  (match op with
            A.Not          -> L.build_not) e' "tmp" builder
-    in 
-    (*  | SCall ("print", [e]) | SCall ("printb", [e]) ->
+    
+      | Call ("print", [e]) | Call ("printb", [e]) ->
 	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
 	    "printf" builder
-      | SCall ("printbig", [e]) ->
+      | Call ("printbig", [e]) ->
 	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
-      | SCall ("printf", [e]) -> 
+      | Call ("printf", [e]) -> 
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
 	    "printf" builder
-      | SCall (f, args) ->
+      | Call (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
-	 let result = (match fdecl.styp with 
-                        A.Void -> ""
-                      | _ -> f ^ "_result") in
+	 let result = (match fdecl.ftype with 
+                       _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
     in
     
     (* LLVM insists each basic block end with exactly one "terminator" 
        instruction that transfers control.  This function runs "instr builder"
        if the current block does not already have a terminator.  Used,
-       e.g., to handle the "fall off the end of the function" case. *)*)
+       e.g., to handle the "fall off the end of the function" case. *)
     let add_terminal builder instr =
       match L.block_terminator (L.insertion_block builder) with
 	Some _ -> ()

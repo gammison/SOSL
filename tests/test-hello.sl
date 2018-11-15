@@ -1,5 +1,4 @@
-Int Main(){
-
-printf("hello world");
-return 0;
+boolean main (int a, int b) {
+    printf(1);
+    return true;
 }
