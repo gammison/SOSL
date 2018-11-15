@@ -53,7 +53,7 @@ fdecls: dtype VARIABLE LPAREN params RPAREN LBRACE vdecls stmts RBRACE {
             fname = $2;
             parameters = List.rev $4;
             locals = List.rev $7;
-            body = List.rev $8;
+            body = List.rev $8
           }
         }
 
@@ -68,7 +68,10 @@ dtype: INT       { Int }
      | CHAR      { Char }
      | SET       { Set }
 
-vdecls: VARIABLE ASSIGN expr SEMI { ($1, $3) }
+vdecls: /* nothing */   { [] }
+      | vdecls vdecl    { $2 :: $1 }
+
+vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }

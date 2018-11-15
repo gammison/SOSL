@@ -39,8 +39,7 @@ type fdecl = { (* function declaration *)
                 body : stmt list;
             }
 
-type global = bind (* global assignments *) 
-type program = global list * fdecl list (* a valid program is some globals and function declarations *)
+type program = bind list * fdecl list (* a valid program is some globals and function declarations *)
 
 (* add pretty printing for the AST ie Add -> "+" *)
 (*
