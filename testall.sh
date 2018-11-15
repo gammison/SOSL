@@ -1,11 +1,4 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf100
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww10800\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-
-\f0\fs24 \cf0 #!/bin/sh\
+#!/bin/sh
 \
 # Regression testing script for MicroC\
 # Step through a list of files\
@@ -13,14 +6,14 @@
 #  Compile and check the error of each expected-to-fail test\
 \
 # Path to the LLVM interpreter\
-LLI="lli"\
-#LLI="/usr/local/opt/llvm/bin/lli"\
+#LLI="lli"\
+LLI="/usr/local/opt/llvm/bin/lli"\
 \
 # Path to the LLVM compiler\
 LLC="llc"\
 \
 # Path to the C compiler\
-CC="cc"\
+#CC="cc"\
 \
 # Path to the microc compiler.  Usually "./microc.native"\
 # Try "_build/microc.native" if ocamlbuild was unable to create a symbolic link.\
@@ -39,7 +32,7 @@ globalerror=0\
 keep=0\
 \
 Usage() \{\
-    echo "Usage: testall.sh [options] [.sc files]"\
+    echo "Usage: testall.sh [options] [.sl files]"\
     echo "-k    Keep intermediate files"\
     echo "-h    Print this help"\
     exit 1\
@@ -88,8 +81,8 @@ RunFail() \{\
 Check() \{\
     error=0\
     basename=`echo $1 | sed 's/.*\\\\///\
-                             s/.sc//'`\
-    reffile=`echo $1 | sed 's/.sc$//'`\
+                             s/.sl//'`\
+    reffile=`echo $1 | sed 's/.sl$//'`\
     basedir="`echo $1 | sed 's/\\/[^\\/]*$//'`/."\
 \
     echo -n "$basename..."\
@@ -123,8 +116,8 @@ Check() \{\
 CheckFail() \{\
     error=0\
     basename=`echo $1 | sed 's/.*\\\\///\
-                             s/.sc//'`\
-    reffile=`echo $1 | sed 's/.sc$//'`\
+                             s/.sl//'`\
+    reffile=`echo $1 | sed 's/.sl$//'`\
     basedir="`echo $1 | sed 's/\\/[^\\/]*$//'`/."\
 \
     echo -n "$basename..."\
@@ -177,7 +170,7 @@ if [ $# -ge 1 ]\
 then\
     files=$@\
 else\
-    files="tests/test-*.sc tests/fail-*.sc"\
+    files="tests/test-*.sl tests/fail-*.sl"\
 fi\
 \
 for file in $files\
