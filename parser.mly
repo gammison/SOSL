@@ -47,26 +47,26 @@ decls: /* nothing */   { [], []                 }
      | decls vdecls    { ($2 :: fst $1), snd $1 } 
      | decls fdecls    { fst $1, ($2 :: snd $1) } 
 
-fdecls: type VARIABLE LPAREN params RPAREN LBRACE vdecls stmts RBRACE {
+fdecls: dtype VARIABLE LPAREN params RPAREN LBRACE vdecls stmts RBRACE {
           {
             ftype = $1;
             fname = $2;
             parameters = List.rev $4;
-            local = List.rev $7;
+            locals = List.rev $7;
             body = List.rev $8;
           }
         }
 
 params: /* nothing */               { []             }
-      | type VARIABLE               { [($1,$2)]      }
-      | params COMMA type VARIABLE  { ($3, $4) :: $1 }
+      | dtype VARIABLE               { [($1,$2)]      }
+      | params COMMA dtype VARIABLE  { ($3, $4) :: $1 }
 
 
-type: INT       { Int }
-    | BOOL      { Bool }
-    | VOID      { Void }
-    | CHAR      { Char }
-    | SET       { Set }
+dtype: INT       { Int }
+     | BOOL      { Bool }
+     | VOID      { Void }
+     | CHAR      { Char }
+     | SET       { Set }
 
 vdecls: VARIABLE ASSIGN expr SEMI { ($1, $3) }
 
