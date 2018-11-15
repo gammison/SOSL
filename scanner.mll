@@ -59,7 +59,7 @@ rule token = parse
 | "forEach" { FOREACH } 
 | "in" { IN } 
 | "return" { RETURN } 
-
+| "break" { BREAK }
 (* Literals and EOF *)
 | ['0'-'9']+ as lxm { NUM_LIT(int_of_string lxm)}
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }

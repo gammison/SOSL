@@ -1,5 +1,5 @@
 type op = Add | Sub | Mul | Div | Mod | Eq
-          | Union | Isec | Elof | Comp | Neq 
+          | Union | Isec | ElOf | Comp | Neq 
           | And | Or | LessEq | MoreEq
           | More | Less | In
 type unop = Not (* cardinality is a delim like () *)
@@ -25,9 +25,9 @@ and stmt = Block                of stmt list
          | Expr                 of expr
          | If                   of expr * stmt * stmt
          | For                  of expr * expr * expr * stmt 
-         | Foreach              of expr * stmt
+         | ForEach              of expr * expr * stmt
          | Return               of expr
-         | Break                of string 
+         | Break                 
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
          | Assign               of string * expr

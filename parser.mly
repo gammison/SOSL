@@ -84,13 +84,14 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
+  | VARIABLE ASSIGN expr                                        { Assign($1, $3) } /* Consider Variable ASSIGN expre */
 
 expr:
     NUM_LIT                                                     { IntLit($1) }
-  | CHAR_LIT                                                    { charLit($1) }
+  | CHAR_LIT                                                    { CharLit($1) }
   | TRUE                                                        { BoolLit(true) }
   | FALSE                                                       { BoolLit(false) }
-  | VARIABLE                                                    { Id($1) } /* ID is not defined */
+  | VARIABLE                                                    { Variable($1) } 
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
   | expr TIMES expr                                             { Binop($1, Mul, $3) }
@@ -105,17 +106,16 @@ expr:
   | expr AND expr                                               { Binop($1, And, $3) }
   | expr OR expr                                                { Binop($1, Or, $3) }
   | expr UNION expr                                             { Binop($1, Union, $3) }
-  | expr INTSEC expr                                            { Binop($1, Isect, $3) }
+  | expr INTSEC expr                                            { Binop($1, Isec, $3) }
   | expr COMP expr                                              { Binop($1, Comp, $3) }
   | expr ELEM expr                                              { Binop($1, ElOf, $3) }
   | NOT expr                                                    { Unop(Not, $2) }
-  | VARIABLE ASSIGN expr                                        { Assign($1, $3) } /* Consider Variable ASSIGN expre */
   | VARIABLE LPAREN fparams RPAREN                              { Call($1, List.rev $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
-  | LBRACKET set RBRACKET                                       { $2 }
+ /* | LBRACKET set RBRACKET                                       { $2 }*/
 
 fparams: expr                       { [$1] }
        | fparams COMMA expr         { $3 :: $1 }
 
-set: expr           { [$1] }
-   | set COMMA expr { $3 :: $1 }
+/*set: expr           { [$1] }
+   | set COMMA expr { $3 :: $1 }*/
