@@ -2,13 +2,13 @@
 
 /* Delimiters */
 %token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE
-%token CARD SEMI COMMA COLON
+%token CARD SEMI COMMA COLON QUOTE SQUOTE
 
 /* Arithmetic Operators */
 %token PLUS MINUS TIMES DIVIDE ASSIGN MOD
 
 /* Data Types */
-%token INT CHAR BOOL VOID SET
+%token INT CHAR BOOL VOID STRING SET
 
 /* Boolean Values */
 %token TRUE FALSE
@@ -26,6 +26,7 @@
 %token <int> NUM_LIT /* we are only doing ints rn, if add floats will need to make an AST.num type that handles both */
 %token <char> CHAR_LIT
 %token <string> VARIABLE
+%token <string> STR_LIT
 %token EOF
 
 /* Order and Associativity */
@@ -70,6 +71,7 @@ dtype: INT       { Int }
      | BOOL      { Boolean}
      | CHAR      { Char }
      | SET       { Set }
+     | STRING    { String }
 
 vdecls: /* nothing */   { [] }
       | vdecls vdecl    { $2 :: $1 }
@@ -92,7 +94,8 @@ stmt:
 
 expr:
     NUM_LIT                                                     { IntLit($1) }
-  | CHAR_LIT                                                    { CharLit($1) }
+  | SQUOTE CHAR_LIT SQUOTE                                      { CharLit($2) }
+  | QUOTE STR_LIT QUOTE						{ StrLit($2)  }
   | TRUE                                                        { BoolLit(true) }
   | FALSE                                                       { BoolLit(false) }
   | VARIABLE                                                    { Variable($1) } 
@@ -114,12 +117,17 @@ expr:
   | expr COMP expr                                              { Binop($1, Comp, $3) }
   | expr ELEM expr                                              { Binop($1, ElOf, $3) }
   | NOT expr                                                    { Unop(Not, $2) }
-  | VARIABLE LPAREN fparams RPAREN                              { Call($1, List.rev $3) } /* consider using optional args */
+  | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
  /* | LBRACKET set RBRACKET                                       { $2 }*/
 
-fparams: expr                       { [$1] }
-       | fparams COMMA expr         { $3 :: $1 }
+fparams_opt:
+     /* nothing */{ [] }
+    |fparams { List.rev $1 }
+ 
+fparams: 
+    expr                       { [$1] }
+  | fparams COMMA expr         { $3 :: $1 }
 
 /*set: expr           { [$1] }
    | set COMMA expr { $3 :: $1 }*/

@@ -3,20 +3,21 @@ type op = Add | Sub | Mul | Div | Mod | Eq
           | And | Or | LessEq | MoreEq
           | More | Less | In
 type unop = Not (* cardinality is a delim like () *)
-type elmTypes = Boolean | Int | Char | Array | Set (* more set types could be added here in future *)
-type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes | Void
+type elmTypes = Boolean | Int | Char | Array | Set | String | Void
+type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes
 type bind = elmTypes * string
 
 type expr = 
           | IntLit              of int
           | CharLit             of char
+	  | StrLit 		of string
           | BoolLit             of bool
           | Variable            of string
           | Set                 of elmTypes list
           | Arr                 of elmTypes list
           | SetAccess           of string * expr
           | ArrayAccess         of string * expr
-          | Call               of string * expr list
+          | Call                of string * expr list
           | Binop               of expr * op * expr
           | Unop                of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
           | Noexpr               

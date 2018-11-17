@@ -15,7 +15,8 @@ rule token = parse
 | ';' { SEMI } 
 | ',' { COMMA } 
 | ':' { COLON } 
-
+| '"' { QUOTE }
+| ''' { SQUOTE }
 (* Arithmetic Operators *)
 | '+' { PLUS }
 | '-' { MINUS }
@@ -30,7 +31,7 @@ rule token = parse
 | "boolean" { BOOL }
 | "void"    { VOID }
 | "set"     { SET }
-
+| "string"  { STRING }
 (* Boolean Type *)
 | "true"     { TRUE }
 | "false"    { FALSE }
