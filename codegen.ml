@@ -42,7 +42,9 @@ let translate (globals, functions) =
     | A.Boolean  -> i1_t
     | A.Char     -> i8_t  (*Adding Char to llvm types*)
     | A.String	 -> str_t (*RK: Adding String to llvm types*)
-    | A.Void  -> void_t
+    | A.Void     -> void_t
+
+    (*RC: compiler complains about Array not being defined here, but it is not an element type actaully*)
   in
 
   (* Create a map of global variables after creating each *)
@@ -136,7 +138,10 @@ let translate (globals, functions) =
         | A.LessEq  -> L.build_icmp L.Icmp.Sle
         | A.More    -> L.build_icmp L.Icmp.Sgt
         | A.MoreEq  -> L.build_icmp L.Icmp.Sge
+        | A.Mod     -> L.build_frem
         ) e1' e2' "tmp" builder
+      (* | SetAccess set -> Need to fill this expr for no warning -RyanC 11/18*)
+      (* | ArrayAccess -> Need to fill this expr for no warning -RyanC 11/18*)
       | Unop(op, e) ->
           let e' = expr builder e in
 	  (match op with
