@@ -1,16 +1,15 @@
 type op = Add | Sub | Mul | Div | Mod | Eq
-          | Union | Isec | ElOf | Comp | Neq 
+          | Union | Isec | Elof | Comp | Neq 
           | And | Or | LessEq | MoreEq
           | More | Less | In
 type unop = Not (* cardinality is a delim like () *)
-type elmTypes = Boolean | Int | Char | Array | Set | String | Void
-type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes
+type elmTypes = Boolean | Int | Char | Array | Set (* more set types could be added here in future *)
+type dataType = SetType of elmTypes | LitType of elmTypes | ArrType of elmTypes | Void
 type bind = elmTypes * string
 
 type expr = 
           | IntLit              of int
           | CharLit             of char
-	  | StrLit 		of string
           | BoolLit             of bool
           | Variable            of string
           | Set                 of elmTypes list
@@ -26,9 +25,9 @@ and stmt = Block                of stmt list
          | Expr                 of expr
          | If                   of expr * stmt * stmt
          | For                  of expr * expr * expr * stmt 
-         | ForEach              of expr * expr * stmt
+         | ForEach              of expr * stmt
          | Return               of expr
-         | Break                 
+         | Break                
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
          | Assign               of string * expr
