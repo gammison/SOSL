@@ -31,20 +31,20 @@ let translate (globals, functions) =
   (* Get types from the context *)
   let i32_t      = L.i32_type    context
   and i1_t       = L.i1_type     context
-  and i8_t       = L.i8_type     context (*RK: Char context*) 
+  and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
-  and str_t      = L.pointer_type (L.i8_type context) (*RK: String context*)
+  and str_t      = L.pointer_type (L.i8_type context)
   and array_t    = L.array_type in
 
   (* Return the LLVM type for a MicroC type *)
   let ltype_of_typ = function
       A.Int      -> i32_t
     | A.Boolean  -> i1_t
-    | A.Char     -> i8_t  (*Adding Char to llvm types*)
-    | A.String	 -> str_t (*RK: Adding String to llvm types*)
+    | A.Char     -> i8_t 
+    | A.String	 -> str_t 
     | A.Void     -> void_t
+    (* | A.Set      -> i32_t array_t  Complete Set *)
 
-    (*RC: compiler complains about Array not being defined here, but it is not an element type actaully*)
   in
 
   (* Create a map of global variables after creating each *)
@@ -119,7 +119,7 @@ let translate (globals, functions) =
         IntLit i     -> L.const_int i32_t i
       | BoolLit b    -> L.const_int i1_t (if b then 1 else 0)
       | CharLit c    -> L.const_int i8_t (Char.code c)
-      | StrLit str   -> L.build_global_stringptr str "string" builder
+      | Variable str   -> L.build_global_stringptr str "string" builder
       | Noexpr       -> L.const_int i32_t 0
       | Variable s   -> L.build_load (lookup s) s builder
       | Binop (e1, op, e2) ->
@@ -139,6 +139,10 @@ let translate (globals, functions) =
         | A.More    -> L.build_icmp L.Icmp.Sgt
         | A.MoreEq  -> L.build_icmp L.Icmp.Sge
         | A.Mod     -> L.build_frem
+        | A.Elof    -> L.build_add
+        | A.Comp    -> L.build_add
+        | A.Isec    -> L.build_add
+        | A.Union   -> L.build_add
         ) e1' e2' "tmp" builder
       (* | SetAccess set -> Need to fill this expr for no warning -RyanC 11/18*)
       (* | ArrayAccess -> Need to fill this expr for no warning -RyanC 11/18*)

@@ -32,6 +32,7 @@ rule token = parse
 | "void"    { VOID }
 | "set"     { SET }
 | "string"  { STRING }
+
 (* Boolean Type *)
 | "true"     { TRUE }
 | "false"    { FALSE }

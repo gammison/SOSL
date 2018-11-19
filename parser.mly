@@ -68,10 +68,11 @@ params:
 
 
 dtype: INT       { Int }
-     | BOOL      { Boolean}
+     | BOOL      { Boolean }
      | CHAR      { Char }
      | SET       { Set }
      | STRING    { String }
+     | VOID      { Void }
 
 vdecls: /* nothing */   { [] }
       | vdecls vdecl    { $2 :: $1 }
@@ -95,7 +96,7 @@ stmt:
 expr:
     NUM_LIT                                                     { IntLit($1) }
   | SQUOTE CHAR_LIT SQUOTE                                      { CharLit($2) }
-  | QUOTE STR_LIT QUOTE						{ StrLit($2)  }
+  | QUOTE STR_LIT QUOTE						                              { StrLit($2)  }
   | TRUE                                                        { BoolLit(true) }
   | FALSE                                                       { BoolLit(false) }
   | VARIABLE                                                    { Variable($1) } 
@@ -115,7 +116,7 @@ expr:
   | expr UNION expr                                             { Binop($1, Union, $3) }
   | expr INTSEC expr                                            { Binop($1, Isec, $3) }
   | expr COMP expr                                              { Binop($1, Comp, $3) }
-  | expr ELEM expr                                              { Binop($1, ElOf, $3) }
+  | expr ELEM expr                                              { Binop($1, Elof, $3) }
   | NOT expr                                                    { Unop(Not, $2) }
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
