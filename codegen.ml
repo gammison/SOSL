@@ -44,7 +44,7 @@ let translate (globals, functions) =
     | A.String	 -> str_t 
     | A.Void     -> void_t
     (* | A.Set      -> i32_t array_t  Complete Set *)
-
+    | _ -> raise (Failure "not finished")
   in
 
   (* Create a map of global variables after creating each *)

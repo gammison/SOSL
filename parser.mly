@@ -91,15 +91,15 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
-  | VARIABLE ASSIGN expr                                        { Assign($1, $3) } /* Consider Variable ASSIGN expre */
+  | VARIABLE ASSIGN expr SEMI                                       { Assign($1, $3) } /* Consider Variable ASSIGN expre */
 
 expr:
     NUM_LIT                                                     { IntLit($1) }
   | SQUOTE CHAR_LIT SQUOTE                                      { CharLit($2) }
-  | QUOTE STR_LIT QUOTE						                              { StrLit($2)  }
+  | QUOTE STR_LIT QUOTE						{ StrLit($2) }
   | TRUE                                                        { BoolLit(true) }
   | FALSE                                                       { BoolLit(false) }
-  | VARIABLE                                                    { Variable($1) } 
+  | VARIABLE                                                    { Variable($1) }
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
   | expr TIMES expr                                             { Binop($1, Mul, $3) }
@@ -117,7 +117,7 @@ expr:
   | expr INTSEC expr                                            { Binop($1, Isec, $3) }
   | expr COMP expr                                              { Binop($1, Comp, $3) }
   | expr ELEM expr                                              { Binop($1, Elof, $3) }
-  | NOT expr                                                    { Unop(Not, $2) }
+  /*| NOT expr                                                    { Unop(Not, $2) }*/
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
  /* | LBRACKET set RBRACKET                                       { $2 }*/

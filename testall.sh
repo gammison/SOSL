@@ -15,10 +15,8 @@ LLC="llc"
 # Path to the C compiler
 CC="cc"
 
-# Path to the microc compiler.  Usually "./microc.native"
-# Try "_build/microc.native" if ocamlbuild was unable to create a symbolic link.
+# Path to the sosl compiler.  Usually "./microc.native"
 SOSL="./sosl.native"
-#MICROC="_build/microc.native"
 
 # Set time limit for all operations
 ulimit -t 30
