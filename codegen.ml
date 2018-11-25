@@ -122,6 +122,8 @@ let translate (globals, functions) =
       | Variable str   -> L.build_global_stringptr str "string" builder
       | Noexpr       -> L.const_int i32_t 0
       | Variable s   -> L.build_load (lookup s) s builder
+      | Assign (s,e) -> let e' = expr builder e in
+                         ignore(L.build_store e' (lookup s) builder); e'
       | Binop (e1, op, e2) ->
         let e1' = expr builder e1
         and e2' = expr builder e2 in

@@ -1,6 +1,6 @@
-Int main()
+int main()
 {
-	Char c = 'a';
+	char c = 'a';
 	print(c);
 	return 0;
 }

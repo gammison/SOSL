@@ -21,7 +21,7 @@ type expr =
           | Binop               of expr * op * expr
           | Unop                of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
           | Noexpr               
-
+          | Assign               of string * expr
 and stmt = Block                of stmt list 
          | Expr                 of expr
          | If                   of expr * stmt * stmt
@@ -31,7 +31,6 @@ and stmt = Block                of stmt list
          | Break                
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
-         | Assign               of string * expr
 
 type fdecl = { (* function declaration *)
                 ftype : elmTypes;

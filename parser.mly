@@ -91,7 +91,6 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
-  | VARIABLE ASSIGN expr SEMI                                       { Assign($1, $3) } /* Consider Variable ASSIGN expre */
 
 expr:
     NUM_LIT                                                     { IntLit($1) }
@@ -121,6 +120,7 @@ expr:
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
  /* | LBRACKET set RBRACKET                                       { $2 }*/
+  | VARIABLE ASSIGN expr                                        { Assign($1, $3) } 
 
 fparams_opt:
      /* nothing */{ [] }
