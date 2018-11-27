@@ -26,12 +26,11 @@ let () =
     let ast = Parser.program Scanner.token lexbuf in
     match !action with
          Ast -> print_string ("Not finished") (*Ast.string_of_program ast*)
-        | _ ->
- (*       let sast = print_string ("Not finished") (* Semant.check ast in (*unwritten semantic checker *) *)
-       in*)  match !action with
+        | _ -> let sast = Semant.check ast in (*unwritten semantic checker *)
+        match !action with
             Ast       -> ()
             | Sast    -> print_string ("Not finished") (* (Sast.string_of_sprogram sast) *) (* unwritten sast *)
-            | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.translate ast)) (* unwritten codegen *)
-            | Compile -> let m = Codegen.translate ast in
+            | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.translate sast)) (* unwritten codegen *)
+            | Compile -> let m = Codegen.translate sast in
               Llvm_analysis.assert_valid_module m;
               print_string (Llvm.string_of_llmodule m);
