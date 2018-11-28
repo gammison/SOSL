@@ -91,9 +91,9 @@ Check() {
 
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
     Run "$SOSL" "$1" ">" "${basename}.ll" &&
-    Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-    #Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
-    Run "./${basename}.exe" > "${basename}.out" &&
+    #Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
+    #Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" && !!Uncomment this to test set.!!
+    #Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files

@@ -67,9 +67,10 @@ let string_of_unop = function
     Not -> "!"
 
 let rec string_of_expr = function
-    IntLit(l)               -> string_of_int l
+      IntLit(l)             -> string_of_int l
     | BoolLit(true)         -> "true"
     | BoolLit(false)        -> "false"
+    | Assign(s, e)          -> s ^ " = " ^ string_of_expr e ^ ";\n"
     | Variable(s)           -> s 
     | Binop(e1, o, e2)      -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)            -> string_of_unop o ^ string_of_expr e
@@ -83,13 +84,13 @@ let rec string_of_stmt = function
     | If(e, s1, s2)             -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_stmt s2 (*if else*)
     | For(e1,e2,e3,s)           -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
     | Foreach(e1,s1)            -> "foreach(" ^ string_of_expr eq ^ ")\n" ^ string_of_stmt s1
-    | Assign(s, e)              -> s ^ " = " string_of_expr ^ ";\n"
     | SetElmAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " string_of_expr e2 ^";\n"
     | ArrayElmAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " string_of_expr e2 ^";\n"
     | Break                     -> "break;\n"
 *)
 let string_of_typ = function
         Int         -> "int"
+      | String      -> "string"
       | Char        -> "char"
       | Boolean     -> "bool"
       | Void        -> "void"
