@@ -1,6 +1,7 @@
 int main()
 {
-	char c = 'a';
-	print(c);
+	char c;
+        c = 'a';
+	printbig(c);
 	return 0;
 }

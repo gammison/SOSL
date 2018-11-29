@@ -68,6 +68,8 @@ let string_of_unop = function
 
 let rec string_of_expr = function
       IntLit(l)             -> string_of_int l
+    | CharLit(c)	    -> Char.escaped c
+    | StrLit(strlit)        -> strlit 
     | BoolLit(true)         -> "true"
     | BoolLit(false)        -> "false"
     | Assign(s, e)          -> s ^ " = " ^ string_of_expr e ^ ";\n"
