@@ -77,19 +77,18 @@ let rec string_of_expr = function
     | Binop(e1, o, e2)      -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)            -> string_of_unop o ^ string_of_expr e
     | Call(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_expr e1)^ ")"
-(*
+
 let rec string_of_stmt = function
-    Block(stmts)                -> "Block{\n" ^ String.conocat "" (List.map string_of_stmt stmts) ^ "}\n"
-    | Expr(expr)                -> string_of_expr ^ ";\n"
+    Block(stmts)                -> "Block{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
+    | Expr(expr)                -> string_of_expr expr ^ ";\n"
     | Return(expr)              -> "return " ^ string_of_expr expr ^ ";\n"
-    | If(e, s)                  -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
-    | If(e, s1, s2)             -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_stmt s2 (*if else*)
+    | If(e,s1,s2)               -> "if(" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2 (*if else*)
     | For(e1,e2,e3,s)           -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
-    | Foreach(e1,s1)            -> "foreach(" ^ string_of_expr eq ^ ")\n" ^ string_of_stmt s1
-    | SetElmAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " string_of_expr e2 ^";\n"
-    | ArrayElmAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " string_of_expr e2 ^";\n"
+    | ForEach(e1,e2,s)          -> "foreach(" ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s
+    | SetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " ^ string_of_expr e2 ^";\n"
+    | ArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " ^ string_of_expr e2 ^";\n"
     | Break                     -> "break;\n"
-*)
+
 let string_of_typ = function
         Int         -> "int"
       | String      -> "string"
