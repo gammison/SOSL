@@ -1,4 +1,4 @@
-{ open Parser }
+{open Parser }
 
 rule token = parse 
 (* Whitespace*)
@@ -15,8 +15,6 @@ rule token = parse
 | ';' { SEMI } 
 | ',' { COMMA } 
 | ':' { COLON } 
-| '"' { QUOTE }
-| ''' { SQUOTE }
 (* Arithmetic Operators *)
 | '+' { PLUS }
 | '-' { MINUS }
@@ -66,6 +64,8 @@ rule token = parse
 | ['0'-'9']+ as lxm { NUM_LIT(int_of_string lxm)}
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
 | '"' { read_string (Buffer.create 17) lexbuf } 
+| '"' (([^ '"'] | "\\\"")* as strlit) '"' { STR_LIT(strlit) } 
+| '''([' '-'!' '#'-'[' ']'-'~' ]|['0'-'9'])''' as lxm {CHAR_LIT( String.get lxm 1)}
 | eof { EOF }
 | _ { raise (Failure ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 

@@ -1,4 +1,7 @@
 int main () {
-    printf("hello world!");
+    
+    string str;
+    str = "Hello World";
+	printf(str);
     return 0;
 }

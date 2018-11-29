@@ -2,7 +2,7 @@
 
 /* Delimiters */
 %token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE
-%token CARD SEMI COMMA COLON QUOTE SQUOTE
+%token CARD SEMI COMMA COLON
 
 /* Arithmetic Operators */
 %token PLUS MINUS TIMES DIVIDE ASSIGN MOD
@@ -94,8 +94,8 @@ stmt:
 
 expr:
     NUM_LIT                                                     { IntLit($1) }
-  | SQUOTE CHAR_LIT SQUOTE                                      { CharLit($2) }
-  | QUOTE STR_LIT QUOTE						{ StrLit($2) }
+  | CHAR_LIT    		                                { CharLit($1) }
+  | STR_LIT						        { StrLit($1) }
   | TRUE                                                        { BoolLit(true) }
   | FALSE                                                       { BoolLit(false) }
   | VARIABLE                                                    { Variable($1) }
