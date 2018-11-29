@@ -1,4 +1,4 @@
-boolean main (int a, int b) {
+int main () {
     printf("hello world!");
-    return true;
+    return 0;
 }
