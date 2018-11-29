@@ -6,8 +6,8 @@
 #  Compile and check the error of each expected-to-fail test
 
 # Path to the LLVM interpreter
-#LLI="lli"
-LLI="/usr/bin/lli"
+LLI="lli"
+#LLI="/usr/bin/lli"
 
 # Path to the LLVM compiler
 LLC="llc"
@@ -91,9 +91,10 @@ Check() {
 
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
     Run "$SOSL" "$1" ">" "${basename}.ll" &&
-    #Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
+    Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     #Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" && !!Uncomment this to test set.!!
-    #Run "./${basename}.exe" > "${basename}.out" &&
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" && #don't have std lib like set.o in right now
+    Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
@@ -145,7 +146,7 @@ CheckFail() {
 while getopts kdpsh c; do
     case $c in
 	k) # Keep intermediate files
-	    keep=1
+	    $keep=1
 	    ;;
 	h) # Help
 	    Usage

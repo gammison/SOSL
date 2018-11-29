@@ -7,6 +7,7 @@ You can see our Language reference manual here:
 Also check out the wiki:  
 
 ## Build instructions
+use ```make``` to build using ocamlbuild or to build individually:
 To build the Scanner:
 ```Bash
 ocamlex scanner.mll

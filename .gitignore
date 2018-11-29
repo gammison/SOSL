@@ -1,1 +1,4 @@
 _build/
+*.ll
+*.diff
+sosl.native
