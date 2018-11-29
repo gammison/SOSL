@@ -2,3 +2,9 @@ _build/
 *.ll
 *.diff
 sosl.native
+.gitignore
+microc/
+res/
+parser.ml
+parser.mli
+parser.output
