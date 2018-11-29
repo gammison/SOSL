@@ -28,7 +28,7 @@ clean-build :
 	#rm -rf testall.log ocamlllvm *.diff, for when we do testing
 	#rm -rf ocamlllvm *.diff
 clean-tests :
-	rm -rf *.diff *.out *.s *.exe *.ll
+	rm -rf *.diff *.out *.s *.exe *.ll *.log
 # Testing the "printbig" example
 #printbig : printbig.sl
 #	cc -o printbig -DBUILD_TEST printbig.sl
