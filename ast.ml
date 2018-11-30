@@ -77,6 +77,10 @@ let rec string_of_expr = function
     | Binop(e1, o, e2)      -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)            -> string_of_unop o ^ string_of_expr e
     | Call(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_expr e1)^ ")"
+    | Noexpr                -> "noexpr"
+    | SetAccess (s,e)       -> s ^ "{" ^ string_of_expr e ^ "}"
+    | ArrayAccess (s,e)     -> s ^ "[" ^ string_of_expr e ^ "]"
+    (*| Set(s)              -> "{" ^ String.concat " " (List.map string_of_expr s) ^ "}"*)
 
 let rec string_of_stmt = function
     Block(stmts)                -> "Block{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
