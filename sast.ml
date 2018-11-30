@@ -20,6 +20,7 @@ and sstmt =
 	   SBlock                of sstmt list 
          | SExpr                 of sexpr 
          | SIf                   of sexpr * sstmt * sstmt
+	 | SWhile                of sexpr * sstmt  
          | SFor                  of sexpr * sexpr * sexpr * sstmt 
          | SForEach              of sexpr * sexpr * sstmt
          | SReturn               of sexpr
@@ -36,6 +37,42 @@ type sfdecl = { (* function declaration *)
             }
 
 type sprogram = bind list * sfdecl list (* a valid program is some globals and function declarations *)
+
+let string_of_unop = function
+    Not -> "!"
+
+let rec string_of_sexpr (t , e) =
+      "(" ^ string_of_typ t ^ " : " ^ (match e with
+      SIntLit(l)             -> string_of_int l
+    | SCharLit(c)	    -> Char.escaped c
+    | SStrLit(strlit)        -> strlit 
+    | SBoolLit(true)         -> "true"
+    | SBoolLit(false)        -> "false"
+    | SAssign(s, e)          -> s ^ " = " ^ string_of_sexpr e ^ ";\n"
+    | SVariable(s)           -> s 
+    | SBinop(e1, o, e2)      -> string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
+    | SUnop(o, e)            -> string_of_unop o ^ string_of_sexpr e
+    | SCall(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_sexpr e1)^ ")"
+		) ^ ")"                
+
+let rec string_of_sstmt = function
+      SBlock(stmts)                -> "Block{\n" ^ String.concat "" (List.map string_of_sstmt stmts) ^ "}\n"
+    | SExpr(expr)                -> string_of_sexpr expr ^ ";\n"
+    | SReturn(expr)              -> "return " ^ string_of_sexpr expr ^ ";\n"
+    | SIf(e,s1,s2)               -> "if(" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2 (*if else*)
+    | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
+    | SFor(e1,e2,e3,s)           -> "for(" ^ string_of_sexpr e1 ^ "; " ^ string_of_sexpr e2 ^ "; " ^ string_of_sexpr e3 ^ ")\n" ^ string_of_sstmt s
+    | SForEach(e1,e2,s)          -> "foreach(" ^ string_of_sexpr e1 ^ " in " ^ string_of_sexpr e2 ^ ")\n" ^ string_of_sstmt s
+    | SSetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_sexpr e1 ^"} = " ^ string_of_sexpr e2 ^";\n"
+    | SArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_sexpr e1 ^"] = " ^ string_of_sexpr e2 ^";\n"
+    | SBreak                     -> "break;\n"
+
+let string_of_typ = function
+        Int         -> "int"
+      | String      -> "string"
+      | Char        -> "char"
+      | Boolean     -> "bool"
+      | Void        -> "void"
 
 (* add pretty printing for the AST ie Add -> "+" *)
 (*
