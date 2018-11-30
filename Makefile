@@ -22,11 +22,13 @@ sosl.native :
 # "make clean" removes all generated files
 
 .PHONY : clean
-clean :
+clean: clean-build clean-tests
+clean-build :
 	ocamlbuild -clean
 	#rm -rf testall.log ocamlllvm *.diff, for when we do testing
-	rm -rf ocamlllvm *.diff
-
+	#rm -rf ocamlllvm *.diff
+clean-tests :
+	rm -rf *.diff *.out *.s *.exe *.ll *.log
 # Testing the "printbig" example
 #printbig : printbig.sl
 #	cc -o printbig -DBUILD_TEST printbig.sl
