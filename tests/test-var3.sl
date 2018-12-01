@@ -1,6 +1,7 @@
 int main()
 {
-	boolean fact;
+    boolean fact;
     fact = true;
+    printb(fact);
 	return 0;
 }
