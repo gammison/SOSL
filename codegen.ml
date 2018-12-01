@@ -36,6 +36,8 @@ let translate (globals, functions) =
   and str_t      = L.pointer_type (L.i8_type context)
   and array_t    = L.array_type in
 
+  let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
+
   (* Return the LLVM type for a MicroC type *)
   let ltype_of_typ = function
       A.Int      -> i32_t
@@ -210,6 +212,8 @@ let translate (globals, functions) =
 
 	 ignore(L.build_cond_br bool_val then_bb else_bb builder);
 	 L.builder_at_end context merge_bb
+
+      | SBreak -> ignore (L.build_br !br_block builder);  builder
 
       | SWhile ((_, predicate), body) ->
 	  let pred_bb = L.append_block context "while" the_function in

@@ -52,8 +52,11 @@ let rec string_of_sexpr (t , e) =
     | SVariable(s)           -> s 
     | SBinop(e1, o, e2)      -> string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
     | SUnop(o, e)            -> string_of_unop o ^ string_of_sexpr e
-    | SCall(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_sexpr e1)^ ")"
-		) ^ ")"                
+    | SCall(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_sexpr e1)^ ")"              
+    | SNoexpr                -> "noexpr"
+    | SSetAccess (s,e)       -> s ^ "{" ^ string_of_sexpr e ^ "}"
+    | SArrayAccess (s,e)     -> s ^ "[" ^ string_of_sexpr e ^ "]"
+		) ^ ")"
 
 let rec string_of_sstmt = function
       SBlock(stmts)                -> "Block{\n" ^ String.concat "" (List.map string_of_sstmt stmts) ^ "}\n"
