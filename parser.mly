@@ -11,7 +11,7 @@
 %token INT CHAR BOOL VOID STRING SET
 
 /* Boolean Values */
-%token TRUE FALSE
+%token <bool> BLIT
 
 /* Boolean Values */
 %token UNION INTSEC ELEM COMP
@@ -97,8 +97,7 @@ expr:
     NUM_LIT                                                     { IntLit($1) }
   | CHAR_LIT    		                                { CharLit($1) }
   | STR_LIT						        { StrLit($1) }
-  | TRUE                                                        { BoolLit(true) }
-  | FALSE                                                       { BoolLit(false) }
+  | BLIT                                                        { BoolLit($1) }
   | VARIABLE                                                    { Variable($1) }
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
