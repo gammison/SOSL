@@ -7,7 +7,7 @@
 # to test linking external code
 
 .PHONY : all
-all : sosl.native #printbig.o
+all : sosl.native printbig.o #annoying ocamlbuild sometimes doesn't do all the reqs, may replace
 # "make sosl.native" compiles the compiler
 #
 # The _tags file controls the operation of ocamlbuild, e.g., by including

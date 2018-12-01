@@ -66,7 +66,7 @@ let translate (globals, functions) =
       L.declare_function "printf" printf_t the_module in
 
   let printbig_t : L.lltype =
-      L.function_type i8_t [| i8_t |] in
+      L.function_type i32_t [| i32_t |] in
   let printbig_func : L.llvalue =
       L.declare_function "printbig" printbig_t the_module in
 
