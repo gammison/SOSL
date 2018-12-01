@@ -64,6 +64,10 @@ void printbig(int c)
   } while (index & 0x7); 
 }
 
+void print_string( char *c)
+{
+    printf("%s",c);
+}
 
 #ifdef BUILD_TEST
 int main()
