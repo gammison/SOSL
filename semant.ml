@@ -1,7 +1,7 @@
 (* Semantic checking for the MicroC compiler *)
 
-open Ast
-open Sast
+open! Ast
+open! Sast
 
 module StringMap = Map.Make(String)
 
