@@ -32,11 +32,12 @@
 /* Order and Associativity */
 %nonassoc NOELSE
 %nonassoc ELSE
+%right ASSIGN
 %left PLUS MINUS TIMES DIVIDE MOD 
 %left UNION INTSEC ELEM COMP
 %left LT LEQ GT GEQ EQ NEQ NSEQ
 %left OR AND
-%right ASSIGN NOT
+%right NOT
 
 %start program
 %type <Ast.program> program
