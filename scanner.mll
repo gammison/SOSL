@@ -32,8 +32,8 @@ rule token = parse
 | "string"  { STRING }
 
 (* Boolean Type *)
-| "true"     { TRUE }
-| "false"    { FALSE }
+| "true"     { BLIT(true) }
+| "false"    { BLIT(false) }
 
 (* Set Operators *)
 | ":u" { UNION }
