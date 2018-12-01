@@ -1,7 +1,7 @@
 int main()
 {
     boolean fact;
-    fact = true;
+    fact = false;
     printb(fact);
 	return 0;
 }
