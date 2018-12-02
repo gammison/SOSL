@@ -63,6 +63,7 @@ let translate (globals, functions) =
   let printf_func : L.llvalue = 
       L.declare_function "printf" printf_t the_module in
 
+
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
       let name = fdecl.sfname
@@ -165,6 +166,8 @@ let translate (globals, functions) =
       | SCall ("printf", [(_, e)]) -> 
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
 	    "printf" builder
+      | SCall ("print_string", [(_, e)]) -> 
+	  L.build_call print_string_func [| (expr builder e) |] "print_string" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev_map snd args)) in

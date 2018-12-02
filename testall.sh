@@ -92,8 +92,7 @@ Check() {
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
     Run "$SOSL" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-    #Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" && !!Uncomment this to test set.!!
-    Run "$CC" "-o" "${basename}.exe" "${basename}.s" && #don't have std lib like set.o in right now
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" && #!!Uncomment this to test set.!!//want some loop for stdlib
     Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
