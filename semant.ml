@@ -1,7 +1,7 @@
 (* Semantic checking for the MicroC compiler *)
 
-open! Ast
-open! Sast
+open Ast
+open Sast
 
 module StringMap = Map.Make(String)
 
@@ -41,8 +41,9 @@ let check (globals, functions) =
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
 			                         ("printb", Boolean);
 			                         ("printf", String);
-                                                 ("printbig", Int); 
-                                                 ("print_string", String) ]
+				                       ("prints", String);
+			                         ("printbig", Char) ]
+
   in
 
   (* Add function name to symbol table *)

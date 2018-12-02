@@ -34,7 +34,7 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
   and str_t      = L.pointer_type (L.i8_type context)
-  and array_t    = L.array_type in
+  (*and array_t    = L.array_type*)in
 
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
@@ -57,31 +57,14 @@ let translate (globals, functions) =
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
   
-  let print_t : L.lltype =
-      L.var_arg_function_type i32_t [| i32_t|] in
-  let print_func : L.llvalue =
-      L.declare_function "print" print_t the_module in
-
+  (*Build printf function from C*)
   let printf_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
       L.declare_function "printf" printf_t the_module in
 
-  let printbig_t : L.lltype =
-      L.function_type i32_t [| i32_t |] in
-  let printbig_func : L.llvalue =
-      L.declare_function "printbig" printbig_t the_module in
-  
-  let print_string_t : L.lltype =
-      L.function_type i32_t [| L.pointer_type i8_t |] in
-  let print_string_func : L.llvalue =
-      L.declare_function "print_string" print_string_t the_module in
 
-
-  (*(* Define each function (arguments and return type) so we can 
-     call it even before we've created its body *)
-  *)
-  let function_decls : (L.llvalue * sfdecl) StringMap.t =
+   let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
       let name = fdecl.sfname
       and parameter_types = 
@@ -91,12 +74,15 @@ let translate (globals, functions) =
     List.fold_left function_decl StringMap.empty functions in
   
   (* Fill in the body of the given function *)
-  let build_function_body fdecl =
+    let build_function_body fdecl =
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
     
+    (*declare variables and formatting for each C printf type to be called below in SCall*)
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
+    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder 
+    and str_format_str = L.build_global_stringptr "%s\n" "fmt" builder
+    and char_format_str = L.build_global_stringptr "%c\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
@@ -159,19 +145,24 @@ let translate (globals, functions) =
         | A.Comp    -> L.build_add
         | A.Isec    -> L.build_add
         | A.Union   -> L.build_add
-        ) e1' e2' "tmp" builder
+        
+) e1' e2' "tmp" builder
       (* | SetAccess set -> Need to fill this expr for no warning -RyanC 11/18*)
       (* | ArrayAccess -> Need to fill this expr for no warning -RyanC 11/18*)
       | SUnop(op, (_, e)) ->
           let e' = expr builder e in
 	  (match op with
            A.Not          -> L.build_not) e' "tmp" builder
-    
+      
+      (*Map various print functions back to C's printf function*)
       | SCall ("print", [(_, e)]) | SCall ("printb", [(_, e)]) ->
 	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
 	    "printf" builder
+      | SCall ("prints", [(_, e)]) ->
+	  L.build_call printf_func [| str_format_str ; (expr builder e) |]
+	    "printf" builder
       | SCall ("printbig", [(_, e)]) ->
-	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
+	  L.build_call printf_func [| char_format_str;  (expr builder e) |] "printbig" builder
       | SCall ("printf", [(_, e)]) -> 
 	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
 	    "printf" builder
@@ -240,9 +231,8 @@ let translate (globals, functions) =
 
       (* Implement for loops as while loops *)
       | SFor (e1, e2, e3, body) -> stmt builder
-	    ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
-    in
-
+	    ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] ) in
+      
     (* Build the code for each statement in the function *)
   
     let builder = stmt builder (SBlock fdecl.sbody) in
