@@ -1,7 +1,7 @@
 int main()
 {
-	int c;
-        c = 7;
+	char c;
+        c = 'a';
 	printbig(c);
 	return 0;
 }
