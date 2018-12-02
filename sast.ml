@@ -8,7 +8,6 @@ and sx =
           | SStrLit              of string 
           | SVariable            of string
           | SSet                 of sexpr list
-          | SArr                 of sexpr list 
           | SSetAccess           of string * sexpr 
           | SArrayAccess         of string * sexpr
           | SCall                of string * sexpr list 

@@ -14,7 +14,6 @@ type expr =
           | StrLit              of string
           | Variable            of string
           | Set                 of elmTypes list
-          | Arr                 of elmTypes list
           | SetAccess           of string * expr
           | ArrayAccess         of string * expr
           | Call                of string * expr list
