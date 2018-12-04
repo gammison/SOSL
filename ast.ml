@@ -21,6 +21,7 @@ type expr =
           | Unop                of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
           | Noexpr               
           | Assign               of string * expr
+
 and stmt = Block                of stmt list 
          | Expr                 of expr
          | If                   of expr * stmt * stmt
@@ -67,7 +68,7 @@ let string_of_unop = function
 
 let rec string_of_expr = function
       IntLit(l)             -> string_of_int l
-    | CharLit(c)	    -> Char.escaped c
+    | CharLit(c)	          -> Char.escaped c
     | StrLit(strlit)        -> strlit 
     | BoolLit(true)         -> "true"
     | BoolLit(false)        -> "false"
@@ -99,14 +100,13 @@ let string_of_typ = function
       | Boolean     -> "bool"
       | Void        -> "void"
 
-(*
+
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
 
 let string_of_fdecl fdecl =
-    fdecl.ftype ^ " " ^ fdecl.fname ^ "(" ^ String.concat "," (List.map (fun x -> x) fdecl.parameters) ^
-    ")\n{\n" ^
-    String.concat "" (List.map string_of_stm fdecl.body) ^ "}\n"
+    string_of_typ fdecl.ftype ^ " " ^ fdecl.fname ^ "(" ^ String.concat "," (List.map snd fdecl.parameters) ^
+    ")\n{\n" ^ String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"
 
-let string_of_program (vars, funcs) = (vars, funcs)
+let string_of_program (vars, funcs) =
     String.concat "" (List.map string_of_int vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
-    String.concat ";\n" (List.map string_of_fdecl funcs)*)
+    String.concat ";\n" (List.map string_of_fdecl funcs)
