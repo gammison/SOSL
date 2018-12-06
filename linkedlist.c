@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include "mylist.h"
+#include "linkedlist.h"
 
 struct Node *addFront(struct List *list, void *data){
        
@@ -18,22 +17,6 @@ void traverseList(struct List *list, void(*f)(void *)){
     while(tmp != NULL){
         (*f)(tmp->data);
         tmp = tmp->next;
-    }
-}
-void flipSignDouble(void *data){
-
-    double *d = data;
-    *d = -1 * (*d); 
-
-}
-int compareDouble(const void *data1, const void *data2){
-
-    
-    if(*(double *)data1 == *(double *)data2){
-        return 0;
-    }
-    else{
-        return 1;
     }
 }
 struct Node *findNode(struct List *list, const void *dataSought, int (*compar)(const void *, const void *)){

@@ -58,18 +58,6 @@ void traverseList(struct List *list, void (*f)(void *));
 struct Node *findNode(struct List *list, const void *dataSought,
 	int (*compar)(const void *, const void *));
 
-/*
- * Flip the sign of the double value pointed to by 'data' by
- * multiplying -1 to it and putting the result back into the memory
- * location.
- */
-void flipSignDouble(void *data);
-
-/*
- * Compare two double values pointed to by the two pointers.
- * Return 0 if they are the same value, 1 otherwise.
- */
-int compareDouble(const void *data1, const void *data2);
 
 /*
  * Returns 1 if the list is empty, 0 otherwise.
