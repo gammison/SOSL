@@ -93,12 +93,17 @@ stmt:
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
 
+arr: /* nothing *                            {[]}
+     | arr expr			       	             {$2 :: $1}
+     | arr COMMA expr			             {$3 :: $1}
+
 expr:
     NUM_LIT                                                     { IntLit($1) }
   | CHAR_LIT    		                                { CharLit($1) }
   | STR_LIT						        { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
   | VARIABLE                                                    { Variable($1) }
+  | LBRACKET arr RBRACKET				        { ArrLit($2)}
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
   | expr TIMES expr                                             { Binop($1, Mul, $3) }
