@@ -80,6 +80,11 @@ vdecls: /* nothing */   { [] }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
+arr: /* nothing */                                   {[]}
+     | arr expr			       	             {$2 :: $1}
+     | arr COMMA expr			             {$3 :: $1}
+
+
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }
 
@@ -99,6 +104,7 @@ expr:
   | STR_LIT						        { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
   | VARIABLE                                                    { Variable($1) }
+  | arr 						        { ArrLit($1)}
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
   | expr TIMES expr                                             { Binop($1, Mul, $3) }

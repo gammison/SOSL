@@ -15,6 +15,7 @@ type expr =
           | Variable            of string
           | Set                 of elmTypes list
           | SetAccess           of string * expr
+          | ArrLit		of expr list
           | ArrayAccess         of string * expr
           | Call                of string * expr list
           | Binop               of expr * op * expr
@@ -22,6 +23,7 @@ type expr =
           | Noexpr               
           | Assign               of string * expr
 
+and arr = ArrLit of expr
 and stmt = Block                of stmt list 
          | Expr                 of expr
          | If                   of expr * stmt * stmt
