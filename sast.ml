@@ -9,12 +9,15 @@ and sx =
           | SVariable            of string
           | SSet                 of sexpr list
           | SSetAccess           of string * sexpr 
+	  | SArrLit		 of sexpr list
           | SArrayAccess         of string * sexpr
           | SCall                of string * sexpr list 
           | SBinop               of sexpr * op * sexpr 
           | SUnop                of unop * sexpr (* if we do string or array slicing, their syntactic sugar here *)
           | SNoexpr               
           | SAssign               of string * sexpr
+
+and arr = SArrLit of sexpr list
 and sstmt = 
 	   SBlock                of sstmt list 
          | SExpr                 of sexpr 
