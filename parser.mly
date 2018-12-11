@@ -80,10 +80,8 @@ vdecls: /* nothing */   { [] }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
-arr: /* nothing */                                   {[]}
-     | arr expr			       	             {$2 :: $1}
-     | arr COMMA expr			             {$3 :: $1}
-
+arr: /* nothing */                     {[]}
+     | arr expr			       	           {$2 :: $1}
 
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }
