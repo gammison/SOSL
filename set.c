@@ -55,7 +55,7 @@ void remove(struct set *s, void *value){
     struct Node *tmpNode = s->list->head;
     struct Node *prev;
 
-    while(tmpNode != NULL && tmpNode->data != key){
+    while(tmpNode != NULL && tmpNode->data != value){
         prev = tmpNode; 
         tmpNode = tmpNode->next; 
     }
