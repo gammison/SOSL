@@ -1,6 +1,6 @@
 {open Parser }
 (* nice string parser from https://v1.realworldocaml.org/v1/en/html/parsing-with-ocamllex-and-menhir.html *) 
-let read_string(buf) =
+(*let read_string(buf) =
       parse
         | '"'       { STR_LIT (Buffer.contents buf) }
         | '\\' '/'  { Buffer.add_char buf '/'; read_string buf lexbuf }
@@ -17,8 +17,11 @@ let read_string(buf) =
         | _ { raise (Failure ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }
         | eof { raise (Failure ("String is not terminated")) }
         | eof { EOF }
+*)
+(* parse_set, possibly typecheck here, or that should be runtime error *)
+let parse_set set_lit =
+    String.split_on_char ',' set_lit 
 in
-(* parse_set *)
 rule token = parse 
 (* Whitespace*)
 [' ' '\t' '\r' '\n'] { token lexbuf }
@@ -82,9 +85,9 @@ rule token = parse
 (* Literals and EOF *)
 | ['0'-'9']+ as lxm { NUM_LIT(int_of_string lxm)}
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
-| '"' { read_string (Buffer.create 17) lexbuf } 
+(*| '"' { read_string (Buffer.create 17) lexbuf } *)
 | '"' (([^ '"'] | "\\\"")* as strlit) '"' { STR_LIT(strlit) } 
-(*| '{' (([^ '}'] | "\\\"")* as strlit) '"' { S_LIT(parse_set strlit) }*)
+| '{' (([^ '}'] | "\\\"")* as setlit) '}' { S_LIT(parse_set setlit) }
 | '''([' '-'!' '#'-'[' ']'-'~' ]|['0'-'9'])''' as lxm {CHAR_LIT( String.get lxm 1)}
 | eof { EOF }
 | _ { raise (Failure ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
