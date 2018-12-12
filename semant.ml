@@ -41,7 +41,7 @@ let check (globals, functions) =
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
 			                         ("printb", Boolean);
 			                         ("printf", String);
-				                       ("prints", String);
+				                 ("prints", String);
 			                         ("printbig", Char) ]
 
   in
@@ -122,26 +122,30 @@ let check (globals, functions) =
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
-            Add | Sub | Mul | Div when same && t1 = Int   -> Int
-          | Eq | Neq              when same               -> Boolean
-          | Less | LessEq | More | MoreEq
-                     when same && t1 = Int     -> Boolean
-          | And | Or when same && t1 = Boolean -> Boolean
-          | _ -> raise (
-	      Failure ("illegal binary operator " ^
+            Add 
+	  | Sub 
+	  | Mul 
+	  | Div      when same && t1 = Int   -> Int
+          | Eq 
+	  | Neq      when same               -> Boolean
+          | Less 
+	  | LessEq 
+	  | More 
+	  | MoreEq   when same && t1 = Int     -> Boolean
+          | And 
+	  | Or       when same && t1 = Boolean -> Boolean
+          | _ -> raise (Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
-                       string_of_typ t2 ^ " in " ^ string_of_expr e))
-          in (ty, SBinop((t1, e1'), op, (t2, e2')))
-      | Call(fname, args) as call -> 
+                       string_of_typ t2 ^ " in " ^ string_of_expr e))in 
+                       (ty, SBinop((t1, e1'), op, (t2, e2')))
+      	  | Call(fname, args) as call -> 
           let fd = find_func fname in
           let param_length = List.length fd.parameters in
           if List.length args != param_length then
-            raise (Failure ("expecting " ^ string_of_int param_length ^ 
-                            " arguments in " ^ string_of_expr call))
+            raise (Failure ("expecting " ^ string_of_int param_length ^ " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e = 
             let (et, e') = expr e in 
-            let err = "illegal argument found " ^ string_of_typ et ^
-              " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
+            let err = "illegal argument found " ^ string_of_typ et ^ " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e')
           in 
           let args' = List.map2 check_call fd.parameters args
@@ -158,9 +162,8 @@ let check (globals, functions) =
     let rec check_stmt = function
         Expr e -> SExpr (expr e)
       | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
-      | For(e1, e2, e3, st) ->
-	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
-     (* | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)*)
+      | For(e1, e2, e3, st) -> SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
+      | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
       | Return e -> let (t, e') = expr e in
         if t = func.ftype then SReturn (t, e') 
         else raise( 
