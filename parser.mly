@@ -88,8 +88,8 @@ vdecls: /* nothing */   { [] }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
-
 set:  SET LBRACE stypes RBRACE		{ Set([$3]) }
+
 
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }
