@@ -8,7 +8,7 @@
 %token PLUS MINUS TIMES DIVIDE ASSIGN MOD
 
 /* Data Types */
-%token INT CHAR BOOL VOID STRING SET
+%token INT CHAR BOOL VOID STRING SET ARRAY
 
 /* Boolean Values */
 %token <bool> BLIT
@@ -74,16 +74,22 @@ dtype: INT       { Int }
      | SET       { Set }
      | STRING    { String }
      | VOID      { Void }
+    /* | ARRAY     { Arr}*/
+
+stypes:  INT       { Int }
+     | BOOL      { Boolean }
+     | CHAR      { Char }
+     | STRING    { String }
+     | SET       { Set }
+
 
 vdecls: /* nothing */   { [] }
       | vdecls vdecl    { $2 :: $1 }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
-arr: /* nothing */                                   {[]}
-     | arr expr			       	             {$2 :: $1}
-     | arr COMMA expr			             {$3 :: $1}
 
+set:  SET LBRACE stypes RBRACE		{ Set([$3]) }
 
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }
@@ -104,7 +110,6 @@ expr:
   | STR_LIT						        { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
   | VARIABLE                                                    { Variable($1) }
-  | arr 						        { ArrLit($1)}
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
   | expr TIMES expr                                             { Binop($1, Mul, $3) }
