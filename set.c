@@ -12,7 +12,7 @@ struct set {
  *      = 3 -> string
  *      = 4 -> set
 
-struct set* create(void *tomake, int size, int type){                   // returns setPtr instead of set
+struct set* create(void *tomake, int size, int type){                 
     if(type == 0)
         tomake = (int *)tomake;      
     if(type == 1)
@@ -26,16 +26,25 @@ struct set* create(void *tomake, int size, int type){                   // retur
     //now we make the linked list and insert initial values
 }
 
-void destroy(struct set *s){                                             // Why does function return int? -> changed to void - RyanC
-    //not sure if the linkedlist destroy works quite well enough
-
+void destroy(struct set *s){                                            
     struct linkedlist *nodes = s->list;
-    removeAllNodes(nodes);
+    struct linkedlist *next;
+
+    if ((s->type)==4){
+        for (int i=0; i<(s->card); i++){
+            next = nodes->next;
+            destroy(nodes);
+            nodes = next;
+        }
+    }
+    else {
+        removeAllNodes(nodes);
+    }
 }
 
-struct set* add(struct set *s, void *value){                             // added setPtr as parameter - RyanC
+struct set* add(struct set *s, void *value){                            
     struct linkedlist *nodes = s->list;
-    if (has(s,value)){                                               // used has function - RyanC
+    if (has(s,value)){                                              
         addFront(nodes, value);
     }
 
@@ -58,7 +67,7 @@ void remove(struct set *s, void *value){
 }
 
 
-int has(struct set *s, void *value){                                  // should return int -Ryan C
+int has(struct set *s, void *value){                              
     struct linkedlist *nodes = &(s->list);
      if (findNode(nodes, value, ???) != NULL){                        // not sure about comparator - RyanC
         return 1;
@@ -71,7 +80,7 @@ struct set complement(struct set universe){
    
 }
 
-struct set* union(struct set *A, struct set *B){                 // changed parameters to setPtrs, returns setPtr - Ryan C
+struct set* union(struct set *A, struct set *B){                 
     struct set *tmp; 
     struct linkedlist *tmpNodes = tmp->list;
     struct Node *tmpCurr = tmpNodes -> head;
@@ -101,7 +110,7 @@ struct set* union(struct set *A, struct set *B){                 // changed para
     return tmp;
 }
 
-struct *set intersect(struct set *A, struct set *B){                  // changed parameters to setPtrs, returns setPtr - Ryan C
+struct *set intersect(struct set *A, struct set *B){                  
     struct set *tmp; 
     struct linkedlist *tmpNodes = tmp->list;
     struct Node *tmpCurr = tmpNodes->head;
