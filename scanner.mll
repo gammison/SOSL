@@ -91,7 +91,7 @@ rule token = parse
 | '{' (([^ '}'] | "\\\"")* as setlit) '}' { 
     let parse_set set_lit =
         String.split_on_char ',' set_lit 
-    in S_LIT(parse_set set_lit) 
+    in S_LIT(parse_set setlit) 
   } 
 | '''([' '-'!' '#'-'[' ']'-'~' ]|['0'-'9'])''' as lxm {CHAR_LIT( String.get lxm 1)}
 | eof { EOF }
