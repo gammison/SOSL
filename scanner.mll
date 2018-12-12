@@ -18,6 +18,7 @@
         | eof { raise (Failure ("String is not terminated")) }
         | eof { EOF }
 *)
+
 (* parse_set, possibly typecheck here, or that should be runtime error *)
 rule token = parse 
 (* Whitespace*)
@@ -34,6 +35,7 @@ rule token = parse
 | ';' { SEMI } 
 | ',' { COMMA } 
 | ':' { COLON } 
+
 (* Arithmetic Operators *)
 | '+' { PLUS }
 | '-' { MINUS }
@@ -65,7 +67,7 @@ rule token = parse
 | "<="  { LEQ } 
 | '>'   { GT }
 | ">="  { GEQ } 
-| "=="  { EQ }  (* we got rid of SEQ and NSEQ *)
+| "=="  { EQ }
 | "!="  { NEQ } 
 | "AND" { AND }
 | "OR"  { OR }
@@ -79,9 +81,11 @@ rule token = parse
 | "in" { IN } 
 | "return" { RETURN } 
 | "break" { BREAK }
+
 (* Literals and EOF *)
 | ['0'-'9']+ as lxm { NUM_LIT(int_of_string lxm)}
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
+
 (*| '"' { read_string (Buffer.create 17) lexbuf } *)
 | '"' (([^ '"'] | "\\\"")* as strlit) '"' { STR_LIT(strlit) } 
 | '{' (([^ '}'] | "\\\"")* as setlit) '}' { 
