@@ -19,9 +19,6 @@
         | eof { EOF }
 *)
 (* parse_set, possibly typecheck here, or that should be runtime error *)
-let parse_set set_lit =
-    String.split_on_char ',' set_lit 
-in
 rule token = parse 
 (* Whitespace*)
 [' ' '\t' '\r' '\n'] { token lexbuf }
@@ -87,7 +84,11 @@ rule token = parse
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
 (*| '"' { read_string (Buffer.create 17) lexbuf } *)
 | '"' (([^ '"'] | "\\\"")* as strlit) '"' { STR_LIT(strlit) } 
-| '{' (([^ '}'] | "\\\"")* as setlit) '}' { S_LIT(parse_set setlit) }
+| '{' (([^ '}'] | "\\\"")* as setlit) '}' { 
+    let parse_set set_lit =
+        String.split_on_char ',' set_lit 
+    in S_LIT(parse_set set_lit) 
+  } 
 | '''([' '-'!' '#'-'[' ']'-'~' ]|['0'-'9'])''' as lxm {CHAR_LIT( String.get lxm 1)}
 | eof { EOF }
 | _ { raise (Failure ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
