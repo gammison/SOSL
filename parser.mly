@@ -27,6 +27,7 @@
 %token <char> CHAR_LIT
 %token <string> VARIABLE
 %token <string> STR_LIT
+%token <string list> S_LIT
 %token EOF
 
 /* Order and Associativity */
@@ -68,27 +69,26 @@ params:
       | params COMMA dtype VARIABLE  { ($3, $4) :: $1 }
 
 
-dtype: INT       { Int }
-     | BOOL      { Boolean }
-     | CHAR      { Char }
-     | SET       { Set }
-     | STRING    { String }
-     | VOID      { Void }
-    /* | ARRAY     { Arr}*/
+dtype: INT       		{ Int }
+     | BOOL      		{ Boolean }
+     | CHAR      		{ Char }
+     | SET LBRACE stypes RBRACE { Set }
+     | STRING    		{ String }
+     | VOID      		{ Void }
 
-stypes:  INT       { Int }
-     | BOOL      { Boolean }
-     | CHAR      { Char }
-     | STRING    { String }
-     | SET       { Set }
-
+stypes:  INT       		     { Int }
+     | BOOL      		     { Boolean }
+     | CHAR      		     { Char }
+     | STRING    		     { String }
+     | SET LBRACE stypes RBRACE      { Set } 
+       
 
 vdecls: /* nothing */   { [] }
       | vdecls vdecl    { $2 :: $1 }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
-set:  SET LBRACE stypes RBRACE		{ Set([$3]) }
+set: SET LBRACE stypes RBRACE { Set([$3]) } 
 
 
 stmts: /* nothing */    { [] }
@@ -109,6 +109,7 @@ expr:
   | CHAR_LIT    		                                { CharLit($1) }
   | STR_LIT						        { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
+  | S_LIT							{ SetLit($1)}
   | VARIABLE                                                    { Variable($1) }
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
