@@ -1,5 +1,24 @@
 {open Parser }
-
+(* nice string parser from https://v1.realworldocaml.org/v1/en/html/parsing-with-ocamllex-and-menhir.html *) 
+let read_string(buf) =
+      parse
+        | '"'       { STR_LIT (Buffer.contents buf) }
+        | '\\' '/'  { Buffer.add_char buf '/'; read_string buf lexbuf }
+        | '\\' '\\' { Buffer.add_char buf '\\'; read_string buf lexbuf }
+        | '\\' 'b'  { Buffer.add_char buf '\b'; read_string buf lexbuf }
+        | '\\' 'f'  { Buffer.add_char buf '\012'; read_string buf lexbuf }
+        | '\\' 'n'  { Buffer.add_char buf '\n'; read_string buf lexbuf }
+        | '\\' 'r'  { Buffer.add_char buf '\r'; read_string buf lexbuf }
+        | '\\' 't'  { Buffer.add_char buf '\t'; read_string buf lexbuf }
+        | [^ '"' '\\']+
+        { Buffer.add_string buf (Lexing.lexeme lexbuf);
+                read_string buf lexbuf
+        }
+        | _ { raise (Failure ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }
+        | eof { raise (Failure ("String is not terminated")) }
+        | eof { EOF }
+in
+(* parse_set *)
 rule token = parse 
 (* Whitespace*)
 [' ' '\t' '\r' '\n'] { token lexbuf }
@@ -65,25 +84,9 @@ rule token = parse
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*+ as lxm { VARIABLE(lxm) }
 | '"' { read_string (Buffer.create 17) lexbuf } 
 | '"' (([^ '"'] | "\\\"")* as strlit) '"' { STR_LIT(strlit) } 
+(*| '{' (([^ '}'] | "\\\"")* as strlit) '"' { S_LIT(parse_set strlit) }*)
 | '''([' '-'!' '#'-'[' ']'-'~' ]|['0'-'9'])''' as lxm {CHAR_LIT( String.get lxm 1)}
 | eof { EOF }
 | _ { raise (Failure ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 
-(* nice string parser from https://v1.realworldocaml.org/v1/en/html/parsing-with-ocamllex-and-menhir.html *) 
-and read_string buf =
-      parse
-        | '"'       { STR_LIT (Buffer.contents buf) }
-        | '\\' '/'  { Buffer.add_char buf '/'; read_string buf lexbuf }
-        | '\\' '\\' { Buffer.add_char buf '\\'; read_string buf lexbuf }
-        | '\\' 'b'  { Buffer.add_char buf '\b'; read_string buf lexbuf }
-        | '\\' 'f'  { Buffer.add_char buf '\012'; read_string buf lexbuf }
-        | '\\' 'n'  { Buffer.add_char buf '\n'; read_string buf lexbuf }
-        | '\\' 'r'  { Buffer.add_char buf '\r'; read_string buf lexbuf }
-        | '\\' 't'  { Buffer.add_char buf '\t'; read_string buf lexbuf }
-        | [^ '"' '\\']+
-        { Buffer.add_string buf (Lexing.lexeme lexbuf);
-                read_string buf lexbuf
-        }
-        | _ { raise (Failure ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }
-        | eof { raise (Failure ("String is not terminated")) }
-        | eof { EOF }
+
