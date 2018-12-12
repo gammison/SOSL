@@ -11,6 +11,7 @@ type expr =
           | CharLit             of char
           | BoolLit             of bool
           | StrLit              of string
+	  | SetLit		of string list
           | Variable            of string
           | SetAccess           of string * expr
          (* | ArrLit		of expr list*)
@@ -22,6 +23,7 @@ type expr =
           | Assign               of string * expr
 
 (* and arr = ArrLit of expr *)
+
 and set = Set of elmTypes list
 
 and stmt = Block                of stmt list 
