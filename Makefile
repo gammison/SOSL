@@ -3,11 +3,11 @@
 #test : all testall.sh
 #	./testall.sh
 
-# "make all" builds the executable as well as the "printbig" library designed
+# "make all" builds the executable as well as the "printlib" and "set" librairies
 # to test linking external code
 
 .PHONY : all
-all : sosl.native printbig.o #annoying ocamlbuild sometimes doesn't do all the reqs, may replace
+all : sosl.native printlib.o #annoying ocamlbuild sometimes doesn't do all the reqs, may replace
 # "make sosl.native" compiles the compiler
 #
 # The _tags file controls the operation of ocamlbuild, e.g., by including
