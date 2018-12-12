@@ -76,10 +76,34 @@ int has(struct set *s, void *value){
      return 0;
 }
 
-struct set complement(struct set universe){
-   
-}
+struct set* complement(struct set *A, struct set* U){
+    struct set *tmp;
+    struct linkedlist *tmpNodes = tmp->list;
+    struct Node *tmpcurr = tmpNodes -> head;
 
+    struct linkedlist *uNodes = U->list;
+    struct Node *uCurr = uNodes -> head;
+
+
+    struct set *AiU = interset(A,U);
+    for(int i=0; i<(U->card); i++){
+        
+        if(!has(AiU, uCurr){
+            tmpCurr->next = uCurr;
+            tmpCurr = tmpCurr->next;
+            uCurr = uCurr->next;
+            (tmp->card)++;
+        }
+        else{
+             uCurr = uCurr->next;
+        }
+    }
+
+    return tmp;
+}
+struct set* copy(struct set *A){//maybe put in a set_lib.c? also rename printbig
+    return NULL;
+}
 struct set* union(struct set *A, struct set *B){                 
     struct set *tmp; 
     struct linkedlist *tmpNodes = tmp->list;
@@ -91,20 +115,11 @@ struct set* union(struct set *A, struct set *B){
     struct linkedlist *bNodes = B->list;
     struct Node *bCurr = bNodes -> head;
 
-    for (int i=0; i<(A->card); i++){
-        tmpCurr->next = aCurr;
+    for (int i=0; i<(U->card); i++){
+        tmpCurr->next = uCurr;
         tmpCurr = tmpCurr->next;
-        aCurr = aCurr->next;
+        aCurr = uCurr->next;
         (tmp->card)++;
-    }
-
-    for (int j=0; j<(B->card); j++){
-        if (!has(tmp,bCurr)){
-            tmpCurr->next = bCurr;
-            tmpCurr = tmpCurr->next;
-            bCurr = bCurr->next;
-            (tmp->card)++;
-        }
     }
 
     return tmp;
