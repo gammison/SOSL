@@ -3,8 +3,7 @@ type op = Add | Sub | Mul | Div | Mod | Eq
           | And | Or | LessEq | MoreEq
           | More | Less
 type unop = Not (* cardinality is a delim like () *)
-type elmTypes = Boolean | Int | Char | String | Void | Set (* more set types could be added here in future *)
-type dataType = LitType of elmTypes | ArrType of elmTypes
+type elmTypes = Int | Boolean | Char | String | Void | Set 
 type bind = elmTypes * string
 
 type expr = 
@@ -13,9 +12,8 @@ type expr =
           | BoolLit             of bool
           | StrLit              of string
           | Variable            of string
-          | Set                 of elmTypes list
           | SetAccess           of string * expr
-          | ArrLit	          	of expr list
+         (* | ArrLit		of expr list*)
           | ArrayAccess         of string * expr
           | Call                of string * expr list
           | Binop               of expr * op * expr
@@ -23,14 +21,17 @@ type expr =
           | Noexpr               
           | Assign               of string * expr
 
-and arr = ArrLit of expr
+(* and arr = ArrLit of expr *)
+and set = Set of elmTypes list
+
 and stmt = Block                of stmt list 
          | Expr                 of expr
          | If                   of expr * stmt * stmt
          | For                  of expr * expr * expr * stmt 
          | ForEach              of expr * expr * stmt
          | Return               of expr
-         | Break                
+         | Break
+	 | While	        of expr * stmt
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
 
@@ -41,6 +42,8 @@ type fdecl = { (* function declaration *)
                 locals: bind list;
                 body : stmt list;
             }
+
+
 
 type program = bind list * fdecl list (* a valid program is some globals and function declarations *)
 
@@ -68,9 +71,10 @@ let string_of_op = function
 let string_of_unop = function
     Not -> "!"
 
+
 let rec string_of_expr = function
       IntLit(l)             -> string_of_int l
-    | CharLit(c)	          -> Char.escaped c
+    | CharLit(c)	    -> Char.escaped c
     | StrLit(strlit)        -> strlit 
     | BoolLit(true)         -> "true"
     | BoolLit(false)        -> "false"
@@ -82,7 +86,6 @@ let rec string_of_expr = function
     | Noexpr                -> "noexpr"
     | SetAccess (s,e)       -> s ^ "{" ^ string_of_expr e ^ "}"
     | ArrayAccess (s,e)     -> s ^ "[" ^ string_of_expr e ^ "]"
-    (*| Set(s)              -> "{" ^ String.concat " " (List.map string_of_expr s) ^ "}"*)
 
 let rec string_of_stmt = function
     Block(stmts)                -> "Block{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
@@ -90,7 +93,8 @@ let rec string_of_stmt = function
     | Return(expr)              -> "return " ^ string_of_expr expr ^ ";\n"
     | If(e,s1,s2)               -> "if(" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2 (*if else*)
     | For(e1,e2,e3,s)           -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
-    | ForEach(e1,e2,s)          -> "foreach(" ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s
+    | ForEach(e1,e2,s)          -> "foreach(" ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s 
+    | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
     | SetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " ^ string_of_expr e2 ^";\n"
     | ArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " ^ string_of_expr e2 ^";\n"
     | Break                     -> "break;\n"
@@ -101,6 +105,13 @@ let string_of_typ = function
       | Char        -> "char"
       | Boolean     -> "bool"
       | Void        -> "void"
+      | Set         -> "set"
+
+
+let string_of_set(e) = "Set{" ^ String.concat "" (List.map string_of_expr e) ^ "}\n"
+
+let string_of_bind (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
+
 
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
@@ -110,5 +121,5 @@ let string_of_fdecl fdecl =
     ")\n{\n" ^ String.concat "" (List.map string_of_stmt fdecl.body) ^ "}\n"
 
 let string_of_program (vars, funcs) =
-    String.concat "" (List.map string_of_int vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
+    String.concat "" (List.map string_of_bind vars) ^ "\n" ^ String.concat "\n" (List.map string_of_fdecl funcs) ^
     String.concat ";\n" (List.map string_of_fdecl funcs)
