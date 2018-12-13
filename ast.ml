@@ -3,7 +3,8 @@ type op = Add | Sub | Mul | Div | Mod | Eq
           | And | Or | LessEq | MoreEq
           | More | Less
 type unop = Not (* cardinality is a delim like () *)
-type elmTypes = Int | Boolean | Char | String | Void | Set 
+type elmTypes = Int | Boolean | Char | String | Void | Set of elmTypes list
+
 type bind = elmTypes * string
 
 type expr = 
@@ -11,7 +12,6 @@ type expr =
           | CharLit             of char
           | BoolLit             of bool
           | StrLit              of string
-	  | SetLit		of string list
           | Variable            of string
           | SetAccess           of string * expr
          (* | ArrLit		of expr list*)
@@ -24,8 +24,6 @@ type expr =
 
 (* and arr = ArrLit of expr *)
 
-and set = Set of elmTypes list
-
 and stmt = Block                of stmt list 
          | Expr                 of expr
          | If                   of expr * stmt * stmt
@@ -36,6 +34,7 @@ and stmt = Block                of stmt list
 	 | While	        of expr * stmt
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
+
 
 type fdecl = { (* function declaration *)
                 ftype : elmTypes;
@@ -101,13 +100,13 @@ let rec string_of_stmt = function
     | ArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " ^ string_of_expr e2 ^";\n"
     | Break                     -> "break;\n"
 
-let string_of_typ = function
-        Int         -> "int"
-      | String      -> "string"
-      | Char        -> "char"
-      | Boolean     -> "bool"
-      | Void        -> "void"
-      | Set         -> "set"
+let rec string_of_typ = function
+        Int         		-> "int"
+      | String      		-> "string"
+      | Char        		-> "char"
+      | Boolean     		-> "bool"
+      | Void        		-> "void"
+      | Set(l) 			-> "set:{" ^ (string_of_typ (List.hd l)) ^ "}:" 
 
 
 let string_of_set(e) = "Set{" ^ String.concat "" (List.map string_of_expr e) ^ "}\n"

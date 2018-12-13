@@ -87,12 +87,13 @@ vdecls: /* nothing */   { [] }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
-S_LIT: LBRACE COLON expr_list COLON RBRACE { Set([$3]) } 
+
+S_LIT: LBRACE COLON lit_list COLON RBRACE { Set([$3]) }
      
-set_access:  VARIABLE LBRACE COLON  expr RBRACE COLON {SetAccess($1, $3)} 
-expr_list:
-    {[]}
-    | expr_list { List.rev $1 }
+
+lit_list:
+       {[]}
+     | lit_list literals { $2 :: $1 }
 
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }
@@ -146,5 +147,3 @@ fparams:
     expr                       { [$1] }
   | fparams COMMA expr         { $3 :: $1 }
 
-/*set: expr           { [$1] }
-   | set COMMA expr { $3 :: $1 }*/
