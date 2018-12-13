@@ -89,8 +89,7 @@ vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
 S_LIT: LBRACE COLON expr_list COLON RBRACE { Set([$3]) } 
      
-/* | VARIABLE LBRACE expr RBRACE {SetAccess($1, $3)} Set access, need to put in ast, maybe take out? or do an iter
-      slicing, or other manipulations we want*/
+set_access:  VARIABLE LBRACE COLON  expr RBRACE COLON {SetAccess($1, $3)} 
 expr_list:
     {[]}
     | expr_list { List.rev $1 }
@@ -137,6 +136,7 @@ expr:
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
   | VARIABLE ASSIGN expr                                        { Assign($1, $3) } 
+  | set_access                                                  {$1}
   
 fparams_opt:
      /* nothing */{ [] }
