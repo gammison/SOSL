@@ -88,7 +88,7 @@ rule token = parse
 
 (*| '"' { read_string (Buffer.create 17) lexbuf } *)
 | '"' (([^ '"'] | "\\\"")* as strlit) '"' { STR_LIT(strlit) } 
-| '{' (([^ '}'] | "\\\"")* as setlit) '}' { 
+| ":{" (([^ "}:"] | "\\\"")* as setlit) '}' { 
     let parse_set set_lit =
         String.split_on_char ',' set_lit 
     in S_LIT(parse_set setlit) 
