@@ -87,10 +87,10 @@ vdecls: /* nothing */   { [] }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
-S_LIT: LBRACE COLON expr_list COLON RBRACE { Set([$3]) } (* literal *)
+S_LIT: LBRACE COLON expr_list COLON RBRACE { Set([$3]) } 
      
-(* | VARIABLE LBRACE expr RBRACE {SetAccess($1, $3)} Set access, need to put in ast, maybe take out? or do an iter*)
-     (* slicing, or other manipulations we want*)
+/* | VARIABLE LBRACE expr RBRACE {SetAccess($1, $3)} Set access, need to put in ast, maybe take out? or do an iter
+      slicing, or other manipulations we want*/
 expr_list:
     {[]}
     | expr_list { List.rev $1 }
@@ -114,7 +114,7 @@ literals:
   | BLIT                                                        { BoolLit($1) }
   | S_LIT							{$1}
 expr:
-    literals
+    literals                                                    {$1}
   | VARIABLE                                                    { Variable($1) }
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
