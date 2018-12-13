@@ -27,7 +27,6 @@
 %token <char> CHAR_LIT
 %token <string> VARIABLE
 %token <string> STR_LIT
-%token <string list> S_LIT
 %token EOF
 
 /* Order and Associativity */
@@ -69,18 +68,18 @@ params:
       | params COMMA dtype VARIABLE  { ($3, $4) :: $1 }
 
 
-dtype: INT       		{ Int }
-     | BOOL      		{ Boolean }
-     | CHAR      		{ Char }
-     | SET LBRACE stypes RBRACE { Set }
-     | STRING    		{ String }
-     | VOID      		{ Void }
+dtype: INT       		            { Int }
+     | BOOL      		            { Boolean }
+     | CHAR      		            { Char }
+     | SET COLON LBRACE stypes RBRACE COLON { Set([$4])}
+     | STRING    		            { String }
+     | VOID      		            { Void }
 
-stypes:  INT       		     { Int }
-     | BOOL      		     { Boolean }
-     | CHAR      		     { Char }
-     | STRING    		     { String }
-     | SET LBRACE stypes RBRACE      { Set } 
+stypes: INT       		                { Int }
+     | BOOL      		                { Boolean }
+     | CHAR      		                { Char }
+     | STRING    		                { String }
+     | SET COLON LBRACE stypes RBRACE COLON     { Set([$4]) } 
        
 
 vdecls: /* nothing */   { [] }
@@ -88,8 +87,13 @@ vdecls: /* nothing */   { [] }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
-set: SET LBRACE stypes RBRACE { Set([$3]) } 
 
+S_LIT: LBRACE COLON lit_list COLON RBRACE { Set([$3]) }
+     
+
+lit_list:
+       {[]}
+     | lit_list literals { $2 :: $1 }
 
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }
@@ -103,13 +107,14 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
-
-expr:
+literals:
     NUM_LIT                                                     { IntLit($1) }
   | CHAR_LIT    		                                { CharLit($1) }
   | STR_LIT						        { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
-  | S_LIT							{ SetLit($1)}
+  | S_LIT							{$1}
+expr:
+    literals                                                    {$1}
   | VARIABLE                                                    { Variable($1) }
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
@@ -131,9 +136,9 @@ expr:
   /*| NOT expr                                                    { Unop(Not, $2) }*/
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
- /* | LBRACKET set RBRACKET                                       { $2 }*/
   | VARIABLE ASSIGN expr                                        { Assign($1, $3) } 
-
+  | set_access                                                  {$1}
+  
 fparams_opt:
      /* nothing */{ [] }
     |fparams { List.rev $1 }
@@ -142,5 +147,3 @@ fparams:
     expr                       { [$1] }
   | fparams COMMA expr         { $3 :: $1 }
 
-/*set: expr           { [$1] }
-   | set COMMA expr { $3 :: $1 }*/

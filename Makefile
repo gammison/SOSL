@@ -3,11 +3,11 @@
 #test : all testall.sh
 #	./testall.sh
 
-# "make all" builds the executable as well as the "printbig" library designed
+# "make all" builds the executable as well as the "printlib" and "set" librairies
 # to test linking external code
 
 .PHONY : all
-all : sosl.native printbig.o #annoying ocamlbuild sometimes doesn't do all the reqs, may replace
+all : sosl.native printlib.o #annoying ocamlbuild sometimes doesn't do all the reqs, may replace
 # "make sosl.native" compiles the compiler
 #
 # The _tags file controls the operation of ocamlbuild, e.g., by including
@@ -22,13 +22,15 @@ sosl.native :
 # "make clean" removes all generated files
 
 .PHONY : clean
-clean: clean-build clean-tests
+clean: clean-build clean-tests clean-lib
 clean-build :
 	ocamlbuild -clean
 	#rm -rf testall.log ocamlllvm *.diff, for when we do testing
 	#rm -rf ocamlllvm *.diff
 clean-tests :
 	rm -rf *.diff *.out *.s *.exe *.ll *.log
+clean-lib :
+	rm *.o
 # Testing the "printbig" example
 #printbig : printbig.sl
 #	cc -o printbig -DBUILD_TEST printbig.sl

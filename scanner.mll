@@ -49,7 +49,7 @@ rule token = parse
 | "char"    { CHAR }
 | "boolean" { BOOL }
 | "void"    { VOID }
-| "set"     { SET }
+| "set"     { SET } (* handle typing need solution *)
 | "string"  { STRING }
 
 (* Boolean Type *)
@@ -88,11 +88,6 @@ rule token = parse
 
 (*| '"' { read_string (Buffer.create 17) lexbuf } *)
 | '"' (([^ '"'] | "\\\"")* as strlit) '"' { STR_LIT(strlit) } 
-| '{' (([^ '}'] | "\\\"")* as setlit) '}' { 
-    let parse_set set_lit =
-        String.split_on_char ',' set_lit 
-    in S_LIT(parse_set setlit) 
-  } 
 | '''([' '-'!' '#'-'[' ']'-'~' ]|['0'-'9'])''' as lxm {CHAR_LIT( String.get lxm 1)}
 | eof { EOF }
 | _ { raise (Failure ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
