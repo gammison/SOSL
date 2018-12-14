@@ -3,15 +3,14 @@ type op = Add | Sub | Mul | Div | Mod | Eq
           | And | Or | LessEq | MoreEq
           | More | Less
 type unop = Not (* cardinality is a delim like () *)
-type elmTypes = Int | Boolean | Char | String | Void | Set of elmTypes list
-
+type elmTypes = Int | Boolean | Char | String | Void | Set of elmTypes    
 type bind = elmTypes * string
-
 type expr = 
           | IntLit              of int
           | CharLit             of char
           | BoolLit             of bool
           | StrLit              of string
+	  | SetLit 		of expr list
           | Variable            of string
           | SetAccess           of string * expr
          (* | ArrLit		of expr list*)
@@ -106,7 +105,7 @@ let rec string_of_typ = function
       | Char        		-> "char"
       | Boolean     		-> "bool"
       | Void        		-> "void"
-      | Set(l) 			-> "set:{" ^ (string_of_typ (List.hd l)) ^ "}:" 
+      | Set(l) 			-> "set:{" ^ string_of_typ l ^ "}:" 
 
 
 let string_of_set(e) = "Set{" ^ String.concat "" (List.map string_of_expr e) ^ "}\n"
