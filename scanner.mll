@@ -49,7 +49,7 @@ rule token = parse
 | "char"    { CHAR }
 | "boolean" { BOOL }
 | "void"    { VOID }
-| "set"     { SET }
+| "set"     { SET } (* handle typing need solution *)
 | "string"  { STRING }
 
 (* Boolean Type *)

@@ -87,6 +87,7 @@ vdecls: /* nothing */   { [] }
 
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
+
 S_LIT: LBRACE COLON lit_list_opt COLON RBRACE { SetLit($3) }
 
 lit_list_opt:
@@ -116,7 +117,7 @@ literals:
   | BLIT                                                        { BoolLit($1) }
   | S_LIT							{ $1}
 expr:
-    literals							{$1}
+    literals                                                    {$1}
   | VARIABLE                                                    { Variable($1) }
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }
@@ -139,6 +140,7 @@ expr:
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
   | VARIABLE ASSIGN expr                                        { Assign($1, $3) } 
+  | set_access                                                  {$1}
   
 fparams_opt:
      /* nothing */{ [] }
