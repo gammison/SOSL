@@ -71,7 +71,7 @@ params:
 dtype: INT       		            { Int }
      | BOOL      		            { Boolean }
      | CHAR      		            { Char }
-     | SET COLON LBRACE stypes RBRACE COLON { Set([$4])}
+     | SET COLON LBRACE stypes RBRACE COLON { Set($4)}
      | STRING    		            { String }
      | VOID      		            { Void }
 
@@ -79,7 +79,7 @@ stypes: INT       		                { Int }
      | BOOL      		                { Boolean }
      | CHAR      		                { Char }
      | STRING    		                { String }
-     | SET COLON LBRACE stypes RBRACE COLON     { Set([$4]) } 
+     | SET COLON LBRACE stypes RBRACE COLON     { Set($4) } 
        
 
 vdecls: /* nothing */   { [] }
@@ -88,12 +88,15 @@ vdecls: /* nothing */   { [] }
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
 
-S_LIT: LBRACE COLON lit_list COLON RBRACE { Set([$3]) }
-     
+S_LIT: LBRACE COLON lit_list_opt COLON RBRACE { SetLit($3) }
+
+lit_list_opt:
+        {[]}
+       | lit_list { List.rev $1 }
 
 lit_list:
-       {[]}
-     | lit_list literals { $2 :: $1 }
+         expr 	  		 { [$1]  } 
+       | lit_list COMMA expr     { $3 :: $1 }  	      
 
 stmts: /* nothing */    { [] }
      | stmts stmt       { $2 :: $1 }
@@ -112,7 +115,7 @@ literals:
   | CHAR_LIT    		                                { CharLit($1) }
   | STR_LIT						        { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
-  | S_LIT							{$1}
+  | S_LIT							{ $1}
 expr:
     literals                                                    {$1}
   | VARIABLE                                                    { Variable($1) }
