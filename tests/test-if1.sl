@@ -1,16 +1,20 @@
 int main()
 {
-	if(true) {
-        string a;
-        a = "It is true!";
-        printf(a);
-    }
+	boolean flag; 
+	int a; 
+	int b; 
+	flag = true;
+	if (true) 
+	{ 
+		a = 1; 
+		print(a); 
+	}
 
-    else {
-        string b;
-        b = "This should not be printed";
-        printf(b);
-    }
-    
-	return 0;
+	else
+	{ 
+		b = 2;
+		print(b); 
+	}
+
+	return 0; 
 }

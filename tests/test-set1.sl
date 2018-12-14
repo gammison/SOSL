@@ -1,6 +1,6 @@
 int main()
 {
-    Set{int} a;
+    set:{int}: a;
     
     prints("OK");
 	return 0;
