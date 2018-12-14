@@ -1,6 +1,5 @@
-int main(){
- set{int} a;
- return 0;
-
-
+int main()
+{
+	set:{int}: a;
+	return 0;
 }

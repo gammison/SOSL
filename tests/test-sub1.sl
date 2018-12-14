@@ -5,9 +5,8 @@ int main()
     int c;
     a = 10;
     b = 30;
-    c = a*b;
+    c = b-a;
 
     print(c);
         return 0;
 }
-

@@ -1,8 +1,10 @@
 int main()
 {
-    int variable = 80;
-
-	if(true) {
+    int variable; 
+    boolean flag; 
+    flag = true; 
+    if(flag) 
+    {
         variable = 200;
     }
 

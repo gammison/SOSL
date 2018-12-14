@@ -1,6 +1,6 @@
 int main()
 { 
-        int a;
+    int a;
     int b;
     int c;
     a = 10;
@@ -10,4 +10,3 @@ int main()
     print(c);
         return 0;
 }
-
