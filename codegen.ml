@@ -45,8 +45,8 @@ let translate (globals, functions) =
     | A.Char     -> i8_t 
     | A.String	 -> str_t 
     | A.Void     -> void_t
-    | A.Set(ty)  -> ltype_of_typ ty 
-    | _ -> raise (Failure "not finished")
+    | A.Set(ty)  -> L.pointer_type (ltype_of_typ ty)
+    | _ -> raise (Failure "not a supported data type")
   in
 
   (* Create a map of global variables after creating each *)
@@ -118,7 +118,7 @@ let translate (globals, functions) =
         SIntLit i     -> L.const_int i32_t i
       | SBoolLit b    -> L.const_int i1_t (if b then 1 else 0)
       | SCharLit c    -> L.const_int i8_t (Char.code c)
-      | SStrLit str  ->  L.build_global_stringptr str "string" builder
+      | SStrLit str   -> L.build_global_stringptr str "string" builder
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
