@@ -22,7 +22,7 @@ and sstmt =
 	   SBlock                of sstmt list 
          | SExpr                 of sexpr 
          | SIf                   of sexpr * sstmt * sstmt
-	 | SWhile                of sexpr * sstmt  
+	       | SWhile                of sexpr * sstmt  
          | SFor                  of sexpr * sexpr * sexpr * sstmt 
          | SForEach              of sexpr * sexpr * sstmt
          | SReturn               of sexpr

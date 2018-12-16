@@ -31,8 +31,8 @@ and stmt = Block                of stmt list
          | Return               of expr
          | Break
 	   | While	              of expr * stmt
-         | SetElementAssign     of string * expr * expr
-         | ArrayElementAssign   of string * expr * expr
+         (* | SetElementAssign     of string * expr * expr
+         | ArrayElementAssign   of string * expr * expr *)
 
 
 type fdecl = { (* function declaration *)
