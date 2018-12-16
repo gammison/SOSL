@@ -10,7 +10,7 @@ type expr =
           | CharLit             of char
           | BoolLit             of bool
           | StrLit              of string
-	  | SetLit 		of expr list
+	    | SetLit 	        of expr list
           | Variable            of string
           | SetAccess           of string * expr
          (* | ArrLit		of expr list*)
@@ -30,7 +30,7 @@ and stmt = Block                of stmt list
          | ForEach              of expr * expr * stmt
          | Return               of expr
          | Break
-	 | While	        of expr * stmt
+	   | While	              of expr * stmt
          | SetElementAssign     of string * expr * expr
          | ArrayElementAssign   of string * expr * expr
 
@@ -62,7 +62,7 @@ let string_of_op = function
     | LessEq    -> "<="
     | MoreEq    -> ">="
     | Union     -> ":u"
-    | Isec     -> ":n"
+    | Isec      -> ":n"
     | Comp      -> ":c"
     | Elof      -> ":i"
     | And       -> "AND"
@@ -111,8 +111,6 @@ let rec string_of_typ = function
 let string_of_set(e) = "Set{" ^ String.concat "" (List.map string_of_expr e) ^ "}\n"
 
 let string_of_bind (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
-
-
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_expr e ^ ";\n"
 
