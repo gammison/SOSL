@@ -6,10 +6,11 @@ and sx =
           | SCharLit             of char
           | SBoolLit             of bool 
           | SStrLit              of string 
+          | SSetLit              of sexpr list
           | SVariable            of string
-          | SSetAccess           of string * sexpr 
+         (*| SSetAccess           of string * sexpr *)
 	 (* | SArrLit		 of sexpr list*)
-          | SArrayAccess         of string * sexpr
+          (*| SArrayAccess         of string * sexpr *)
           | SCall                of string * sexpr list 
           | SBinop               of sexpr * op * sexpr 
           | SUnop                of unop * sexpr (* if we do string or array slicing, their syntactic sugar here *)
@@ -26,8 +27,8 @@ and sstmt =
          | SForEach              of sexpr * sexpr * sstmt
          | SReturn               of sexpr
          | SBreak                
-         | SSetElementAssign     of string * sexpr * sexpr
-         | SArrayElementAssign   of string * sexpr * sexpr
+         (*| SSetElementAssign     of string * sexpr * sexpr not done*)
+         (*| SArrayElementAssign   of string * sexpr * sexpr we dont have arrays rn*)
 
 type sfdecl = { (* function declaration *)
                 sftype : elmTypes;
@@ -49,14 +50,15 @@ let rec string_of_sexpr (t , e) =
     | SStrLit(strlit)        -> strlit 
     | SBoolLit(true)         -> "true"
     | SBoolLit(false)        -> "false"
+    | SSetLit(setlit)        -> ":{" ^ List.fold_left (^) "" (List.map string_of_sexpr setlit) ^ "}:"
     | SAssign(s, e)          -> s ^ " = " ^ string_of_sexpr e ^ ";\n"
     | SVariable(s)           -> s 
     | SBinop(e1, o, e2)      -> string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
     | SUnop(o, e)            -> string_of_sunop o ^ string_of_sexpr e
     | SCall(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_sexpr e1)^ ")"              
     | SNoexpr                -> "noexpr"
-    | SSetAccess (s,e)       -> s ^ "{" ^ string_of_sexpr e ^ "}"
-    | SArrayAccess (s,e)     -> s ^ "[" ^ string_of_sexpr e ^ "]"
+    (*| SSetAccess (s,e)       -> s ^ "{" ^ string_of_sexpr e ^ "}"
+    | SArrayAccess (s,e)     -> s ^ "[" ^ string_of_sexpr e ^ "]"*)
 		) ^ ")"
 
 let rec string_of_sstmt = function

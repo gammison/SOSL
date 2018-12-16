@@ -68,18 +68,18 @@ params:
       | params COMMA dtype VARIABLE  { ($3, $4) :: $1 }
 
 
-dtype: INT       		            { Int }
-     | BOOL      		            { Boolean }
-     | CHAR      		            { Char }
-     | SET COLON LBRACE stypes RBRACE COLON { Set($4)}
-     | STRING    		            { String }
-     | VOID      		            { Void }
+dtype: INT       		                { Int }
+     | BOOL      		                { Boolean }
+     | CHAR      		                { Char }
+     | SET COLON LBRACE stypes COLON RBRACE     { Set($4)}
+     | STRING    		                { String }
+     | VOID      		                { Void }
 
 stypes: INT       		                { Int }
      | BOOL      		                { Boolean }
      | CHAR      		                { Char }
      | STRING    		                { String }
-     | SET COLON LBRACE stypes RBRACE COLON     { Set($4) } 
+     | SET COLON LBRACE stypes COLON RBRACE     { Set($4) } 
        
 
 vdecls: /* nothing */   { [] }
@@ -140,7 +140,7 @@ expr:
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
   | VARIABLE ASSIGN expr                                        { Assign($1, $3) } 
-  | set_access                                                  {$1}
+ /*| set_access                                                  {$1}*/
   
 fparams_opt:
      /* nothing */{ [] }
