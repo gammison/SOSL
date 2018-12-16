@@ -132,10 +132,10 @@ let check (globals, functions) =
          	  | LessEq 
         	  | More 
             | MoreEq   when same && t1 = Int   -> Boolean
-            | Union    
+            (* | Union    
             | Isec      
             | Comp     when same && t1 = Set   -> Set 
-            | Elof     when t1 != Set && t2 = Set -> t1
+            | Elof     when t1 != Set && t2 = Set -> t1 *)
             | And 
             | Or       when same && t1 = Boolean -> Boolean
             | _ -> raise (Failure ("illegal binary operator " ^
@@ -169,6 +169,7 @@ let check (globals, functions) =
       | For(e1, e2, e3, st) -> SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | ForEach(e1, e2, st) -> SForEach(expr e1, expr e2, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
+      | Break -> 
       | Return e -> let (t, e') = expr e in
         if t = func.ftype then SReturn (t, e') 
         else raise( 
