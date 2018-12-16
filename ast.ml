@@ -55,7 +55,7 @@ let string_of_op = function
     | Mul       -> "*"
     | Div       -> "/"
     | Mod       -> "%"
-    | Eq        -> "="
+    | Eq        -> "=="
     | Neq       -> "!="
     | Less      -> "<"
     | More      -> ">"

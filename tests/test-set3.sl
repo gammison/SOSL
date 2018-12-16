@@ -1,5 +1,5 @@
 int main()
 {
-	set:{int}: a;
+	set:{char}: a;
 	return 0;
 }

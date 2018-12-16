@@ -39,13 +39,13 @@ let translate (globals, functions) =
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a MicroC type *)
-  let ltype_of_typ = function
+  let rec ltype_of_typ = function
       A.Int      -> i32_t
     | A.Boolean  -> i1_t
     | A.Char     -> i8_t 
     | A.String	 -> str_t 
     | A.Void     -> void_t
-    (* | A.Set      -> i32_t array_t  Complete Set *)
+    | A.Set(ty)  -> ltype_of_typ ty 
     | _ -> raise (Failure "not finished")
   in
 
@@ -113,7 +113,7 @@ let translate (globals, functions) =
 
     in
 
-    (* Construct code for an expression; return its value *)
+   (* Construct code for an expression; return its value *)
     let rec expr builder = function
         SIntLit i     -> L.const_int i32_t i
       | SBoolLit b    -> L.const_int i1_t (if b then 1 else 0)
@@ -215,7 +215,6 @@ let translate (globals, functions) =
       | SWhile ((_, predicate), body) ->
 	  let pred_bb = L.append_block context "while" the_function in
 	  ignore(L.build_br pred_bb builder);
-
 	  let body_bb = L.append_block context "while_body" the_function in
 	  add_terminal (stmt (L.builder_at_end context body_bb) body)
 	    (L.build_br pred_bb);
