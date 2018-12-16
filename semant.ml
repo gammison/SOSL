@@ -41,7 +41,7 @@ let check (globals, functions) =
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
 			                         ("printb", Boolean);
 			                         ("printf", String);
-				                 ("prints", String);
+				                       ("prints", String);
 			                         ("printbig", Char) ]
 
   in
@@ -117,24 +117,27 @@ let check (globals, functions) =
                                   " in " ^ string_of_expr ex))
           in (ty, SUnop(op, (t, e')))
       | Binop(e1, op, e2) as e -> 
-          let (t1, e1') = expr e1 
-          and (t2, e2') = expr e2 in
+          let (t1, e1') = expr e1 and (t2, e2') = expr e2 in
           (* All binary operators require operands of the same type *)
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
             Add 
 	          | Sub 
-        	  | Mul 
+        	  | Mul      
         	  | Div      when same && t1 = Int   -> Int
             | Eq 
         	  | Neq      when same               -> Boolean
             | Less 
          	  | LessEq 
         	  | More 
-	          | MoreEq   when same && t1 = Int     -> Boolean
+            | MoreEq   when same && t1 = Int   -> Boolean
+            | Union    
+            | Isec      
+            | Comp     when same && t1 = Set   -> Set 
+            | Elof     when t1 != Set && t2 = Set -> t1
             | And 
-	          | Or       when same && t1 = Boolean -> Boolean
+            | Or       when same && t1 = Boolean -> Boolean
             | _ -> raise (Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))in 

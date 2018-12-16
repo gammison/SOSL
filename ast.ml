@@ -13,7 +13,7 @@ type expr =
 	    | SetLit 	        of expr list
           | Variable            of string
           | SetAccess           of string * expr
-         (* | ArrLit		of expr list*)
+          (* | ArrLit		of expr list*)
           | ArrayAccess         of string * expr
           | Call                of string * expr list
           | Binop               of expr * op * expr
