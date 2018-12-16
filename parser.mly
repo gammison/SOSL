@@ -110,14 +110,16 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
   | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
+
 literals:
     NUM_LIT                                                     { IntLit($1) }
-  | CHAR_LIT    		                                { CharLit($1) }
-  | STR_LIT						        { StrLit($1) }
+  | CHAR_LIT    		                                            { CharLit($1) }
+  | STR_LIT						                                          { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
-  | S_LIT							{ $1}
+  | S_LIT					                                          		{ $1 }
+  
 expr:
-    literals                                                    {$1}
+    literals                                                    { $1 }
   | VARIABLE                                                    { Variable($1) }
   | expr PLUS expr                                              { Binop($1, Add, $3) }
   | expr MINUS expr                                             { Binop($1, Sub, $3) }

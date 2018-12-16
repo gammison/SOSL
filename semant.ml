@@ -41,7 +41,7 @@ let check (globals, functions) =
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
 			                         ("printb", Boolean);
 			                         ("printf", String);
-				                 ("prints", String);
+				                       ("prints", String);
 			                         ("printbig", Char) ]
 
   in
@@ -96,49 +96,53 @@ let check (globals, functions) =
     let rec expr = function
         IntLit  l  -> (Int, SIntLit l)
       | CharLit l  -> (Char, SCharLit l)
-      | StrLit l   -> (String, SStrLit l)
       | BoolLit l  -> (Boolean, SBoolLit l)
+      | StrLit l   -> (String, SStrLit l)
+      (* | SetLet l -> (Set, SSetLit l) *)
       | Noexpr     -> (Void, SNoexpr)
       | Variable s -> (type_of_identifier s, SVariable s)
       | Assign(var, e) as ex -> 
           let lt = type_of_identifier var
-          and (rt, e') = expr e in
+            and (rt, e') = expr e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^ 
             string_of_typ rt ^ " in " ^ string_of_expr ex
           in (check_assign lt rt err, 
-	  SAssign(var, (rt, e')))
+	          SAssign(var, (rt, e')))
       | Unop(op, e) as ex -> 
           let (t, e') = expr e in
           let ty = match op with
-           Not when t = Boolean -> Boolean
-          | _ -> raise (Failure ("illegal unary operator " ^ 
-                                 string_of_unop op ^ string_of_typ t ^
-                                 " in " ^ string_of_expr ex))
+            Not when t = Boolean -> Boolean
+            | _ -> raise (Failure ("illegal unary operator " ^ 
+                                   string_of_unop op ^ string_of_typ t ^
+                                  " in " ^ string_of_expr ex))
           in (ty, SUnop(op, (t, e')))
       | Binop(e1, op, e2) as e -> 
-          let (t1, e1') = expr e1 
-          and (t2, e2') = expr e2 in
+          let (t1, e1') = expr e1 and (t2, e2') = expr e2 in
           (* All binary operators require operands of the same type *)
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
             Add 
-	  | Sub 
-	  | Mul 
-	  | Div      when same && t1 = Int   -> Int
-          | Eq 
-	  | Neq      when same               -> Boolean
-          | Less 
-	  | LessEq 
-	  | More 
-	  | MoreEq   when same && t1 = Int     -> Boolean
-          | And 
-	  | Or       when same && t1 = Boolean -> Boolean
-          | _ -> raise (Failure ("illegal binary operator " ^
+	          | Sub 
+        	  | Mul      
+        	  | Div      when same && t1 = Int   -> Int
+            | Eq 
+        	  | Neq      when same               -> Boolean
+            | Less 
+         	  | LessEq 
+        	  | More 
+            | MoreEq   when same && t1 = Int   -> Boolean
+            | Union    
+            | Isec      
+            | Comp     when same && t1 = Set   -> Set 
+            | Elof     when t1 != Set && t2 = Set -> t1
+            | And 
+            | Or       when same && t1 = Boolean -> Boolean
+            | _ -> raise (Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))in 
                        (ty, SBinop((t1, e1'), op, (t2, e2')))
-      	  | Call(fname, args) as call -> 
+      | Call(fname, args) as call -> 
           let fd = find_func fname in
           let param_length = List.length fd.parameters in
           if List.length args != param_length then
@@ -163,6 +167,7 @@ let check (globals, functions) =
         Expr e -> SExpr (expr e)
       | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
       | For(e1, e2, e3, st) -> SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
+      | ForEach(e1, e2, st) -> SForEach(expr e1, expr e2, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
       | Return e -> let (t, e') = expr e in
         if t = func.ftype then SReturn (t, e') 
