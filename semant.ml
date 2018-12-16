@@ -169,7 +169,7 @@ let check (globals, functions) =
       | For(e1, e2, e3, st) -> SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | ForEach(e1, e2, st) -> SForEach(expr e1, expr e2, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
-      | Break -> 
+      (*| Break -> *)
       | Return e -> let (t, e') = expr e in
         if t = func.ftype then SReturn (t, e') 
         else raise( 

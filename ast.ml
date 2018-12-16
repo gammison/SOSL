@@ -95,8 +95,8 @@ let rec string_of_stmt = function
     | For(e1,e2,e3,s)           -> "for(" ^ string_of_expr e1 ^ "; " ^ string_of_expr e2 ^ "; " ^ string_of_expr e3 ^ ")\n" ^ string_of_stmt s
     | ForEach(e1,e2,s)          -> "foreach(" ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s 
     | While(e, s)               -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-    | SetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " ^ string_of_expr e2 ^";\n"
-    | ArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " ^ string_of_expr e2 ^";\n"
+    (*| SetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_expr e1 ^"} = " ^ string_of_expr e2 ^";\n"
+    | ArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_expr e1 ^"] = " ^ string_of_expr e2 ^";\n"*)
     | Break                     -> "break;\n"
 
 let rec string_of_typ = function
