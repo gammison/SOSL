@@ -9,13 +9,13 @@ and sx =
           | SSetLit              of sexpr list
           | SVariable            of string
          (*| SSetAccess           of string * sexpr *)
-	 (* | SArrLit		 of sexpr list*)
-          (*| SArrayAccess         of string * sexpr *)
+	 (*| SArrLit		 of sexpr list*)
+         (*| SArrayAccess         of string * sexpr *)
           | SCall                of string * sexpr list 
           | SBinop               of sexpr * op * sexpr 
           | SUnop                of unop * sexpr (* if we do string or array slicing, their syntactic sugar here *)
           | SNoexpr               
-          | SAssign               of string * sexpr
+          | SAssign              of string * sexpr
 
 (*and arr = SArrLit of sexpr list*)
 and sstmt = 
@@ -27,7 +27,7 @@ and sstmt =
          | SForEach              of sexpr * sexpr * sstmt
          | SReturn               of sexpr
          | SBreak                
-         (*| SSetElementAssign     of string * sexpr * sexpr not done*)
+         (*| SSetElementAssign     of string * sexpr * sexpr not done and we probably will just do remove and ins ops*)
          (*| SArrayElementAssign   of string * sexpr * sexpr we dont have arrays rn*)
 
 type sfdecl = { (* function declaration *)
@@ -69,8 +69,8 @@ let rec string_of_sstmt = function
     | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
     | SFor(e1,e2,e3,s)           -> "for(" ^ string_of_sexpr e1 ^ "; " ^ string_of_sexpr e2 ^ "; " ^ string_of_sexpr e3 ^ ")\n" ^ string_of_sstmt s
     | SForEach(e1,e2,s)          -> "foreach(" ^ string_of_sexpr e1 ^ " in " ^ string_of_sexpr e2 ^ ")\n" ^ string_of_sstmt s
-    | SSetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_sexpr e1 ^"} = " ^ string_of_sexpr e2 ^";\n"
-    | SArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_sexpr e1 ^"] = " ^ string_of_sexpr e2 ^";\n"
+    (*| SSetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_sexpr e1 ^"} = " ^ string_of_sexpr e2 ^";\n"
+    | SArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_sexpr e1 ^"] = " ^ string_of_sexpr e2 ^";\n"*)
     | SBreak                     -> "break;\n"
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_sexpr e ^ ";\n"
