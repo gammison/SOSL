@@ -1,3 +1,4 @@
+#include<string.h>
 #include "linkedlist.h" 
 
 
@@ -38,25 +39,75 @@ void create(void *ptr_from_llvm, int dType){
 }
 
 void destroy(struct set *s){                                            
-    struct List *nodes = s->list;
-    struct List *next;
+    struct List nodes = s->list;
+    struct Node *next = nodes.head;
 
     if ((s->type)==4){
         for (int i=0; i<(s->card); i++){
-            next = nodes->next;
-            destroy(nodes);
-            nodes = next;
+            struct set *temp = next->data;
+            next = next->next;
+            destroy(temp);
         }
     }
     else {
-        removeAllNodes(nodes);
+        removeAllNodes(&nodes);
     }
 }
 
+int compare_int_bool_char(const void *data_sought, const void *against){
+//they're all the same so we just cast to int and do equivalence
+    if(*(int *)data_sought != *(int *)against)
+        return 1;
+    return 0;
+}
+int compare_string(const void *data_sought, const void *against){
+    return strcmp((char *)data_sought,(char *)against);
+}
+
+int compare_set(const void *data_sought, const void *against){
+    int type_sought = ((struct set *)data_sought)->type;
+    int type_against =((struct set *)against)->type;//will throw error if screw up types
+    if(type_sought != type_against)
+        return 1;//sets of different types are clearly not the same thing
+    else{
+        //loop over all the elements and run the right compare method
+        struct Node *tmpCurr = (((struct set *)data_sought)->list).head;
+
+        for(int i=0; i<(((struct set *)data_sought)->card); i++){
+            
+            if(!has((struct set *)against,(void *)(&(tmpCurr->data)))){
+                return 1;
+            }
+            else{
+                tmpCurr= tmpCurr->next;
+            }
+        }
+    }
+    return 0;
+
+}
+
+int has(struct set *s, void *value){                              
+    struct List *nodes = &(s->list);
+    int (*compar)(const void *, const void *);
+    if(s->type == 0 || s->type==1 || s->type == 2)
+        compar = compare_int_bool_char;
+    else if(s->type == 3)
+        compar = compare_string;
+    else if(s->type == 4)
+        compar = compare_set;
+    if (findNode(nodes, value,compar) != 0){// not sure about comparator - RyanC, need write compare funs
+        return 1;
+    }
+     
+    return 0;
+}
+
+
 struct set* add(struct set *s, void *value){                            
-    struct List *nodes = s->list;
+    struct List nodes = s->list;
     if (has(s,value)){                                              
-        addFront(nodes, value);
+        addFront(&nodes, value);
     }
 
     return s;
@@ -78,14 +129,6 @@ void remove(struct set *s, void *value){
 }
 
 
-int has(struct set *s, void *value){                              
-    struct List *nodes = &(s->list);
-     if (findNode(nodes, value, ???) != 0){                        // not sure about comparator - RyanC
-        return 1;
-     }
-     
-     return 0;
-}
 
 struct set* complement(struct set *A, struct set* U){
     struct set *tmp;
@@ -96,7 +139,7 @@ struct set* complement(struct set *A, struct set* U){
     struct Node *uCurr = uNodes -> head;
 
 
-    struct set *AiU = interset(A,U);
+    struct set *AiU = intersect(A,U);
     for(int i=0; i<(U->card); i++){
         
         if(!has(AiU, uCurr){
