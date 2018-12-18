@@ -11,7 +11,7 @@ struct set{
     int card;
     int type;
 };
-void create(void *ptr_from_llvm, int dType)
+void create_set(void *ptr_from_llvm, int dType);
 
 void destroy(struct set *s);
 
@@ -25,7 +25,7 @@ struct set* add(struct set *s, void *value);
 void remove(struct set *s, void *value);
 
 struct set *complement(struct set *A, struct set *U);
-struct set *union(set struct set *A, struct set *B);
+struct set *set_union(struct set *A, struct set *B);
 struct set *intersect(struct set *A, struct set *B);
 struct set *copy(struct set *A);
 struct set *cartesian(struct set *A, struct set *B);
