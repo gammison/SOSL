@@ -71,7 +71,7 @@ params:
 dtype: INT       		                { Int }
      | BOOL      		                { Boolean }
      | CHAR      		                { Char }
-     | SET COLON LBRACE stypes COLON RBRACE     { Set($4)}
+     | SET COLON LBRACE stypes RBRACE COLON    { Set($4)}
      | STRING    		                { String }
      | VOID      		                { Void }
 
@@ -79,7 +79,7 @@ stypes: INT       		                { Int }
      | BOOL      		                { Boolean }
      | CHAR      		                { Char }
      | STRING    		                { String }
-     | SET COLON LBRACE stypes COLON RBRACE     { Set($4) } 
+     | SET COLON LBRACE stypes RBRACE COLON     { Set($4) } 
        
 
 vdecls: /* nothing */   { [] }
@@ -88,7 +88,7 @@ vdecls: /* nothing */   { [] }
 vdecl: dtype VARIABLE SEMI { ($1, $2) }
 
 
-S_LIT: LBRACE COLON lit_list_opt COLON RBRACE { SetLit($3) }
+S_LIT: COLON LBRACE lit_list_opt RBRACE COLON { SetLit($3) }
 
 lit_list_opt:
         {[]}
