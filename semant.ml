@@ -134,8 +134,8 @@ let check (globals, functions) =
             | MoreEq   when same && t1 = Int   -> Boolean
             (* | Union    
             | Isec      
-            | Comp     when same && t1 = Set   -> Set 
-            | Elof     when t1 != Set && t2 = Set -> t1 *)
+            | Comp     when same && t1 = Set(t1)   -> Set(t1) 
+            | Elof     when t1 != Set(t1) && t2 = Set(t1) -> t1 *)
             | And 
             | Or       when same && t1 = Boolean -> Boolean
             | _ -> raise (Failure ("illegal binary operator " ^
@@ -152,8 +152,8 @@ let check (globals, functions) =
             let err = "illegal argument found " ^ string_of_typ et ^ " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e')
           in 
-          let args' = List.map2 check_call fd.parameters args
-          in (fd.ftype, SCall(fname, args'))
+            let args' = List.map2 check_call fd.parameters args
+              in (fd.ftype, SCall(fname, args'))
     in
 
     let check_bool_expr e = 
@@ -169,12 +169,11 @@ let check (globals, functions) =
       | For(e1, e2, e3, st) -> SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | ForEach(e1, e2, st) -> SForEach(expr e1, expr e2, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
-      (*| Break -> *)
+      | Break -> SBreak
       | Return e -> let (t, e') = expr e in
         if t = func.ftype then SReturn (t, e') 
         else raise( 
-	  Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-		   string_of_typ func.ftype ^ " in " ^ string_of_expr e))
+          Failure ("return gives " ^ string_of_typ t ^ " expected " ^ string_of_typ func.ftype ^ " in " ^ string_of_expr e))
 	    
 	    (* A block is correct if each statement is correct and nothing
 	       follows any Return statement.  Nested blocks are flattened. *)

@@ -1,4 +1,3 @@
-
 #include<"linkedlist.h">
 
 
@@ -6,6 +5,7 @@ struct set {
     struct List list;
     int card;
     int type;
+
     initList(&list);
 };
 
@@ -17,19 +17,18 @@ struct set {
  *      = 3 -> string
  *      = 4 -> set
 
-
 struct set* create(struct List *list, int dType){ 
     struct set *result; 
     struct List *curr = result->head; 
 
-    set->card = 0;
-    set->type = dType;
+    result->card = 0;
+    result->type = dType;
       
     while (list != 0) {
         curr = list;
         curr = curr->next;
         list = list->next;
-        set->card++;
+        result->card++;
     }
 
     return result;
@@ -111,7 +110,7 @@ struct set* complement(struct set *A, struct set* U){
 
     return tmp;
 }
-struct set* copy(struct set *A){//maybe put in a set_lib.c? also rename printbig
+struct set* copy(struct set *A){                //maybe put in a set_lib.c?
     return 0;
 }
 struct set* union(struct set *A, struct set *B){                 

@@ -12,9 +12,9 @@ type expr =
           | StrLit              of string
 	  | SetLit 	        of expr list
           | Variable            of string
-          | SetAccess           of string * expr
-          (* | ArrLit		of expr list*)
-          | ArrayAccess         of string * expr
+          (*| SetAccess           of string * expr
+          | ArrLit		of expr list
+          | ArrayAccess         of string * expr *)
           | Call                of string * expr list
           | Binop               of expr * op * expr
           | Unop                of unop * expr (* if we do string types or array slicing, their syntactic sugar needs to go here *)
@@ -84,8 +84,8 @@ let rec string_of_expr = function
     | Unop(o, e)            -> string_of_unop o ^ string_of_expr e
     | Call(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_expr e1)^ ")"
     | Noexpr                -> "noexpr"
-    | SetAccess (s,e)       -> s ^ "{" ^ string_of_expr e ^ "}"
-    | ArrayAccess (s,e)     -> s ^ "[" ^ string_of_expr e ^ "]"
+    (* | SetAccess (s,e)       -> s ^ "{" ^ string_of_expr e ^ "}"
+    | ArrayAccess (s,e)     -> s ^ "[" ^ string_of_expr e ^ "]" *)
 
 let rec string_of_stmt = function
     Block(stmts)                -> "Block{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"

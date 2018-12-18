@@ -142,7 +142,6 @@ expr:
   | VARIABLE LPAREN fparams_opt RPAREN                          { Call($1, $3) } /* consider using optional args */
   | LPAREN expr RPAREN                                          { $2 }
   | VARIABLE ASSIGN expr                                        { Assign($1, $3) } 
-/*  | set_access                                                  {$1}*/
   
 fparams_opt:
      /* nothing */{ [] }
