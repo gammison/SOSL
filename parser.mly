@@ -68,17 +68,17 @@ params:
       | params COMMA dtype VARIABLE  { ($3, $4) :: $1 }
 
 
-dtype: INT       		                { Int }
-     | BOOL      		                { Boolean }
-     | CHAR      		                { Char }
+dtype: INT       		                            { Int }
+     | BOOL      		                            { Boolean }
+     | CHAR      		                            { Char }
      | SET COLON LBRACE stypes RBRACE COLON     { Set($4)}
-     | STRING    		                { String }
-     | VOID      		                { Void }
+     | STRING    		                            { String }
+     | VOID      		                            { Void }
 
-stypes: INT       		                { Int }
-     | BOOL      		                { Boolean }
-     | CHAR      		                { Char }
-     | STRING    		                { String }
+stypes: INT       		                          { Int }
+     | BOOL      		                            { Boolean }
+     | CHAR      		                            { Char }
+     | STRING    		                            { String }
      | SET COLON LBRACE stypes RBRACE COLON     { Set($4) } 
        
 
