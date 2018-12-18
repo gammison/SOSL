@@ -98,7 +98,7 @@ let check (globals, functions) =
       | CharLit l  -> (Char, SCharLit l)
       | BoolLit l  -> (Boolean, SBoolLit l)
       | StrLit l   -> (String, SStrLit l)
-      (* | SetLet l -> (Set, SSetLit l) *)
+      | SetLit l   -> (Set(l), SSetLit l)
       | Noexpr     -> (Void, SNoexpr)
       | Variable s -> (type_of_identifier s, SVariable s)
       | Assign(var, e) as ex -> 

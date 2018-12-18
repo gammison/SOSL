@@ -1,9 +1,11 @@
 #include<"linkedlist.h">
+
 struct set {
-    struct linkedlist list;
+    struct List list;
     int card;
     int type;
-}
+    
+};
 
 
 /* type = 0 -> int
@@ -13,6 +15,9 @@ struct set {
  *      = 4 -> set
 
 struct set* create(void *tomake, int size, int type){                 
+    
+
+
     if(type == 0)
         tomake = (int *)tomake;      
     if(type == 1)

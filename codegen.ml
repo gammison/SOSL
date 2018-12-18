@@ -34,18 +34,20 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
   and str_t      = L.pointer_type (L.i8_type context)
+  and set_t	 = L.pointer_type (L.void_type context)
+            
   (*and array_t    = L.array_type*)in
 
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a MicroC type *)
   let rec ltype_of_typ = function
-      A.Int      -> i32_t
-    | A.Boolean  -> i1_t
-    | A.Char     -> i8_t 
-    | A.String	 -> str_t 
-    | A.Void     -> void_t
-    | A.Set(ty)  -> L.pointer_type (ltype_of_typ ty)
+      A.Int      	   -> i32_t
+    | A.Boolean  	   -> i1_t
+    | A.Char     	   -> i8_t 
+    | A.String	 	   -> str_t 
+    | A.Void               -> void_t
+    | A.Set(ltype_of_typ)  -> set_t
     | _ -> raise (Failure "not a supported data type")
   in
 
@@ -56,7 +58,9 @@ let translate (globals, functions) =
           _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
-  
+  (*Create set.c functions*)
+
+ 
   (*Build printf function from C*)
   let printf_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
@@ -119,6 +123,7 @@ let translate (globals, functions) =
       | SBoolLit b    -> L.const_int i1_t (if b then 1 else 0)
       | SCharLit c    -> L.const_int i8_t (Char.code c)
       | SStrLit str   -> L.build_global_stringptr str "string" builder
+      (*| SSetLit ([(ty, _)]) -> L.pointer_type (ltype_of_typ ty)*)
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
