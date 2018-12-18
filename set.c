@@ -1,12 +1,10 @@
-#include<"linkedlist.h">
+#include "linkedlist.h" 
 
 
 struct set {
     struct List list;
     int card;
     int type;
-
-    initList(&list);
 };
 
 
@@ -32,6 +30,10 @@ struct set* create(struct List *list, int dType){
     }
 
     return result;
+
+}*/
+
+void create(void *ptr_from_llvm, int dType){
 
 }
 

@@ -41,6 +41,7 @@ let translate (globals, functions) =
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a MicroC type *)
+  (*let set_t = *)
   let rec ltype_of_typ = function
       A.Int      	   -> i32_t
     | A.Boolean  	   -> i1_t
