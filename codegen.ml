@@ -34,7 +34,7 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
   and str_t      = L.pointer_type (L.i8_type context)
-  and set_t	 = L.pointer_type (L.void_type context)
+  and set_t	     = L.pointer_type (L.void_type context)
             
   (*and array_t    = L.array_type*)in
 
