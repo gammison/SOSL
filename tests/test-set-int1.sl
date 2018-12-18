@@ -1,7 +1,5 @@
 int main()
 {
-    set:{int}: a;
-    
-    prints("OK");
+    set:{int}: a; 
 	return 0;
 }
