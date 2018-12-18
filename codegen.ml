@@ -34,9 +34,9 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
   and str_t      = L.pointer_type (L.i8_type context)
-  and set_t	     = L.pointer_type (L.void_type context)
-            
-  (*and array_t    = L.array_type*)in
+  and set_t	 = L.pointer_type (L.void_type context)
+ (* and array_t    = L.array_type*)in
+
 
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
@@ -60,12 +60,31 @@ let translate (globals, functions) =
     List.fold_left global_var StringMap.empty globals in
   (*Create set.c functions*)
 
- 
+  
   (*Build printf function from C*)
+
   let printf_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
       L.declare_function "printf" printf_t the_module in
+ (* let create_set : L.lltype =
+      L.var_arg_function_type (L.pointer_type void_t) [|[|] in
+  let create_set_func : L.llvalue = 
+      L.declare_function "create" create_set the_module in *)
+  let add_set : L.lltype =
+      L.var_arg_function_type (L.pointer_type void_t) [|set_t; (L.pointer_type void_t) |] in
+  let add_set_func : L.llvalue = 
+      L.declare_function "add" add_set the_module in 
+  let remove_set : L.lltype =
+      L.var_arg_function_type void_t [|set_t; (L.pointer_type void_t) |] in
+  let remove_set_func : L.llvalue = 
+      L.declare_function "remove" remove_set the_module in 
+  let has_elmt : L.lltype =
+      L.var_arg_function_type (L.pointer_type void_t) [|set_t; (L.pointer_type void_t) |] in
+  let has_elmt_func : L.llvalue = 
+      L.declare_function "has" has_elmt the_module in 
+
+
 
 
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
@@ -231,7 +250,8 @@ let translate (globals, functions) =
           ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
           L.builder_at_end context merge_bb
 
-      (* | SForEach (e1, e2, s) -> stmt builder *)
+    (*  | SForEach (e1, e2, s) -> stmt builder *)
+
 
       (* Implement for loops as while loops *)
       | SFor (e1, e2, e3, body) -> stmt builder
