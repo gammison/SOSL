@@ -98,7 +98,22 @@ let check (globals, functions) =
       | CharLit l  -> (Char, SCharLit l)
       | BoolLit l  -> (Boolean, SBoolLit l)
       | StrLit l   -> (String, SStrLit l)
-      | SetLit l   -> (Set(l), SSetLit l)
+      | SetLit sl   -> 
+        ( match sl with
+        | [] -> (Set(Void), SSetLit [])
+        | hd :: _ -> 
+          let (t', _) = expr hd in 
+            let expr_to_sexpr ex =
+              let (t1, e1) = expr ex in
+                match t1 with
+                | Int        -> (t1, e1)
+                | Char       -> (t1, e1)
+                | Boolean    -> (t1, e1)
+                | String     -> (t1, e1)
+                | Void       -> (t1, e1)
+                | Set(_)     -> (t1, e1)              
+                in
+              let ssl = List.map expr_to_sexpr sl in (Set(t'), SSetLit ssl))
       | Noexpr     -> (Void, SNoexpr)
       | Variable s -> (type_of_identifier s, SVariable s)
       | Assign(var, e) as ex -> 
@@ -132,10 +147,10 @@ let check (globals, functions) =
          	  | LessEq 
         	  | More 
             | MoreEq   when same && t1 = Int   -> Boolean
-            (* | Union    
+            | Union    
             | Isec      
             | Comp     when same && t1 = Set(t1)   -> Set(t1) 
-            | Elof     when t1 != Set(t1) && t2 = Set(t1) -> t1 *)
+            | Elof     when t1 != Set(t1) && t2 = Set(t1) -> t1
             | And 
             | Or       when same && t1 = Boolean -> Boolean
             | _ -> raise (Failure ("illegal binary operator " ^

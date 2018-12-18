@@ -37,6 +37,7 @@ let translate (globals, functions) =
   and set_t	 = L.pointer_type (L.void_type context)
  (* and array_t    = L.array_type*)in
 
+
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a MicroC type *)
@@ -250,6 +251,7 @@ let translate (globals, functions) =
           L.builder_at_end context merge_bb
 
     (*  | SForEach (e1, e2, s) -> stmt builder *)
+
 
       (* Implement for loops as while loops *)
       | SFor (e1, e2, e3, body) -> stmt builder
