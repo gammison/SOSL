@@ -34,7 +34,7 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
   and str_t      = L.pointer_type (L.i8_type context)
-  and set_t	 = L.pointer_type (L.void_type context)
+  and set_t	     = L.pointer_type (L.void_type context)
             
   (*and array_t    = L.array_type*)in
 
@@ -231,7 +231,7 @@ let translate (globals, functions) =
           ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
           L.builder_at_end context merge_bb
 
-      | SForEach (e1, e2, s) -> stmt builder 
+      (* | SForEach (e1, e2, s) -> stmt builder *)
 
       (* Implement for loops as while loops *)
       | SFor (e1, e2, e3, body) -> stmt builder
