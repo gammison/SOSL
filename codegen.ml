@@ -231,7 +231,7 @@ let translate (globals, functions) =
           ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
           L.builder_at_end context merge_bb
 
-      | SForEach (e1, e2, s) -> stmt builder 
+      (* | SForEach (e1, e2, s) -> stmt builder *)
 
       (* Implement for loops as while loops *)
       | SFor (e1, e2, e3, body) -> stmt builder

@@ -147,10 +147,10 @@ let check (globals, functions) =
          	  | LessEq 
         	  | More 
             | MoreEq   when same && t1 = Int   -> Boolean
-            (* | Union    
+            | Union    
             | Isec      
             | Comp     when same && t1 = Set(t1)   -> Set(t1) 
-            | Elof     when t1 != Set(t1) && t2 = Set(t1) -> t1 *)
+            | Elof     when t1 != Set(t1) && t2 = Set(t1) -> t1
             | And 
             | Or       when same && t1 = Boolean -> Boolean
             | _ -> raise (Failure ("illegal binary operator " ^

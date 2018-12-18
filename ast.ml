@@ -10,7 +10,7 @@ type expr =
           | CharLit             of char
           | BoolLit             of bool
           | StrLit              of string
-	  | SetLit 	        of expr list
+	    | SetLit 	        of expr list
           | Variable            of string
           (*| SetAccess           of string * expr
           | ArrLit		of expr list
@@ -74,11 +74,12 @@ let string_of_unop = function
 
 let rec string_of_expr = function
       IntLit(l)             -> string_of_int l
-    | CharLit(c)	    -> Char.escaped c
+    | CharLit(c)	          -> Char.escaped c
     | StrLit(strlit)        -> strlit 
     | BoolLit(true)         -> "true"
     | BoolLit(false)        -> "false"
     | Assign(s, e)          -> s ^ " = " ^ string_of_expr e ^ ";\n"
+    | SetLit(s)             -> "Set:{" ^ String.concat "" (List.map string_of_expr s) ^ "}:\n"
     | Variable(s)           -> s 
     | Binop(e1, o, e2)      -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
     | Unop(o, e)            -> string_of_unop o ^ string_of_expr e
