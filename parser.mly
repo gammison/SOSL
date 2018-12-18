@@ -68,17 +68,17 @@ params:
       | params COMMA dtype VARIABLE  { ($3, $4) :: $1 }
 
 
-dtype: INT       		                { Int }
-     | BOOL      		                { Boolean }
-     | CHAR      		                { Char }
-     | SET COLON LBRACE stypes RBRACE COLON    { Set($4)}
-     | STRING    		                { String }
-     | VOID      		                { Void }
+dtype: INT       		                            { Int }
+     | BOOL      		                            { Boolean }
+     | CHAR      		                            { Char }
+     | SET COLON LBRACE stypes RBRACE COLON     { Set($4)}
+     | STRING    		                            { String }
+     | VOID      		                            { Void }
 
-stypes: INT       		                { Int }
-     | BOOL      		                { Boolean }
-     | CHAR      		                { Char }
-     | STRING    		                { String }
+stypes: INT       		                          { Int }
+     | BOOL      		                            { Boolean }
+     | CHAR      		                            { Char }
+     | STRING    		                            { String }
      | SET COLON LBRACE stypes RBRACE COLON     { Set($4) } 
        
 
@@ -113,10 +113,10 @@ stmt:
 
 literals:
     NUM_LIT                                                     { IntLit($1) }
-  | CHAR_LIT    		                                            { CharLit($1) }
-  | STR_LIT						                                          { StrLit($1) }
+  | CHAR_LIT    		                                { CharLit($1) }
+  | STR_LIT						        { StrLit($1) }
   | BLIT                                                        { BoolLit($1) }
-  | S_LIT					                                          		{ $1 }
+  | S_LIT					                { $1 }
   
 expr:
     literals                                                    { $1 }

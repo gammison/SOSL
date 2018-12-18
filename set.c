@@ -1,11 +1,14 @@
-#include<"List.h">
+
+#include<"linkedlist.h">
+
+
 struct set {
     struct List list;
     int card;
     int type;
+    initList(&list);
+};
 
-    initList(&List);
-}
 
 
 /* type = 0 -> int
@@ -13,6 +16,7 @@ struct set {
  *      = 2 -> char
  *      = 3 -> string
  *      = 4 -> set
+
 
 struct set* create(struct List *list, int dType){ 
     struct set *result; 
@@ -29,6 +33,7 @@ struct set* create(struct List *list, int dType){
     }
 
     return result;
+
 }
 
 void destroy(struct set *s){                                            
