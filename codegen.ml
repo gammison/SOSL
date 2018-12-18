@@ -72,19 +72,37 @@ let translate (globals, functions) =
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in *)
   let add_set : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [|set_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type set_t [|set_t; (L.pointer_type void_t) |] in
   let add_set_func : L.llvalue = 
       L.declare_function "add" add_set the_module in 
+  let destroy_set : L.lltype =
+      L.var_arg_function_type void_t [| set_t |] in
+  let destroy_set_func : L.llvalue = 
+      L.declare_function "destroy" destroy_set the_module in 
   let remove_set : L.lltype =
       L.var_arg_function_type void_t [|set_t; (L.pointer_type void_t) |] in
   let remove_set_func : L.llvalue = 
       L.declare_function "remove" remove_set the_module in 
   let has_elmt : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [|set_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type i32_t [|set_t; (L.pointer_type void_t) |] in
   let has_elmt_func : L.llvalue = 
       L.declare_function "has" has_elmt the_module in 
-
-
+  let comp_set : L.lltype =
+      L.var_arg_function_type set_t [|set_t; set_t|] in
+  let comp_set_func : L.llvalue =
+      L.declare_function "complement" comp_set the_module in
+  let copy_set : L.lltype =
+      L.var_arg_function_type set_t [|set_t|] in
+  let copy_set_func : L.llvalue =
+      L.declare_function "copy" copy_set the_module in
+  let union_set : L.lltype =
+      L.var_arg_function_type set_t [|set_t; set_t|] in
+  let union_set_func : L.llvalue =
+      L.declare_function "union" union_set the_module in
+  let intsect_set : L.lltype =
+      L.var_arg_function_type set_t [|set_t; set_t|] in
+  let intsect_set_func : L.llvalue =
+      L.declare_function "intersect" intsect_set the_module in
 
 
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
