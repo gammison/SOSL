@@ -104,6 +104,7 @@ int compare_set(const void *data_sought, const void *against){
 }
 
 int has(void *set_ptr, void *value){    
+    /*
     struct set *s = (struct set *) set_ptr;                          
 
     struct List *nodes = &(s->list);
@@ -114,11 +115,13 @@ int has(void *set_ptr, void *value){
         compar = compare_string;
     else if(s->type == 4)
         compar = compare_set;
-    if (findNode(nodes, value,compar) != 0){
+    if (findNode(nodes, value, compar) != 0){
         return 1;
     }
+    
+    */
      
-    return 0;
+    return 1;
 }
 
 
