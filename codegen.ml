@@ -78,9 +78,9 @@ let translate (globals, functions) =
   let print_set_t : L.lltype =
       L.var_arg_function_type i32_t [| void_ptr_t |] in
   let print_set_func : L.llvalue = 
-      L.declare_function "print_set" printf_t the_module in 
+      L.declare_function "print_set" print_set_t the_module in 
   let create_set : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [| i32_t |] in
+      L.var_arg_function_type (L.pointer_type void_t) [| void_ptr_t |] in
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in
   let get_head : L.lltype =
@@ -110,9 +110,9 @@ let translate (globals, functions) =
       L.declare_function "comare_set" compare_set the_module in 
 
   let add_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
+      L.var_arg_function_type void_ptr_t [| void_ptr_t ; i32_t |] in
   let add_set_func : L.llvalue = 
-      L.declare_function "add" add_set the_module in 
+      L.declare_function "adds" add_set the_module in 
   let destroy_set : L.lltype =
       L.var_arg_function_type void_t [| void_ptr_t |] in
   let destroy_set_func : L.llvalue = 
@@ -205,11 +205,15 @@ let translate (globals, functions) =
         (match sl with 
         | [] -> L.build_call create_set_func [| L.const_int i32_t 5 |] "tmp" builder
         | hd :: _ -> 
-            let hd' = expr builder hd in
-            let s = L.build_call create_set_func [| hd' |] "s" builder in
-            let addNodes ex = L.build_call add_set_func [| s, expr builder ex|] "ns" builder in
+            let (_, e1) = hd in
+            let e1' = expr builder e1 in
+            let s = L.build_call create_set_func [| e1' |] "s" builder in 
+            let addNodes ex = 
+                let (ty, e2) = ex in
+                    L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
             List.map addNodes sl;
-            s)
+            s
+            )
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
@@ -245,8 +249,8 @@ let translate (globals, functions) =
 	    L.build_call printf_func [| int_format_str ; (expr builder e) |] "print" builder
       | SCall ("prints", [(_, e)]) ->
 	    L.build_call printf_func [| str_format_str ; (expr builder e) |] "prints" builder
-      | SCall ("printbig", [(_, e)]) ->
-	    L.build_call printf_func [| char_format_str;  (expr builder e) |] "printbig" builder
+      | SCall ("printc", [(_, e)]) ->
+	    L.build_call printf_func [| char_format_str;  (expr builder e) |] "print_char" builder
       | SCall ("printf", [(_, e)]) -> 
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
       | SCall ("print_set", [(_,e)]) ->
@@ -317,8 +321,8 @@ let translate (globals, functions) =
         (*
         | SForEach (e1, e2, s) -> 
             let set_ptr = expr builder e2 in 
-                let counter = L.build_alloca i32_t "counter" builder in
-                ignore(L.build_store (L.const_int i32_t 0) counter builder);
+            let counter = L.build_alloca i32_t "counter" builder in
+            ignore(L.build_store (L.const_int i32_t 0) counter builder);
             
             let size = L.build_call get_card_func [| set_ptr |] "size" builder in
             let node_var = L.build_alloca void_ptr_t n builder in

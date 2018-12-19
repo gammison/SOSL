@@ -9,11 +9,7 @@ void print_string( char *c)
     printf("%s",c);
 }
 
-#ifdef BUILD_TEST
-int main()
+void print_char( char c)
 {
-  char s[] = "HELLO WORLD09AZ";
-  char *c;
-  for ( c = s ; *c ; c++) printbig(*c);
+    printf("%c",c);
 }
-#endif

@@ -28,26 +28,33 @@ struct set* create(struct List *list, int dType){
 
 }*/
 
-struct set *create_set(int dType){//not necessairly from llvm
+void *create_set(int dType){  //not necessairly from llvm
     struct set *newset = malloc(sizeof(struct set));
     initList(&(newset->list));
     newset->card = 0;
     newset->type = 1;
-    return newset;
+    return (void *) newset;
 }
-struct Node *get_head(struct set *A){
-    return (A->list).head;
+void *get_head(void *set_ptr){
+    struct set *s = (struct set *) set_ptr;                          
+
+    return (void *) (s->list).head;
 }
 
-void *get_data_from_node(struct Node *data){
-    return data->data;
+void *get_data_from_node(void *node_ptr){
+    struct Node *node = (struct Node *) node_ptr; 
+    return node->data;
 }
 
-struct Node *get_next_node(struct Node *data){
-    return data->next;
+void* *get_next_node(void *node_ptr){
+    struct Node *node = (struct Node *) node_ptr; 
+
+    return (void *) node->next;
 }
 
-void destroy(struct set *s){                                            
+void destroy(void *set_ptr){            
+    struct set *s = (struct set *) set_ptr;  
+
     struct List nodes = s->list;
     struct Node *next = nodes.head;
 
@@ -96,7 +103,9 @@ int compare_set(const void *data_sought, const void *against){
 
 }
 
-int has(struct set *s, void *value){                              
+int has(void *set_ptr, void *value){    
+    struct set *s = (struct set *) set_ptr;                          
+
     struct List *nodes = &(s->list);
     int (*compar)(const void *, const void *);
     if(s->type == 0 || s->type==1 || s->type == 2)
@@ -113,16 +122,18 @@ int has(struct set *s, void *value){
 }
 
 
-struct set* add(struct set *s, void *value){                            
-    struct List nodes = s->list;
-    if (!has(s,value)){                                              
+void *add(void *set_ptr, void *value){  
+    struct set *s = (struct set *) set_ptr;                          
+    struct List nodes = set->list;
+    if (!has(set,value)){                                              
         addFront(&nodes, value);
     }
 
     return s;
 }
 
-struct set *remove_elm(struct set *s, void *value){                              
+void *remove_elm(void *set_ptr, void *value){   
+    struct set *s = (struct set *) set_ptr;                               
     struct Node *tmpNode = (s->list).head;
     struct Node *prev;
 
@@ -135,12 +146,15 @@ struct set *remove_elm(struct set *s, void *value){
 
     prev->next = tmpNode->next; 
     free(tmpNode);
-    return s;
+    return (void *) s;
 }
 
 
 
-struct set* complement(struct set *A, struct set* U){
+void *complement(void *A_ptr, void* U_ptr){
+    struct set *A = (struct set *) A_ptr;   
+    struct set *U = (struct set *) U_ptr;  
+
     struct set *tmp = create_set(A->type);
     struct List tmpNodes = tmp->list;
     struct Node *tmpCurr = tmpNodes.head;
@@ -158,13 +172,16 @@ struct set* complement(struct set *A, struct set* U){
         uCurr = uCurr->next;
     }
     destroy(AiU);
-    return tmp;
+    return (void *) tmp;
 }
 struct set* copy(struct set *A){                //maybe put in a set_lib.c?
     return 0;
 }
 
-struct set* set_union(struct set *A, struct set *B){                 
+void* set_union(void *A_ptr, void *B_ptr){       
+    struct set *A = (struct set *) A_ptr;   
+    struct set *B = (struct set *) B_ptr; 
+
     struct List aNodes = A->list;
     struct Node *aCurr = aNodes.head;
 
@@ -185,7 +202,7 @@ struct set* set_union(struct set *A, struct set *B){
         }
     }
 
-    return AuB;
+    return (void *) AuB;
 }
 int compare(void *Adata, void *Bdata, int type){
     if(type == 0 || type == 1 || type == 2)
@@ -197,7 +214,10 @@ int compare(void *Adata, void *Bdata, int type){
 
     return -1;
 }
-struct set *intersect(struct set *A, struct set *B){                  
+void *intersect(void *A_ptr, void *B_ptr){    
+    struct set *A = (struct set *) A_ptr;   
+    struct set *B = (struct set *) B_ptr;   
+
     struct set *tmp = create_set(A->type); 
 
     struct List aNodes = A->list;
@@ -220,7 +240,7 @@ struct set *intersect(struct set *A, struct set *B){
         A->card <= B->card ? (aCurr = aCurr->next):(bCurr = bCurr->next);
     }
 
-    return tmp;
+    return (void *) tmp;
 }
 
 int get_card(struct set *A){
@@ -241,7 +261,8 @@ struct set *cartesian(struct set *A, struct set *B){                // not done 
     return tmp;
 }
 
-void print_set(struct set *A){
+void print_set(void *A_ptr){
+    struct set *A = (struct set *) A_ptr;   
     printf(":{");
     struct Node *Acurr = A->list.head;
     for(int i = 0; i<get_card(A); i++){

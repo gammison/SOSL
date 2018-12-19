@@ -2,6 +2,6 @@ int main()
 {
 	char c;
         c = 'a';
-	printbig(c);
+	printc(c);
 	return 0;
 }
