@@ -41,8 +41,9 @@ let check (globals, functions) =
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
 			                         ("printb", Boolean);
 			                         ("printf", String);
-				                       ("prints", String);
-			                         ("printbig", Char) ]
+				                 ("prints", String);
+                                                 ("printc", Char); 
+                                                 ("print_set", Set(Int));]
 
   in
 
