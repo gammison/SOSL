@@ -8,3 +8,8 @@ void print_string( char *c)
 {
     printf("%s",c);
 }
+
+void print_char( char c)
+{
+    printf("%c",c);
+}

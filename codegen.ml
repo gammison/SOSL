@@ -254,8 +254,8 @@ let translate (globals, functions) =
 	    L.build_call printf_func [| int_format_str ; (expr builder e) |] "print" builder
       | SCall ("prints", [(_, e)]) ->
 	    L.build_call printf_func [| str_format_str ; (expr builder e) |] "prints" builder
-      | SCall ("printbig", [(_, e)]) ->
-	    L.build_call printf_func [| char_format_str;  (expr builder e) |] "printbig" builder
+      | SCall ("printc", [(_, e)]) ->
+	    L.build_call printf_func [| char_format_str;  (expr builder e) |] "print_char" builder
       | SCall ("printf", [(_, e)]) -> 
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
       | SCall ("print_set", [(_,e)]) ->

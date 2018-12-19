@@ -38,11 +38,12 @@ let check (globals, functions) =
       fname = name; 
       parameters = [(ty, "x")];
       locals = []; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", [Int]);
-                                                 ("printb", [Boolean]);
-                                                 ("printf", [String]);
-                                                 ("prints", [String]);
-                                                 ("print_set",[Set(Int)]);
+    in List.fold_left add_bind StringMap.empty [ ("print", Int);
+                                                 ("printb", Boolean);
+                                                 ("printf", String);
+                                                 ("prints", String);
+                                                 ("printc", Char);]
+                                                 (*("print_set",[Set(Int)]);
                                                  ("print_set",[Set(Boolean)]);
                                                  ("print_set",[Set(String)]);
                                                  ("print_set",[Set(Char)]);
@@ -51,7 +52,7 @@ let check (globals, functions) =
                                                  ("adds",     [Set(Boolean);Boolean]);
                                                  ("adds",     [Set(String);String]);
                                                  ("adds",     [Set(Char);Char]);]
-                                                 (*("adds",     [Set(Set(_)),Set(_)]);]*)
+                                                 (*("adds",     [Set(Set(_)),Set(_)]);]*)*)
   in
 
   (* Add function name to symbol table *)
