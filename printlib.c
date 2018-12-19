@@ -8,12 +8,3 @@ void print_string( char *c)
 {
     printf("%s",c);
 }
-
-#ifdef BUILD_TEST
-int main()
-{
-  char s[] = "HELLO WORLD09AZ";
-  char *c;
-  for ( c = s ; *c ; c++) printbig(*c);
-}
-#endif
