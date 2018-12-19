@@ -27,8 +27,19 @@ struct set* create(struct List *list, int dType){
 
 }*/
 
-void create_set(void *ptr_from_llvm, int dType){//not necessairly from llvm
+struct set *create_set(int dType){//not necessairly from llvm
+    struct set *newset = malloc(sizeof(struct set));
+    initList(&(newset->list));
+    newset->card = 0;
+    newset->type = 1;
+    return newset;
+}
+struct Node *get_head(struct set *A){
+    return (A->list).head;
+}
 
+void *get_data_from_node(struct Node *data){
+    return data->data;
 }
 
 void destroy(struct set *s){                                            
@@ -159,9 +170,8 @@ struct set* set_union(struct set *A, struct set *B){
     struct List bNodes = B->list;
     struct Node *bCurr = bNodes.head;
     
-    struct set *AuB;
-    create_set(AuB, A->type); 
-    
+    struct set *AuB=create_set(A->type); 
+        
     int bigger_card = (A->card > B->card) ? A->card : B->card;
     for (int i=0; i<bigger_card; i++){
         if(i<A->card){

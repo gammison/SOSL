@@ -11,7 +11,7 @@ struct set{
     int card;
     int type;
 };
-void create_set(void *ptr_from_llvm, int dType);
+struct set *create_set(int dType);
 
 void destroy(struct set *s);
 
@@ -21,7 +21,8 @@ int compare_string(const void *data_sought, const void *against);
 int compare_char(const void *data_sought, const void *against);
 int compare_set(const void *data_sought, const void *against);
 int getCard(struct set *A);
-
+struct Node *get_head(struct set *A);
+void *get_data_from_node(struct Node *data);
 struct set* add(struct set *s, void *value);
 void remove(struct set *s, void *value);
 
