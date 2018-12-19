@@ -1,9 +1,7 @@
 int main()
 {
     set:{int}: a; 
-    a = add(a,1);
 
-
-    prints("OK");
+    print_set(a);
 	return 0;
 }
