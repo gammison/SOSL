@@ -216,7 +216,7 @@ struct set *intersect(struct set *A, struct set *B){
     return tmp;
 }
 
-int getCard(struct set *A){
+int get_card(struct set *A){
     return A->card;
 }
 

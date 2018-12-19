@@ -20,7 +20,7 @@ int compare_int_bool_char(const void *data_sought, const void *against);
 int compare_string(const void *data_sought, const void *against);
 int compare_char(const void *data_sought, const void *against);
 int compare_set(const void *data_sought, const void *against);
-int getCard(struct set *A);
+int get_card(struct set *A);
 struct Node *get_head(struct set *A);
 void *get_data_from_node(struct Node *data);
 struct Node *get_next_node(struct Node *data);

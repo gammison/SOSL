@@ -34,21 +34,20 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
   and str_t      = L.pointer_type (L.i8_type context)
-  and set_t	     = L.pointer_type (L.void_type context)
+  and void_ptr_t = L.pointer_type (L.i8_type context)
  (* and array_t    = L.array_type*)in
 
 
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a MicroC type *)
-  (*let set_t = *)
   let rec ltype_of_typ = function
       A.Int      	   -> i32_t
     | A.Boolean  	   -> i1_t
     | A.Char     	   -> i8_t 
     | A.String	 	   -> str_t 
     | A.Void               -> void_t
-    | A.Set(ltype_of_typ)  -> set_t
+    | A.Set(ltype_of_typ)  -> void_ptr_t
     | _ -> raise (Failure "not a supported data type")
   in
 
@@ -73,45 +72,55 @@ let translate (globals, functions) =
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in *)
   let add_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t; (L.pointer_type void_t) |] in
   let add_set_func : L.llvalue = 
       L.declare_function "add" add_set the_module in 
   let destroy_set : L.lltype =
-      L.var_arg_function_type void_t [| set_t |] in
+      L.var_arg_function_type void_t [| void_ptr_t |] in
   let destroy_set_func : L.llvalue = 
       L.declare_function "destroy" destroy_set the_module in 
   let remove_set : L.lltype =
-      L.var_arg_function_type void_t [|set_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type void_t [|void_ptr_t; (L.pointer_type void_t) |] in
   let remove_set_func : L.llvalue = 
       L.declare_function "remove" remove_set the_module in 
   let has_elmt : L.lltype =
-      L.var_arg_function_type i32_t [|set_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type i32_t [|void_ptr_t; (L.pointer_type void_t) |] in
   let has_elmt_func : L.llvalue = 
       L.declare_function "has" has_elmt the_module in 
   let comp_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; set_t|] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t; void_ptr_t|] in
   let comp_set_func : L.llvalue =
       L.declare_function "complement" comp_set the_module in
   let copy_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t|] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
   let copy_set_func : L.llvalue =
       L.declare_function "copy" copy_set the_module in
   let union_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; set_t|] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t; void_ptr_t|] in
   let union_set_func : L.llvalue =
       L.declare_function "union" union_set the_module in
   let intsect_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; set_t|] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t; void_ptr_t|] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
   let get_card : L.lltype =
-      L.var_arg_function_type i32_t [|set_t|] in
+      L.var_arg_function_type i32_t [|void_ptr_t|] in
   let get_card_func : L.llvalue =
-      L.declare_function "getCard" intsect_set the_module in
-  (* let get_ : L.lltype =
-      L.var_arg_function_type i32_t [|set_t|] in
-  let get_card_func : L.llvalue =
-        L.declare_function "getCard" intsect_set the_module in *)
+      L.declare_function "get_card" get_card the_module in
+
+(* let get_head : L.lltype =
+      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
+  let get_head_func : L.llvalue =
+      L.declare_function "get_head" get_head the_module in 
+  let get_next_node : L.lltype =
+      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
+  let get_next_node_func : L.llvalue =
+      L.declare_function "get_next_node" get_next_node the_module in 
+  let get_data_from_node : L.lltype =
+      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
+  let get_data_from_node_func : L.llvalue =
+      L.declare_function "get_data_from_node" get_data_from_node the_module in     
+    *)
 
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
@@ -159,7 +168,6 @@ let translate (globals, functions) =
        Check local names first, then global names *)
     let lookup n = try StringMap.find n local_vars
                    with Not_found -> StringMap.find n global_vars
-
     in
 
    (* Construct code for an expression; return its value *)
@@ -168,7 +176,24 @@ let translate (globals, functions) =
       | SBoolLit b    -> L.const_int i1_t (if b then 1 else 0)
       | SCharLit c    -> L.const_int i8_t (Char.code c)
       | SStrLit str   -> L.build_global_stringptr str "string" builder
-      (*| SSetLit ([(ty, _)]) -> L.pointer_type (ltype_of_typ ty)*)
+      | SSetLit sl    ->
+        match sl with
+        | [] -> L.build_call new_graph_func [||] "tmp" builder
+
+        | hd :: _ -> 
+            let hd = expr builder hd in 
+            let expr_to_sexpr ex =
+                let (t1, e1) = expr ex in
+                match t1 with
+                | Int        -> (t1, e1)
+                | Char       -> (t1, e1)
+                | Boolean    -> (t1, e1)
+                | String     -> (t1, e1)
+                | Void       -> (t1, e1)
+                | Set(_)     -> (t1, e1)              
+                in
+            let ssl = List.map expr_to_sexpr sl in (Set(t'), SSetLit ssl))
+        let s = L.build_call create_set [||]
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
@@ -281,7 +306,7 @@ let translate (globals, functions) =
             ignore(L.build_store (L.const_int i32_t 0) counter builder);
             
             let size = L.build_call get_card_func [| set_ptr |] "size" builder in
-            let node_var = L.build_alloca set_t n builder in
+            let node_var = L.build_alloca void_ptr_t n builder in
             let vars = StringMap.add n set_var vars in
 
             let current_node_ptr = L.build_alloca void_ptr_t "current" builder in
