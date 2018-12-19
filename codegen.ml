@@ -127,7 +127,7 @@ let translate (globals, functions) =
       L.declare_function "has" has_elmt the_module in 
   let has_elmt_const : L.lltype =
       L.var_arg_function_type i32_t [| void_ptr_t ; i32_t |] in
-  let has_elmt_const_func : L.llvalue =
+  let has_elmt_func_const : L.llvalue =
       L.declare_function "has_const" has_elmt_const the_module in
   let complement_set : L.lltype =
       L.var_arg_function_type  void_ptr_t [| void_ptr_t ; void_ptr_t |] in
@@ -247,7 +247,7 @@ let translate (globals, functions) =
       | SAssign (s,ex) -> let (_ , e) = ex in 
 			 let e' = expr builder e in
                          ignore(L.build_store e' (lookup s) builder); e'
-      | SBinop ((_,e1), op, (_,e2)) ->
+      | SBinop ((_,e1), op, (tyy,e2)) ->
         let e1' = expr builder e1 and e2' = expr builder e2 in
         (match op with
           A.Add     -> L.build_add e1' e2' "tmp" builder
@@ -263,9 +263,13 @@ let translate (globals, functions) =
         | A.More    -> L.build_icmp L.Icmp.Sgt e1' e2' "tmp" builder
         | A.MoreEq  -> L.build_icmp L.Icmp.Sge e1' e2' "tmp" builder
         | A.Mod     -> L.build_frem e1' e2' "tmp" builder
-        | A.Elof    -> (match e2' with
-                       L.const_int i32_t  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has" builder
-                       | L.const_int i1_t ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has" builder )
+        | A.Elof    -> (match tyy with
+                       Int  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder
+                       | Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
+                       | Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
+                       | String ->     L.build_call has_elmt_func [| e1'; e2' |] "has" builder
+                       | Set(_)->     L.build_call has_elmt_func[| e1'; e2' |] "has" builder )
+
         | A.Comp    -> L.build_call complement_set_func [| e1' ; e2' |] "complement" builder
         | A.Isec    -> L.build_call intsect_set_func [| e1' ; e2' |] "intersect" builder
         | A.Union   -> L.build_call union_set_func [| e1' ; e2' |] "set_union" builder)

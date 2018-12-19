@@ -1,5 +1,8 @@
 int main()
 {
-	set:{char}: a;
+	set:{string}: a;
+
+        a = :{"hi","bye","sye"}:;
+        prints("OK");
 	return 0;
 }
