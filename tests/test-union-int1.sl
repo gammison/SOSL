@@ -11,6 +11,6 @@ int main()
     c = a :u b;
     
     result = (c :i 1) + 10000;
-
+    print(result);
 	return 0;
 }

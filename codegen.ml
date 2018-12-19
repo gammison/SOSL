@@ -122,7 +122,7 @@ let translate (globals, functions) =
   let rem_set_func : L.llvalue = 
       L.declare_function "remove_elm" rem_set the_module in  *)
   let has_elmt : L.lltype =
-      L.var_arg_function_type i32_t [| void_ptr_t ; i32_t |] in
+      L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
   let has_elmt_func : L.llvalue = 
       L.declare_function "has" has_elmt the_module in 
   let has_elmt_const : L.lltype =
@@ -245,7 +245,7 @@ let translate (globals, functions) =
         | A.Elof    -> (match tyy with
                        Int  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder
                        | Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
-                       | Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
+                       | Boolean  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
                        | String ->     L.build_call has_elmt_func [| e1'; e2' |] "has" builder
                        | Set(_)->     L.build_call has_elmt_func[| e1'; e2' |] "has" builder )
 
