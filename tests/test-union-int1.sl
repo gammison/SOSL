@@ -10,10 +10,7 @@ int main()
 
     c = a :u b;
     
-    result = (c :i 1);
-    if (result == 1) { 
-        prints("HELLO");
-    }
+    result = (c :i 1) + 10000;
 
 	return 0;
 }
