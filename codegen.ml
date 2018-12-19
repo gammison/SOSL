@@ -29,25 +29,26 @@ let translate (globals, functions) =
   let the_module = L.create_module context "SOSL" in
 
   (* Get types from the context *)
-  let i32_t      = L.i32_type    context
-  and i1_t       = L.i1_type     context
-  and i8_t       = L.i8_type     context
-  and void_t     = L.void_type   context 
-  and str_t      = L.pointer_type (L.i8_type context)
-  and void_ptr_t = L.pointer_type (L.i8_type context)
+  let i32_t          = L.i32_type    context
+  and i1_t           = L.i1_type     context
+  and i8_t           = L.i8_type     context
+  and void_t         = L.void_type   context 
+  and str_t          = L.pointer_type (L.i8_type context)
+  and set_t	         = L.named_struct_type context "set" in
+  let set_t_pointer  = L.pointer_type set_t
  (* and array_t    = L.array_type*)in
 
 
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a MicroC type *)
-  let rec ltype_of_typ = function
+  let ltype_of_typ = function
       A.Int      	   -> i32_t
     | A.Boolean  	   -> i1_t
     | A.Char     	   -> i8_t 
     | A.String	 	   -> str_t 
     | A.Void               -> void_t
-    | A.Set(ltype_of_typ)  -> void_ptr_t
+    | A.Set(ltype_of_typ)  -> set_t
     | _ -> raise (Failure "not a supported data type")
   in
 
@@ -71,57 +72,69 @@ let translate (globals, functions) =
       L.var_arg_function_type (L.pointer_type void_t) [|[|] in
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in *)
+  let get_head : L.lltype =
+      L.var_arg_function_type (L.pointer_type void_t) [| set_t_pointer |] in
+  let get_head_func : L.llvalue = 
+      L.declare_function "get_head" get_head the_module in   
+  let get_data_from_node : L.lltype =
+      L.var_arg_function_type (L.pointer_type void_t) [| (L.pointer_type void_t) |] in
+  let get_data_from_node_func : L.llvalue = 
+      L.declare_function "get_data_from_node" get_data_from_node the_module in 
+  let get_next_node : L.lltype =
+      L.var_arg_function_type (L.pointer_type void_t) [| (L.pointer_type void_t) |] in
+  let get_next_node_func : L.llvalue = 
+      L.declare_function "get_next_node" get_next_node the_module in 
+
+  let compare_int_bool_char : L.lltype =
+      L.var_arg_function_type i32_t [| (L.pointer_type void_t) ; (L.pointer_type void_t) |] in
+  let compare_int_bool_char_func : L.llvalue = 
+      L.declare_function "compare_int_bool_char" compare_int_bool_char the_module in 
+  let compare_string : L.lltype =
+      L.var_arg_function_type i32_t [| (L.pointer_type void_t) ; (L.pointer_type void_t) |] in
+  let compare_string_func : L.llvalue =
+      L.declare_function "compare_string" compare_string the_module in 
+  let compare_set : L.lltype =
+      L.var_arg_function_type set_t_pointer [| (L.pointer_type void_t) ; (L.pointer_type void_t) |] in
+  let compare_set_func : L.llvalue = 
+      L.declare_function "comare_set" compare_set the_module in 
+  
   let add_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type set_t_pointer [| set_t_pointer ; (L.pointer_type void_t) |] in
   let add_set_func : L.llvalue = 
       L.declare_function "add" add_set the_module in 
   let destroy_set : L.lltype =
-      L.var_arg_function_type void_t [| void_ptr_t |] in
+      L.var_arg_function_type void_t [| set_t_pointer |] in
   let destroy_set_func : L.llvalue = 
       L.declare_function "destroy" destroy_set the_module in 
   let remove_set : L.lltype =
-      L.var_arg_function_type void_t [|void_ptr_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type void_t [| set_t_pointer ; (L.pointer_type void_t) |] in
   let remove_set_func : L.llvalue = 
       L.declare_function "remove" remove_set the_module in 
   let has_elmt : L.lltype =
-      L.var_arg_function_type i32_t [|void_ptr_t; (L.pointer_type void_t) |] in
+      L.var_arg_function_type i32_t [| set_t_pointer ; (L.pointer_type void_t) |] in
   let has_elmt_func : L.llvalue = 
       L.declare_function "has" has_elmt the_module in 
-  let comp_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t; void_ptr_t|] in
-  let comp_set_func : L.llvalue =
-      L.declare_function "complement" comp_set the_module in
+  let complement_set : L.lltype =
+      L.var_arg_function_type  set_t_pointer [| set_t_pointer ; set_t_pointer |] in
+  let complement_set_func : L.llvalue =
+      L.declare_function "complement" complement_set the_module in
   let copy_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
+      L.var_arg_function_type set_t_pointer [|set_t_pointer |] in
   let copy_set_func : L.llvalue =
       L.declare_function "copy" copy_set the_module in
   let union_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t; void_ptr_t|] in
+      L.var_arg_function_type set_t_pointer [|set_t_pointer ; set_t_pointer |] in
   let union_set_func : L.llvalue =
       L.declare_function "union" union_set the_module in
   let intsect_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t; void_ptr_t|] in
+      L.var_arg_function_type set_t_pointer [|set_t_pointer ; set_t_pointer |] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
   let get_card : L.lltype =
-      L.var_arg_function_type i32_t [|void_ptr_t|] in
+      L.var_arg_function_type i32_t [|set_t_pointer |] in
   let get_card_func : L.llvalue =
-      L.declare_function "get_card" get_card the_module in
-
-(* let get_head : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
-  let get_head_func : L.llvalue =
-      L.declare_function "get_head" get_head the_module in 
-  let get_next_node : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
-  let get_next_node_func : L.llvalue =
-      L.declare_function "get_next_node" get_next_node the_module in 
-  let get_data_from_node : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t|] in
-  let get_data_from_node_func : L.llvalue =
-      L.declare_function "get_data_from_node" get_data_from_node the_module in     
-    *)
-
+      L.declare_function "getCard" get_card the_module in
+  
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
       let name = fdecl.sfname
@@ -176,7 +189,7 @@ let translate (globals, functions) =
       | SBoolLit b    -> L.const_int i1_t (if b then 1 else 0)
       | SCharLit c    -> L.const_int i8_t (Char.code c)
       | SStrLit str   -> L.build_global_stringptr str "string" builder
-      | SSetLit sl    ->
+      (* | SSetLit sl    ->
         match sl with
         | [] -> L.build_call new_graph_func [||] "tmp" builder
 
@@ -193,35 +206,32 @@ let translate (globals, functions) =
                 | Set(_)     -> (t1, e1)              
                 in
             let ssl = List.map expr_to_sexpr sl in (Set(t'), SSetLit ssl))
-        let s = L.build_call create_set [||]
+        let s = L.build_call create_set [||] *)
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
 			 let e' = expr builder e in
                          ignore(L.build_store e' (lookup s) builder); e'
       | SBinop ((_,e1), op, (_,e2)) ->
-        let e1' = expr builder e1
-        and e2' = expr builder e2 in
+        let e1' = expr builder e1 and e2' = expr builder e2 in
         (match op with
-          A.Add     -> L.build_add
-        | A.Sub     -> L.build_sub
-        | A.Mul     -> L.build_mul
-        | A.Div     -> L.build_sdiv
-        | A.And     -> L.build_and
-        | A.Or      -> L.build_or
-        | A.Eq      -> L.build_icmp L.Icmp.Eq
-        | A.Neq     -> L.build_icmp L.Icmp.Ne
-        | A.Less    -> L.build_icmp L.Icmp.Slt
-        | A.LessEq  -> L.build_icmp L.Icmp.Sle
-        | A.More    -> L.build_icmp L.Icmp.Sgt
-        | A.MoreEq  -> L.build_icmp L.Icmp.Sge
-        | A.Mod     -> L.build_frem
-        | A.Elof    -> L.build_add
-        | A.Comp    -> L.build_add
-        | A.Isec    -> L.build_add
-        | A.Union   -> L.build_add
-        
-) e1' e2' "tmp" builder
+          A.Add     -> L.build_add e1' e2' "tmp" builder
+        | A.Sub     -> L.build_sub e1' e2' "tmp" builder
+        | A.Mul     -> L.build_mul e1' e2' "tmp" builder
+        | A.Div     -> L.build_sdiv e1' e2' "tmp" builder
+        | A.And     -> L.build_and e1' e2' "tmp" builder
+        | A.Or      -> L.build_or e1' e2' "tmp" builder
+        | A.Eq      -> L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
+        | A.Neq     -> L.build_icmp L.Icmp.Ne e1' e2' "tmp" builder
+        | A.Less    -> L.build_icmp L.Icmp.Slt e1' e2' "tmp" builder
+        | A.LessEq  -> L.build_icmp L.Icmp.Sle e1' e2' "tmp" builder
+        | A.More    -> L.build_icmp L.Icmp.Sgt e1' e2' "tmp" builder
+        | A.MoreEq  -> L.build_icmp L.Icmp.Sge e1' e2' "tmp" builder
+        | A.Mod     -> L.build_frem e1' e2' "tmp" builder
+        | A.Elof    -> L.build_call has_elmt_func [| e1'; e2' |] "has" builder
+        | A.Comp    -> L.build_call complement_set_func [| e1' ; e2' |] "complement" builder
+        | A.Isec    -> L.build_call intsect_set_func [| e1' ; e2' |] "intersect" builder
+        | A.Union   -> L.build_call union_set_func [| e1' ; e2' |] "set_union" builder)
       | SUnop(op, (_, e)) ->
           let e' = expr builder e in
 	        (match op with
@@ -245,6 +255,8 @@ let translate (globals, functions) =
 	 let result = (match fdecl.sftype with 
                        _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
+
+
     in
     
     (* LLVM insists each basic block end with exactly one "terminator" 
