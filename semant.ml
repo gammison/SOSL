@@ -149,8 +149,8 @@ let check (globals, functions) =
             | MoreEq   when same && t1 = Int   -> Boolean
             | Union    
             | Isec      
-            | Comp     when same && t1 = Set(t1)   -> Set(t1) 
-            | Elof     when t1 != Set(t1) && t2 = Set(t1) -> t1
+            | Comp     when same               -> t1 
+            | Elof     when t2 = Set(t1)       -> Boolean
             | And 
             | Or       when same && t1 = Boolean -> Boolean
             | _ -> raise (Failure ("illegal binary operator " ^

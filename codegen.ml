@@ -34,7 +34,7 @@ let translate (globals, functions) =
   and i8_t           = L.i8_type     context
   and void_t         = L.void_type   context 
   and str_t          = L.pointer_type (L.i8_type context)
-  and set_t	     = L.named_struct_type context "set" in
+  and set_t	         = L.named_struct_type context "set" in
   let set_t_pointer  = L.pointer_type set_t
  (* and array_t    = L.array_type*)in
 
@@ -42,8 +42,7 @@ let translate (globals, functions) =
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a MicroC type *)
-  (*let set_t = *)
-  let rec ltype_of_typ = function
+  let ltype_of_typ = function
       A.Int      	   -> i32_t
     | A.Boolean  	   -> i1_t
     | A.Char     	   -> i8_t 
@@ -157,7 +156,6 @@ let translate (globals, functions) =
        Check local names first, then global names *)
     let lookup n = try StringMap.find n local_vars
                    with Not_found -> StringMap.find n global_vars
-
     in
 
    (* Construct code for an expression; return its value *)
@@ -166,35 +164,49 @@ let translate (globals, functions) =
       | SBoolLit b    -> L.const_int i1_t (if b then 1 else 0)
       | SCharLit c    -> L.const_int i8_t (Char.code c)
       | SStrLit str   -> L.build_global_stringptr str "string" builder
-      (*| SSetLit ([(ty, _)]) -> L.pointer_type (ltype_of_typ ty)*)
+      (* | SSetLit sl    ->
+        match sl with
+        | [] -> L.build_call new_graph_func [||] "tmp" builder
+
+        | hd :: _ -> 
+            let hd = expr builder hd in 
+            let expr_to_sexpr ex =
+                let (t1, e1) = expr ex in
+                match t1 with
+                | Int        -> (t1, e1)
+                | Char       -> (t1, e1)
+                | Boolean    -> (t1, e1)
+                | String     -> (t1, e1)
+                | Void       -> (t1, e1)
+                | Set(_)     -> (t1, e1)              
+                in
+            let ssl = List.map expr_to_sexpr sl in (Set(t'), SSetLit ssl))
+        let s = L.build_call create_set [||] *)
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
 			 let e' = expr builder e in
                          ignore(L.build_store e' (lookup s) builder); e'
       | SBinop ((_,e1), op, (_,e2)) ->
-        let e1' = expr builder e1
-        and e2' = expr builder e2 in
+        let e1' = expr builder e1 and e2' = expr builder e2 in
         (match op with
-          A.Add     -> L.build_add
-        | A.Sub     -> L.build_sub
-        | A.Mul     -> L.build_mul
-        | A.Div     -> L.build_sdiv
-        | A.And     -> L.build_and
-        | A.Or      -> L.build_or
-        | A.Eq      -> L.build_icmp L.Icmp.Eq
-        | A.Neq     -> L.build_icmp L.Icmp.Ne
-        | A.Less    -> L.build_icmp L.Icmp.Slt
-        | A.LessEq  -> L.build_icmp L.Icmp.Sle
-        | A.More    -> L.build_icmp L.Icmp.Sgt
-        | A.MoreEq  -> L.build_icmp L.Icmp.Sge
-        | A.Mod     -> L.build_frem
-        | A.Elof    -> L.build_add
-        | A.Comp    -> L.build_add
-        | A.Isec    -> L.build_add
-        | A.Union   -> L.build_add
-        
-) e1' e2' "tmp" builder
+          A.Add     -> L.build_add e1' e2' "tmp" builder
+        | A.Sub     -> L.build_sub e1' e2' "tmp" builder
+        | A.Mul     -> L.build_mul e1' e2' "tmp" builder
+        | A.Div     -> L.build_sdiv e1' e2' "tmp" builder
+        | A.And     -> L.build_and e1' e2' "tmp" builder
+        | A.Or      -> L.build_or e1' e2' "tmp" builder
+        | A.Eq      -> L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
+        | A.Neq     -> L.build_icmp L.Icmp.Ne e1' e2' "tmp" builder
+        | A.Less    -> L.build_icmp L.Icmp.Slt e1' e2' "tmp" builder
+        | A.LessEq  -> L.build_icmp L.Icmp.Sle e1' e2' "tmp" builder
+        | A.More    -> L.build_icmp L.Icmp.Sgt e1' e2' "tmp" builder
+        | A.MoreEq  -> L.build_icmp L.Icmp.Sge e1' e2' "tmp" builder
+        | A.Mod     -> L.build_frem e1' e2' "tmp" builder
+        | A.Elof    -> L.build_call has_elmt_func [| e1'; e2' |] "has" builder
+        | A.Comp    -> L.build_call complement_set_func [| e1' ; e2' |] "complement" builder
+        | A.Isec    -> L.build_call intsect_set_func [| e1' ; e2' |] "intersect" builder
+        | A.Union   -> L.build_call union_set_func [| e1' ; e2' |] "set_union" builder)
       | SUnop(op, (_, e)) ->
           let e' = expr builder e in
 	        (match op with
@@ -279,7 +291,7 @@ let translate (globals, functions) =
             ignore(L.build_store (L.const_int i32_t 0) counter builder);
             
             let size = L.build_call get_card_func [| set_ptr |] "size" builder in
-            let node_var = L.build_alloca set_t n builder in
+            let node_var = L.build_alloca void_ptr_t n builder in
             let vars = StringMap.add n set_var vars in
 
             let current_node_ptr = L.build_alloca void_ptr_t "current" builder in
