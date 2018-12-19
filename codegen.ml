@@ -112,7 +112,7 @@ let translate (globals, functions) =
   let add_set : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let add_set_func : L.llvalue = 
-      L.declare_function "add" add_set the_module in 
+      L.declare_function "adds" add_set the_module in 
   let destroy_set : L.lltype =
       L.var_arg_function_type void_t [| void_ptr_t |] in
   let destroy_set_func : L.llvalue = 
