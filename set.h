@@ -20,6 +20,7 @@ int compare_int_bool_char(const void *data_sought, const void *against);
 int compare_string(const void *data_sought, const void *against);
 int compare_char(const void *data_sought, const void *against);
 int compare_set(const void *data_sought, const void *against);
+int getCard(struct set *A);
 
 struct set* add(struct set *s, void *value);
 void remove(struct set *s, void *value);
@@ -29,4 +30,3 @@ struct set *set_union(struct set *A, struct set *B);
 struct set *intersect(struct set *A, struct set *B);
 struct set *copy(struct set *A);
 struct set *cartesian(struct set *A, struct set *B);
-
