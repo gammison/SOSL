@@ -1,6 +1,7 @@
 _build/
 *.ll
 *.diff
+*.o
 sosl.native
 .gitignore
 microc/
