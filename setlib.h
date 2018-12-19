@@ -24,8 +24,11 @@ int get_card(struct set *A);
 struct Node *get_head(struct set *A);
 void *get_data_from_node(struct Node *data);
 struct Node *get_next_node(struct Node *data);
+
 struct set* add(struct set *s, void *value);
-void remove(struct set *s, void *value);
+struct set* remove_elm(struct set *s, void *value);
+
+void print_set(struct set *A);
 
 struct set *complement(struct set *A, struct set *U);
 struct set *set_union(struct set *A, struct set *B);
