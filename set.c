@@ -27,7 +27,7 @@ struct set* create(struct List *list, int dType){
 
 }*/
 
-void create(void *ptr_from_llvm, int dType){
+void create_set(void *ptr_from_llvm, int dType){//not necessairly from llvm
 
 }
 
