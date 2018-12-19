@@ -130,7 +130,7 @@ int has_const(void *set_ptr, int value){
 }
 
 
-void *add(void *set_ptr, void *value){  
+void *adds(void *set_ptr, void *value){  
     struct set *s = (struct set *) set_ptr;                          
     struct List nodes = s->list;
 
@@ -179,7 +179,7 @@ void *complement(void *A_ptr, void* U_ptr){
     for(int i=0; i<(U->card); i++){
         
         if(!has(AiU, uCurr->data)){
-            add(tmp, uCurr->data); 
+            adds(tmp, uCurr->data); 
         }
         uCurr = uCurr->next;
     }
@@ -205,11 +205,11 @@ void* set_union(void *A_ptr, void *B_ptr){
     int bigger_card = (A->card > B->card) ? A->card : B->card;
     for (int i=0; i<bigger_card; i++){
         if(i<A->card){
-            add(AuB,aCurr);
+            adds(AuB,aCurr);
             aCurr = aCurr->next;
         }
         if(i< B->card){
-            add(AuB,bCurr);
+            adds(AuB,bCurr);
             bCurr = bCurr->next;
         }
     }
@@ -245,7 +245,7 @@ void *intersect(void *A_ptr, void *B_ptr){
     for (int i=0; i<smaller_card; i++){
         for (int j=0; j<larger_card; j++){
             if(compare(aCurr->data,bCurr->data, A->type) == 0){
-                add(tmp, A->card > B->card ? aCurr->data: bCurr->data);
+                adds(tmp, A->card > B->card ? aCurr->data: bCurr->data);
             }
             A->card > A->card ? (bCurr = bCurr->next):(aCurr = aCurr->next);
         }

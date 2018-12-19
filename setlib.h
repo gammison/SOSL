@@ -26,7 +26,7 @@ void *get_head(void *set_ptr);
 void *get_data_from_node(void *node_ptr);
 void *get_next_node(void *data);
 
-void* add(void *s_ptr, void *value);
+void* adds(void *s_ptr, void *value);
 void* remove_elm(void *s_ptr, void *value);
 
 void print_set(void *A_ptr);
