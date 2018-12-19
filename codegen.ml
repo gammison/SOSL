@@ -73,32 +73,7 @@ let translate (globals, functions) =
       L.var_arg_function_type (L.pointer_type void_t) [|[|] in
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in *)
-  let get_head : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [| set_t_pointer |] in
-  let get_head_func : L.llvalue = 
-      L.declare_function "get_head" get_head the_module in   
-  let get_data_from_node : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [| (L.pointer_type void_t) |] in
-  let get_data_from_node_func : L.llvalue = 
-      L.declare_function "get_data_from_node" get_data_from_node the_module in 
-  let get_next_node : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [| (L.pointer_type void_t) |] in
-  let get_next_node_func : L.llvalue = 
-      L.declare_function "get_next_node" get_next_node the_module in 
 
-  let compare_int_bool_char : L.lltype =
-      L.var_arg_function_type i32_t [| (L.pointer_type void_t) ; (L.pointer_type void_t) |] in
-  let compare_int_bool_char_func : L.llvalue = 
-      L.declare_function "compare_int_bool_char" compare_int_bool_char the_module in 
-  let compare_string : L.lltype =
-      L.var_arg_function_type i32_t [| (L.pointer_type void_t) ; (L.pointer_type void_t) |] in
-  let compare_string_func : L.llvalue =
-      L.declare_function "compare_string" compare_string the_module in 
-  let compare_set : L.lltype =
-      L.var_arg_function_type set_t_pointer [| (L.pointer_type void_t) ; (L.pointer_type void_t) |] in
-  let compare_set_func : L.llvalue = 
-      L.declare_function "comare_set" compare_set the_module in 
-  
   let add_set : L.lltype =
       L.var_arg_function_type set_t_pointer [| set_t_pointer ; (L.pointer_type void_t) |] in
   let add_set_func : L.llvalue = 
@@ -120,21 +95,21 @@ let translate (globals, functions) =
   let complement_set_func : L.llvalue =
       L.declare_function "complement" complement_set the_module in
   let copy_set : L.lltype =
-      L.var_arg_function_type set_t_pointer [|set_t_pointer |] in
+      L.var_arg_function_type set_t [|set_t|] in
   let copy_set_func : L.llvalue =
       L.declare_function "copy" copy_set the_module in
   let union_set : L.lltype =
-      L.var_arg_function_type set_t_pointer [|set_t_pointer ; set_t_pointer |] in
+      L.var_arg_function_type set_t [|set_t; set_t|] in
   let union_set_func : L.llvalue =
       L.declare_function "union" union_set the_module in
   let intsect_set : L.lltype =
-      L.var_arg_function_type set_t_pointer [|set_t_pointer ; set_t_pointer |] in
+      L.var_arg_function_type set_t [|set_t; set_t|] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
   let get_card : L.lltype =
-      L.var_arg_function_type i32_t [|set_t_pointer |] in
+      L.var_arg_function_type i32_t [|set_t|] in
   let get_card_func : L.llvalue =
-      L.declare_function "getCard" get_card the_module in
+      L.declare_function "getCard" intsect_set the_module in
   
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
@@ -243,8 +218,6 @@ let translate (globals, functions) =
 	 let result = (match fdecl.sftype with 
                        _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
-
-
     in
     
     (* LLVM insists each basic block end with exactly one "terminator" 
