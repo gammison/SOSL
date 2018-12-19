@@ -140,7 +140,7 @@ let translate (globals, functions) =
   let union_set : L.lltype =
       L.var_arg_function_type void_ptr_t [|void_ptr_t ; void_ptr_t |] in
   let union_set_func : L.llvalue =
-      L.declare_function "union" union_set the_module in
+      L.declare_function "set_union" union_set the_module in
   let intsect_set : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let intsect_set_func : L.llvalue =
