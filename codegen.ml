@@ -205,13 +205,12 @@ let translate (globals, functions) =
         (match sl with 
         | [] -> L.build_call create_set_func [| L.const_int i32_t 5 |] "tmp" builder
         | hd :: _ -> 
-            let (ty, e1) = hd in
-            let e1' = expr builder e1 in
-            match ty with
+            let (ty1, _) = hd in
+            match ty1 with
             Int -> 
                 let s = L.build_call create_set_func [| L.const_int i32_t 0 |] "tmp" builder in
                 let addNodes ex = 
-                    let (ty, e2) = ex in
+                    let (ty, e2) = ex in 
                         L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
                 List.map addNodes sl; s
             | Char -> 
