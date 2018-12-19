@@ -89,7 +89,7 @@ int has(struct set *s, void *value){
         compar = compare_string;
     else if(s->type == 4)
         compar = compare_set;
-    if (findNode(nodes, value,compar) != 0){// not sure about comparator - RyanC, need write compare funs
+    if (findNode(nodes, value,compar) != 0){
         return 1;
     }
      
@@ -200,6 +200,10 @@ struct set *intersect(struct set *A, struct set *B){
     }
 
     return tmp;
+}
+
+int getCard(struct set *A){
+    return A->card;
 }
 
 struct set *cartesian(struct set *A, struct set *B){                // not done -Ryan C.
