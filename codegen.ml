@@ -120,21 +120,21 @@ let translate (globals, functions) =
   let complement_set_func : L.llvalue =
       L.declare_function "complement" complement_set the_module in
   let copy_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t|] in
+      L.var_arg_function_type set_t_pointer [|set_t_pointer |] in
   let copy_set_func : L.llvalue =
       L.declare_function "copy" copy_set the_module in
   let union_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; set_t|] in
+      L.var_arg_function_type set_t_pointer [|set_t_pointer ; set_t_pointer |] in
   let union_set_func : L.llvalue =
       L.declare_function "union" union_set the_module in
   let intsect_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; set_t|] in
+      L.var_arg_function_type set_t_pointer [|set_t_pointer ; set_t_pointer |] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
   let get_card : L.lltype =
-      L.var_arg_function_type i32_t [|set_t|] in
+      L.var_arg_function_type i32_t [|set_t_pointer |] in
   let get_card_func : L.llvalue =
-      L.declare_function "getCard" intsect_set the_module in
+      L.declare_function "getCard" get_card the_module in
   
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
@@ -243,6 +243,8 @@ let translate (globals, functions) =
 	 let result = (match fdecl.sftype with 
                        _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
+
+
     in
     
     (* LLVM insists each basic block end with exactly one "terminator" 
