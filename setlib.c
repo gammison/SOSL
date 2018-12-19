@@ -188,6 +188,12 @@ struct set* set_union(struct set *A, struct set *B){
 int compare(void *Adata, void *Bdata, int type){
     if(type == 0 || type == 1 || type == 2)
         return compare_int_bool_char(Adata,Bdata);
+    else if(type == 3)
+        return compare_string(Adata,Bdata);
+    else if(type == 4)
+        return compare_set(Adata,Bdata);
+
+    return -1;
 }
 struct set *intersect(struct set *A, struct set *B){                  
     struct set *tmp = create_set(A->type); 
