@@ -34,7 +34,7 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and void_t     = L.void_type   context 
   and str_t      = L.pointer_type (L.i8_type context)
-  and set_t	 = L.pointer_type (L.void_type context)
+  and set_t	     = L.pointer_type (L.void_type context)
  (* and array_t    = L.array_type*)in
 
 
@@ -104,6 +104,10 @@ let translate (globals, functions) =
       L.var_arg_function_type set_t [|set_t; set_t|] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
+  let get_card : L.lltype =
+      L.var_arg_function_type i32_t [|set_t|] in
+  let get_card_func : L.llvalue =
+      L.declare_function "getCard" intsect_set the_module in
 
 
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
@@ -190,8 +194,6 @@ let translate (globals, functions) =
         | A.Union   -> L.build_add
         
 ) e1' e2' "tmp" builder
-      (* | SetAccess set -> Need to fill this expr for no warning -RyanC 11/18*)
-      (* | ArrayAccess -> Need to fill this expr for no warning -RyanC 11/18*)
       | SUnop(op, (_, e)) ->
           let e' = expr builder e in
 	        (match op with
@@ -269,15 +271,27 @@ let translate (globals, functions) =
           ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
           L.builder_at_end context merge_bb
 
-    (*  | SForEach (e1, e2, s) -> stmt builder *)
+        (*
+        | SForEach (e1, e2, s) -> 
+            let set_ptr = expr builder e2 in 
+            let counter = L.build_alloca i32_t "counter" builder in
+            ignore(L.build_store (L.const_int i32_t 0) counter builder);
+            let size = L.build_call get_card_func [| set_ptr |] "size" builder in
+            let set_var = L.build_alloca set_t n builder in
+            let vars = StringMap.add n set_var vars in
+
+            let current_vertex_ptr = L.build_alloca void_ptr_t "current" builder in
+            let head_vertex = L.build_call get_head_vertex_func [| graph_ptr |] "head" builder in
+            ignore(L.build_store head_vertex current_vertex_ptr builder);
 
 
+        *)
       (* Implement for loops as while loops *)
       | SFor (e1, e2, e3, body) -> stmt builder
 	      ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] ) in
       
       (* Build the code for each statement in the function *)
-      let builder = stmt builder (SBlock fdecl.sbody) in
+        let builder = stmt builder (SBlock fdecl.sbody) in
 
         (* Add a return if the last block falls off the end *)
         add_terminal builder (match fdecl.sftype with
