@@ -206,37 +206,17 @@ let translate (globals, functions) =
         | [] -> L.build_call create_set_func [| L.const_int i32_t 5 |] "tmp" builder
         | hd :: _ -> 
             let (ty1, _) = hd in
-            match ty1 with
-            Int -> 
-                let s = L.build_call create_set_func [| L.const_int i32_t 0 |] "tmp" builder in
-                let addNodes ex = 
-                    let (ty, e2) = ex in 
-                        L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
-                List.map addNodes sl; s
-            | Char -> 
-                let s = L.build_call create_set_func [| L.const_int i32_t 1 |] "tmp" builder in
-                let addNodes ex = 
-                    let (ty, e2) = ex in
-                        L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
-                List.map addNodes sl; s        
-            | Boolean -> 
-                let s = L.build_call create_set_func [| L.const_int i32_t 2 |] "tmp" builder in
-                let addNodes ex = 
-                    let (ty, e2) = ex in
-                        L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
-                List.map addNodes sl; s
-            | String -> 
-                let s = L.build_call create_set_func [| L.const_int i32_t 3 |] "tmp" builder in
-                let addNodes ex = 
-                    let (ty, e2) = ex in
-                        L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
-                List.map addNodes sl; s
-            | Set(_) -> 
-                let s = L.build_call create_set_func [| L.const_int i32_t 4 |] "tmp" builder in
-                let addNodes ex = 
-                    let (ty, e2) = ex in
-                        L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
-                List.map addNodes sl; s)
+            let s =  
+                (match ty1 with
+                Int         -> L.build_call create_set_func [| L.const_int i32_t 0 |] "tmp" builder
+                | Char      -> L.build_call create_set_func [| L.const_int i32_t 1 |] "tmp" builder
+                | Boolean   -> L.build_call create_set_func [| L.const_int i32_t 2 |] "tmp" builder
+                | String    -> L.build_call create_set_func [| L.const_int i32_t 3 |] "tmp" builder
+                | Set(_)    -> L.build_call create_set_func [| L.const_int i32_t 4 |] "tmp" builder ) in (* in 
+            let addNodes ex = 
+                let (ty, e2) = ex in
+                    L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
+                    List.map addNodes sl;*)  s)
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
