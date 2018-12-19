@@ -80,7 +80,7 @@ let translate (globals, functions) =
   let print_set_func : L.llvalue = 
       L.declare_function "print_set" print_set_t the_module in 
   let create_set : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [| void_ptr_t |] in
+      L.var_arg_function_type void_ptr_t [| i32_t |] in
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in
   let get_head : L.lltype =
