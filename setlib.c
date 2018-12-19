@@ -8,6 +8,7 @@
  *      = 2 -> char
  *      = 3 -> string
  *      = 4 -> set
+ *      = 5 -> void
 
 struct set* create(struct List *list, int dType){ 
     struct set *result; 

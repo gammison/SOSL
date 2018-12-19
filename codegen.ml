@@ -79,10 +79,10 @@ let translate (globals, functions) =
       L.var_arg_function_type i32_t [| void_ptr_t |] in
   let print_set_func : L.llvalue = 
       L.declare_function "print_set" printf_t the_module in 
- (* let create_set : L.lltype =
-      L.var_arg_function_type (L.pointer_type void_t) [|[|] in
+  let create_set : L.lltype =
+      L.var_arg_function_type (L.pointer_type void_t) [| i32_t |] in
   let create_set_func : L.llvalue = 
-      L.declare_function "create" create_set the_module in *)
+      L.declare_function "create" create_set the_module in
   let get_head : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
   let get_head_func : L.llvalue = 
@@ -201,24 +201,15 @@ let translate (globals, functions) =
       | SBoolLit b    -> L.const_int i1_t (if b then 1 else 0)
       | SCharLit c    -> L.const_int i8_t (Char.code c)
       | SStrLit str   -> L.build_global_stringptr str "string" builder
-      (* | SSetLit sl    ->
-        match sl with
-        | [] -> L.build_call new_graph_func [||] "tmp" builder
-
+      | SSetLit sl    ->
+        (match sl with 
+        | [] -> L.build_call create_set_func [| L.const_int i32_t 5 |] "tmp" builder
         | hd :: _ -> 
-            let hd = expr builder hd in 
-            let expr_to_sexpr ex =
-                let (t1, e1) = expr ex in
-                match t1 with
-                | Int        -> (t1, e1)
-                | Char       -> (t1, e1)
-                | Boolean    -> (t1, e1)
-                | String     -> (t1, e1)
-                | Void       -> (t1, e1)
-                | Set(_)     -> (t1, e1)              
-                in
-            let ssl = List.map expr_to_sexpr sl in (Set(t'), SSetLit ssl))
-        let s = L.build_call create_set [||] *)
+            let hd' = expr builder hd in
+            let s = L.build_call create_set_func [| hd' |] "s" builder in
+            let addNodes ex = L.build_call add_set_func [| s, expr builder ex|] "ns" builder in
+            List.map addNodes sl;
+            s)
       | SNoexpr       -> L.const_int i32_t 0
       | SVariable s   -> L.build_load (lookup s) s builder
       | SAssign (s,ex) -> let (_ , e) = ex in 
