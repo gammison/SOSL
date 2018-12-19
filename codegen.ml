@@ -75,6 +75,10 @@ let translate (globals, functions) =
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
       L.declare_function "printf" printf_t the_module in
+  let print_set_t : L.lltype =
+      L.var_arg_function_type i32_t [| void_ptr_t |] in
+  let print_set_func : L.llvalue = 
+      L.declare_function "print_set" printf_t the_module in 
  (* let create_set : L.lltype =
       L.var_arg_function_type (L.pointer_type void_t) [|[|] in
   let create_set_func : L.llvalue = 
@@ -141,10 +145,7 @@ let translate (globals, functions) =
       L.var_arg_function_type i32_t [| void_ptr_t |] in
   let get_card_func : L.llvalue =
       L.declare_function "get_card" intsect_set the_module in
-  let print_set : L.lltype =
-      L.var_arg_function_type void_t [| void_ptr_t |] in
-  let print_set_func : L.llvalue = 
-      L.declare_function "print_set" printf_t the_module in
+  
   
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
