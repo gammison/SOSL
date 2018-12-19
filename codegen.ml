@@ -48,7 +48,7 @@ let translate (globals, functions) =
 
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
-  (* Return the LLVM type for a MicroC type *)
+  (* Return the LLVM type for a SOSL type *)
   let ltype_of_typ = function
       A.Int      	   -> i32_t
     | A.Boolean  	   -> i1_t
@@ -83,7 +83,7 @@ let translate (globals, functions) =
       L.var_arg_function_type void_ptr_t [| i32_t |] in
   let create_set_func : L.llvalue = 
       L.declare_function "create_set" create_set the_module in
-  let get_head : L.lltype =
+  (*let get_head : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
   let get_head_func : L.llvalue = 
       L.declare_function "get_head" get_head the_module in   
@@ -94,9 +94,9 @@ let translate (globals, functions) =
   let get_next_node : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
   let get_next_node_func : L.llvalue = 
-      L.declare_function "get_next_node" get_next_node the_module in 
+      L.declare_function "get_next_node" get_next_node the_module in *)
 
-  let compare_int_bool_char : L.lltype =
+  (*let compare_int_bool_char : L.lltype =
       L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
   let compare_int_bool_char_func : L.llvalue = 
       L.declare_function "compare_int_bool_char" compare_int_bool_char the_module in 
@@ -107,7 +107,7 @@ let translate (globals, functions) =
   let compare_set : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let compare_set_func : L.llvalue = 
-      L.declare_function "comare_set" compare_set the_module in 
+      L.declare_function "comare_set" compare_set the_module in *)
 
   let add_set : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; i32_t |] in
@@ -117,10 +117,10 @@ let translate (globals, functions) =
       L.var_arg_function_type void_t [| void_ptr_t |] in
   let destroy_set_func : L.llvalue = 
       L.declare_function "destroy" destroy_set the_module in 
-  let rem_set : L.lltype =
+  (*let rem_set : L.lltype =
       L.var_arg_function_type void_t [| void_ptr_t ; void_ptr_t |] in
   let rem_set_func : L.llvalue = 
-      L.declare_function "remove_elm" rem_set the_module in 
+      L.declare_function "remove_elm" rem_set the_module in  *)
   let has_elmt : L.lltype =
       L.var_arg_function_type i32_t [| void_ptr_t ; i32_t |] in
   let has_elmt_func : L.llvalue = 
@@ -133,10 +133,10 @@ let translate (globals, functions) =
       L.var_arg_function_type  void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let complement_set_func : L.llvalue =
       L.declare_function "complement" complement_set the_module in
-  let copy_set : L.lltype =
+  (*let copy_set : L.lltype =
       L.var_arg_function_type void_ptr_t [|void_ptr_t |] in
   let copy_set_func : L.llvalue =
-      L.declare_function "copy" copy_set the_module in
+      L.declare_function "copy" copy_set the_module in *)
   let union_set : L.lltype =
       L.var_arg_function_type void_ptr_t [|void_ptr_t ; void_ptr_t |] in
   let union_set_func : L.llvalue =
@@ -145,10 +145,10 @@ let translate (globals, functions) =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
-  let get_card : L.lltype =
+  (* let get_card : L.lltype =
       L.var_arg_function_type i32_t [| void_ptr_t |] in
   let get_card_func : L.llvalue =
-      L.declare_function "get_card" intsect_set the_module in
+      L.declare_function "get_card" intsect_set the_module in *)
   
   
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
@@ -268,27 +268,27 @@ let translate (globals, functions) =
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
       | SCall ("print_set_int", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder
-      | SCall ("print_set_bool", [(_,e)]) ->
+      (*| SCall ("print_set_bool", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder
       | SCall ("print_set_char", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder
       | SCall ("print_set_string", [(_,e)]) ->
-        L.build_call print_set_func [| expr builder e |] "print_set" builder
+        L.build_call print_set_func [| expr builder e |] "print_set" builder*)
       (*| SCall ("print_set_set", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder*)
 
+      (*| SCall ("adds_int", [(_,e1); (_,e2)]) ->
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "adds" builder
       | SCall ("adds_int", [(_,e1); (_,e2)]) ->
-	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "adds" builder
       | SCall ("adds_int", [(_,e1); (_,e2)]) ->
-	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "adds" builder
       | SCall ("adds_int", [(_,e1); (_,e2)]) ->
-	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "adds" builder
       | SCall ("adds_int", [(_,e1); (_,e2)]) ->
-	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
-      | SCall ("adds_int", [(_,e1); (_,e2)]) ->
-	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "adds" builder
       | SCall ("rems_int", [(_,e1); (_,e2)]) ->
-	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "adds" builder
       | SCall ("rems_int", [(_,e1); (_,e2)]) ->
 	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder
       | SCall ("rems_int", [(_,e1); (_,e2)]) ->
@@ -298,7 +298,7 @@ let translate (globals, functions) =
       | SCall ("rems_int", [(_,e1); (_,e2)]) ->
 	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder
       (*| SCall ("rems_set", [(_,e1); (_,e2)]) ->
-	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder*)
+	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder*)*)
 
 
       | SCall (f, args) ->
