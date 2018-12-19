@@ -35,6 +35,7 @@ void *create_set(int dType){  //not necessairly from llvm
     newset->type = 1;
     return (void *) newset;
 }
+
 void *get_head(void *set_ptr){
     struct set *s = (struct set *) set_ptr;                          
 
@@ -133,9 +134,12 @@ void *add(void *set_ptr, void *value){
     struct set *s = (struct set *) set_ptr;                          
     struct List nodes = s->list;
 
+    /*
     if (!has(s,value)){                                              
         addFront(&nodes, value);
     }
+
+    */
 
     return (void *) s;
 }
@@ -150,7 +154,7 @@ void *remove_elm(void *set_ptr, void *value){
         tmpNode = tmpNode->next; 
     }
 
-    if (tmpNode == 0) return s; 
+    if (tmpNode == 0) return (void *) s; 
 
     prev->next = tmpNode->next; 
     free(tmpNode);
