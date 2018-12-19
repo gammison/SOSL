@@ -46,7 +46,7 @@ void *get_data_from_node(void *node_ptr){
     return node->data;
 }
 
-void* *get_next_node(void *node_ptr){
+void *get_next_node(void *node_ptr){
     struct Node *node = (struct Node *) node_ptr; 
 
     return (void *) node->next;
@@ -124,8 +124,8 @@ int has(void *set_ptr, void *value){
 
 void *add(void *set_ptr, void *value){  
     struct set *s = (struct set *) set_ptr;                          
-    struct List nodes = set->list;
-    if (!has(set,value)){                                              
+    struct List nodes = s->list;
+    if (!has(s,value)){                                              
         addFront(&nodes, value);
     }
 
@@ -174,7 +174,7 @@ void *complement(void *A_ptr, void* U_ptr){
     destroy(AiU);
     return (void *) tmp;
 }
-struct set* copy(struct set *A){                //maybe put in a set_lib.c?
+void* copy(void *A){                //maybe put in a set_lib.c?
     return 0;
 }
 
@@ -243,11 +243,17 @@ void *intersect(void *A_ptr, void *B_ptr){
     return (void *) tmp;
 }
 
-int get_card(struct set *A){
+int get_card(void *A_ptr){
+    struct set *A = (struct set *) A_ptr;   
+
     return A->card;
 }
 
-struct set *cartesian(struct set *A, struct set *B){                // not done -Ryan C.
+void *cartesian(void *A_ptr, void *B_ptr){                // not done -Ryan C.
+    struct set *A = (struct set *) A_ptr;   
+    struct set *B = (struct set *) B_ptr;   
+
+    
     struct set *tmp; 
     struct List tmpNodes = tmp->list;
     struct Node *tmpCurr = tmpNodes.head;

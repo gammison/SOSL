@@ -6,7 +6,7 @@
  * 2 -> char
  * 3 -> string
  * 4 -> set */
-void{
+struct set{
     struct List list;
     int card;
     int type;
@@ -21,9 +21,9 @@ int compare_string(const void *data_sought, const void *against);
 int compare_char(const void *data_sought, const void *against);
 int compare_set(const void *data_sought, const void *against);
 int get_card(void *A_ptr);
-struct Node *get_head(void *set_ptr);
+void *get_head(void *set_ptr);
 void *get_data_from_node(void *node_ptr);
-struct Node *get_next_node(struct Node *data);
+void *get_next_node(void *data);
 
 void* add(void *s_ptr, void *value);
 void* remove_elm(void *s_ptr, void *value);
