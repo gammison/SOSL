@@ -117,10 +117,10 @@ let translate (globals, functions) =
       L.var_arg_function_type void_t [| void_ptr_t |] in
   let destroy_set_func : L.llvalue = 
       L.declare_function "destroy" destroy_set the_module in 
-  let remove_set : L.lltype =
+  let rem_set : L.lltype =
       L.var_arg_function_type void_t [| void_ptr_t ; void_ptr_t |] in
-  let remove_set_func : L.llvalue = 
-      L.declare_function "remove" remove_set the_module in 
+  let rem_set_func : L.llvalue = 
+      L.declare_function "remove" rem_set the_module in 
   let has_elmt : L.lltype =
       L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
   let has_elmt_func : L.llvalue = 
@@ -258,10 +258,41 @@ let translate (globals, functions) =
 	    L.build_call printf_func [| char_format_str;  (expr builder e) |] "print_char" builder
       | SCall ("printf", [(_, e)]) -> 
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
-      | SCall ("print_set", [(_,e)]) ->
+      | SCall ("print_set_int", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder
-      | SCall ("adds", [(_,e1); (_,e2)]) ->
-	    L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add_set" builder
+      | SCall ("print_set_bool", [(_,e)]) ->
+        L.build_call print_set_func [| expr builder e |] "print_set" builder
+      | SCall ("print_set_char", [(_,e)]) ->
+        L.build_call print_set_func [| expr builder e |] "print_set" builder
+      | SCall ("print_set_string", [(_,e)]) ->
+        L.build_call print_set_func [| expr builder e |] "print_set" builder
+      (*| SCall ("print_set_set", [(_,e)]) ->
+        L.build_call print_set_func [| expr builder e |] "print_set" builder*)
+
+      | SCall ("adds_int", [(_,e1); (_,e2)]) ->
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+      | SCall ("adds_int", [(_,e1); (_,e2)]) ->
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+      | SCall ("adds_int", [(_,e1); (_,e2)]) ->
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+      | SCall ("adds_int", [(_,e1); (_,e2)]) ->
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+      | SCall ("adds_int", [(_,e1); (_,e2)]) ->
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+      | SCall ("rems_int", [(_,e1); (_,e2)]) ->
+	L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add" builder
+      | SCall ("rems_int", [(_,e1); (_,e2)]) ->
+	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder
+      | SCall ("rems_int", [(_,e1); (_,e2)]) ->
+	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder
+      | SCall ("rems_int", [(_,e1); (_,e2)]) ->
+	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder
+      | SCall ("rems_int", [(_,e1); (_,e2)]) ->
+	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder
+      (*| SCall ("rems_set", [(_,e1); (_,e2)]) ->
+	L.build_call rem_set_func [| (expr builder e1) ; (expr builder e2) |] "remove_elm" builder*)
+
+
       | SCall (f, args) ->
             let (fdef, fdecl) = StringMap.find f function_decls in
 	        let llargs = List.rev (List.map (expr builder) (List.rev_map snd args)) in

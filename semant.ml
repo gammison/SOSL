@@ -38,21 +38,27 @@ let check (globals, functions) =
       fname = name; 
       parameters = [(ty, "x")];
       locals = []; body = [] } map
-      in List.fold_left add_bind StringMap.empty [ ("print", [Int]);
-                                                 ("printb", [Boolean]);
-                                                 ("printf", [String]);
-                                                 ("prints", [String]);
-                                                 ("printc", [Char]);
-                                                 ("print_set",[Set(Int)]);
-                                                 (*("print_set",[Set(Boolean)]);
-                                                 ("print_set",[Set(String)]);
-                                                 ("print_set",[Set(Char)]);*)
-                                                 (* ("print_set", Set(Set(_)));*)
-                                                 ("adds",     [Set(Int),Int]);]
-                                                 (*("adds",     [Set(Boolean)]);
-                                                 ("adds",     [Set(String)]);
-                                                 ("adds",     [Set(Char)]);]*)
-                                                 (*("adds",   Set(Set(_)),Set(_)]);]*)
+      in List.fold_left add_bind StringMap.empty [ ("print",       [Int]);
+                                                 ("printb",        [Boolean]);
+                                                 ("printf",        [String]);
+                                                 ("prints",        [String]);
+                                                 ("printc",        [Char]);
+                                                 ("print_set_int", [Set(Int)]);
+                                                 ("print_set_bool",[Set(Boolean)]);
+                                                 ("print_set_string",[Set(String)]);
+                                                 ("print_set_char",[Set(Char)]);
+                                                 (*("print_set_set", [Set(Set(_))]);*)
+                                                 ("adds_int",      [Set(Int),Int]);
+                                                 ("adds_bool",     [Set(Boolean)]);
+                                                 ("adds_string",   [Set(String)]);
+                                                 ("adds_char",     [Set(Char)]);
+                                                 (*("adds_set",   Set(Set(_)),Set(_))]*)
+                                                 ("rems_int",      [Set(Int),Int]);
+                                                 ("rems_bool",     [Set(Boolean)]);
+                                                 ("rems_string",   [Set(String)]);
+                                                 ("rems_char",     [Set(Char)]);]
+                                                 (*("rems_set",   Set(Set(_)),Set(_))]*)
+
   in
 
   (* Add function name to symbol table *)
