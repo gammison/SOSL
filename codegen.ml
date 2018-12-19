@@ -125,6 +125,10 @@ let translate (globals, functions) =
       L.var_arg_function_type i32_t [| void_ptr_t ; i32_t |] in
   let has_elmt_func : L.llvalue = 
       L.declare_function "has" has_elmt the_module in 
+  let has_elmt_const : L.lltype =
+      L.var_arg_function_type i32_t [| void_ptr_t ; i32_t |] in
+  let has_elmt_const_func : L.llvalue =
+      L.declare_function "has_const" has_elmt_const the_module in
   let complement_set : L.lltype =
       L.var_arg_function_type  void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let complement_set_func : L.llvalue =
@@ -235,7 +239,9 @@ let translate (globals, functions) =
         | A.More    -> L.build_icmp L.Icmp.Sgt e1' e2' "tmp" builder
         | A.MoreEq  -> L.build_icmp L.Icmp.Sge e1' e2' "tmp" builder
         | A.Mod     -> L.build_frem e1' e2' "tmp" builder
-        | A.Elof    -> L.build_call has_elmt_func [| e1'; e2' |] "has" builder
+        | A.Elof    -> (match e2' with
+                       L.const_int i32_t  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has" builder
+                       | L.const_int i1_t ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has" builder )
         | A.Comp    -> L.build_call complement_set_func [| e1' ; e2' |] "complement" builder
         | A.Isec    -> L.build_call intsect_set_func [| e1' ; e2' |] "intersect" builder
         | A.Union   -> L.build_call union_set_func [| e1' ; e2' |] "set_union" builder)

@@ -16,6 +16,7 @@ void *create_set(int dType);
 void destroy(void *s_ptr);
 
 int has(void *s_ptr, void *value);
+int has_const(void *s_ptr, int value);
 int compare_int_bool_char(const void *data_sought, const void *against);
 int compare_string(const void *data_sought, const void *against);
 int compare_char(const void *data_sought, const void *against);

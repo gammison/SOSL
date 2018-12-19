@@ -121,6 +121,10 @@ int has(void *set_ptr, void *value){
     return 0;
 }
 
+int has_const(void *set_ptr, int value){
+    return has(set_ptr, &value);
+}
+
 
 void *add(void *set_ptr, void *value){  
     struct set *s = (struct set *) set_ptr;                          
