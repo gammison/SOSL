@@ -34,10 +34,17 @@ let translate (globals, functions) =
   and i8_t           = L.i8_type     context
   and void_t         = L.void_type   context 
   and str_t          = L.pointer_type (L.i8_type context)
-  and set_t	         = L.named_struct_type context "set" in
-  let set_t_pointer  = L.pointer_type set_t
- (* and array_t    = L.array_type*)in
-
+  and void_ptr_t     = L.pointer_type (L.i8_type context) in
+  
+  (*
+  and set_t	         = L.named_struct_type context "set" 
+  
+  in
+  let void_ptr_t  = L.pointer_type set_t
+  (* and array_t    = L.array_type*)
+ 
+  in
+  *)
 
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
@@ -48,7 +55,7 @@ let translate (globals, functions) =
     | A.Char     	   -> i8_t 
     | A.String	 	   -> str_t 
     | A.Void               -> void_t
-    | A.Set(ltype_of_typ)  -> set_t
+    | A.Set(ltype_of_typ)  -> void_ptr_t
     | _ -> raise (Failure "not a supported data type")
   in
 
@@ -73,40 +80,67 @@ let translate (globals, functions) =
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in *)
 
+  let get_head : L.lltype =
+      L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
+  let get_head_func : L.llvalue = 
+      L.declare_function "get_head" get_head the_module in   
+  let get_data_from_node : L.lltype =
+      L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
+  let get_data_from_node_func : L.llvalue = 
+      L.declare_function "get_data_from_node" get_data_from_node the_module in 
+  let get_next_node : L.lltype =
+      L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
+  let get_next_node_func : L.llvalue = 
+      L.declare_function "get_next_node" get_next_node the_module in 
+
+  let compare_int_bool_char : L.lltype =
+      L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
+  let compare_int_bool_char_func : L.llvalue = 
+      L.declare_function "compare_int_bool_char" compare_int_bool_char the_module in 
+  let compare_string : L.lltype =
+      L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
+  let compare_string_func : L.llvalue =
+      L.declare_function "compare_string" compare_string the_module in 
+  let compare_set : L.lltype =
+      L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
+  let compare_set_func : L.llvalue = 
+      L.declare_function "comare_set" compare_set the_module in 
+
   let add_set : L.lltype =
-      L.var_arg_function_type set_t_pointer [| set_t_pointer ; (L.pointer_type void_t) |] in
+      L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let add_set_func : L.llvalue = 
       L.declare_function "add" add_set the_module in 
   let destroy_set : L.lltype =
-      L.var_arg_function_type void_t [| set_t_pointer |] in
+      L.var_arg_function_type void_t [| void_ptr_t |] in
   let destroy_set_func : L.llvalue = 
       L.declare_function "destroy" destroy_set the_module in 
   let remove_set : L.lltype =
-      L.var_arg_function_type void_t [| set_t_pointer ; (L.pointer_type void_t) |] in
+      L.var_arg_function_type void_t [| void_ptr_t ; void_ptr_t |] in
   let remove_set_func : L.llvalue = 
       L.declare_function "remove" remove_set the_module in 
   let has_elmt : L.lltype =
-      L.var_arg_function_type i32_t [| set_t_pointer ; (L.pointer_type void_t) |] in
+      L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
   let has_elmt_func : L.llvalue = 
       L.declare_function "has" has_elmt the_module in 
   let complement_set : L.lltype =
-      L.var_arg_function_type  set_t_pointer [| set_t_pointer ; set_t_pointer |] in
+      L.var_arg_function_type  void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let complement_set_func : L.llvalue =
       L.declare_function "complement" complement_set the_module in
   let copy_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t|] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t |] in
   let copy_set_func : L.llvalue =
       L.declare_function "copy" copy_set the_module in
   let union_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; set_t|] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t ; void_ptr_t |] in
   let union_set_func : L.llvalue =
       L.declare_function "union" union_set the_module in
   let intsect_set : L.lltype =
-      L.var_arg_function_type set_t [|set_t; set_t|] in
+      L.var_arg_function_type void_ptr_t [|void_ptr_t ; void_ptr_t |] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
   let get_card : L.lltype =
-      L.var_arg_function_type i32_t [|set_t|] in
+      L.var_arg_function_type i32_t [|void_ptr_t |] in
+
   let get_card_func : L.llvalue =
       L.declare_function "getCard" intsect_set the_module in
   
@@ -214,22 +248,22 @@ let translate (globals, functions) =
       
       (*Map various print functions back to C's printf function*)
       | SCall ("print", [(_, e)]) | SCall ("printb", [(_, e)]) ->
-	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
-	    "printf" builder
+	    L.build_call printf_func [| int_format_str ; (expr builder e) |] "print" builder
       | SCall ("prints", [(_, e)]) ->
-	  L.build_call printf_func [| str_format_str ; (expr builder e) |]
-	    "printf" builder
+	    L.build_call printf_func [| str_format_str ; (expr builder e) |] "prints" builder
       | SCall ("printbig", [(_, e)]) ->
-	  L.build_call printf_func [| char_format_str;  (expr builder e) |] "printbig" builder
+	    L.build_call printf_func [| char_format_str;  (expr builder e) |] "printbig" builder
       | SCall ("printf", [(_, e)]) -> 
-	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
-	    "printf" builder
+	    L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
+      | SCall ("add", [(_,e1); (_,e2)]) ->
+	    L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add_set" builder
       | SCall (f, args) ->
-         let (fdef, fdecl) = StringMap.find f function_decls in
-	 let llargs = List.rev (List.map (expr builder) (List.rev_map snd args)) in
-	 let result = (match fdecl.sftype with 
-                       _ -> f ^ "_result") in
-         L.build_call fdef (Array.of_list llargs) result builder
+            let (fdef, fdecl) = StringMap.find f function_decls in
+	        let llargs = List.rev (List.map (expr builder) (List.rev_map snd args)) in
+            let result = 
+                (match fdecl.sftype with 
+                    _ -> f ^ "_result") in
+            L.build_call fdef (Array.of_list llargs) result builder
     in
     
     (* LLVM insists each basic block end with exactly one "terminator" 
@@ -287,8 +321,8 @@ let translate (globals, functions) =
         (*
         | SForEach (e1, e2, s) -> 
             let set_ptr = expr builder e2 in 
-            let counter = L.build_alloca i32_t "counter" builder in
-            ignore(L.build_store (L.const_int i32_t 0) counter builder);
+                let counter = L.build_alloca i32_t "counter" builder in
+                ignore(L.build_store (L.const_int i32_t 0) counter builder);
             
             let size = L.build_call get_card_func [| set_ptr |] "size" builder in
             let node_var = L.build_alloca void_ptr_t n builder in
@@ -301,35 +335,28 @@ let translate (globals, functions) =
             let body_bb = L.append_block context "while_body" the_function in
             let body_builder = L.builder_at_end context body_bb in
 
-            (* load value of current vertex *)
             let current_node = L.build_load current_node_ptr "current_tmp" body_builder in
             
-            (* get node data pointer from current vertex struct *)
             let data_ptr = L.build_call get_data_from_vertex_func [| current_node |] (n ^ "_tmp") body_builder in
             ignore(L.build_store data_ptr node_var body_builder);
             
-            (* change current_vertex to be pointer to next_vertex *)
             let next_node = L.build_call get_next_vertex_func [| current_node |] "next" body_builder in
             ignore(L.build_store next_node current_node_ptr body_builder);
             
-            (* increment counter *)
             let counter_val = L.build_load counter "counter_tmp" body_builder in
             let counter_incr = L.build_add (L.const_int i32_t 1) counter_val "counter_incr" body_builder in
             ignore(L.build_store counter_incr counter body_builder);
             
-            (* build body of loop *)
             add_terminal (stmt vars body_builder body) (L.build_br pred_bb);
 
-            (* branch to while_body iff counter < size *)
             let pred_builder = L.builder_at_end context pred_bb in
             let counter_val = L.build_load counter "counter_tmp" pred_builder in
             let done_bool_val = L.build_icmp L.Icmp.Slt counter_val size "done" pred_builder in
 
             let merge_bb = L.append_block context "merge" the_function in
             ignore (L.build_cond_br done_bool_val body_bb merge_bb pred_builder);
-            L.builder_at_end context merge_bb
+            L.builder_at_end context merge_bb *)
 
-        *)
       (* Implement for loops as while loops *)
       | SFor (e1, e2, e3, body) -> stmt builder
 	      ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] ) in
