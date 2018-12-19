@@ -150,7 +150,7 @@ let check (globals, functions) =
             | Union    
             | Isec      
             | Comp     when same               -> t1 
-            | Elof     when t1 = Set(t2)       -> Boolean
+            | Elof     when t1 = Set(t2)       -> Int
             | And 
             | Or       when same && t1 = Boolean -> Boolean
             | _ -> raise (Failure ("illegal binary operator " ^

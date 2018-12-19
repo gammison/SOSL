@@ -122,7 +122,7 @@ let translate (globals, functions) =
   let rem_set_func : L.llvalue = 
       L.declare_function "remove" rem_set the_module in 
   let has_elmt : L.lltype =
-      L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
+      L.var_arg_function_type i32_t [| void_ptr_t ; i32_t |] in
   let has_elmt_func : L.llvalue = 
       L.declare_function "has" has_elmt the_module in 
   let complement_set : L.lltype =
