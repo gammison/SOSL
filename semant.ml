@@ -42,17 +42,17 @@ let check (globals, functions) =
                                                  ("printb", Boolean);
                                                  ("printf", String);
                                                  ("prints", String);
-                                                 ("printc", Char);]
-                                                 (*("print_set",[Set(Int)]);
-                                                 ("print_set",[Set(Boolean)]);
-                                                 ("print_set",[Set(String)]);
-                                                 ("print_set",[Set(Char)]);
+                                                 ("printc", Char);
+                                                 ("print_set",Set(Int));
+                                                 ("print_set",Set(Boolean));
+                                                 ("print_set",Set(String));
+                                                 ("print_set",Set(Char));
                                                  (* ("print_set", Set(Set(_)));*)
-                                                 ("adds",     [Set(Int);Int]);
-                                                 ("adds",     [Set(Boolean);Boolean]);
-                                                 ("adds",     [Set(String);String]);
-                                                 ("adds",     [Set(Char);Char]);]
-                                                 (*("adds",     [Set(Set(_)),Set(_)]);]*)*)
+                                                 ("adds",     Set(Int));
+                                                 ("adds",     Set(Boolean));
+                                                 ("adds",     Set(String));
+                                                 ("adds",     Set(Char));]
+                                                 (*("adds",   Set(Set(_)),Set(_)]);]*)
   in
 
   (* Add function name to symbol table *)
