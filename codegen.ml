@@ -79,7 +79,6 @@ let translate (globals, functions) =
       L.var_arg_function_type (L.pointer_type void_t) [|[|] in
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in *)
-
   let get_head : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
   let get_head_func : L.llvalue = 
@@ -135,14 +134,17 @@ let translate (globals, functions) =
   let union_set_func : L.llvalue =
       L.declare_function "union" union_set the_module in
   let intsect_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [|void_ptr_t ; void_ptr_t |] in
+      L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let intsect_set_func : L.llvalue =
       L.declare_function "intersect" intsect_set the_module in
   let get_card : L.lltype =
-      L.var_arg_function_type i32_t [|void_ptr_t |] in
-
+      L.var_arg_function_type i32_t [| void_ptr_t |] in
   let get_card_func : L.llvalue =
-      L.declare_function "getCard" intsect_set the_module in
+      L.declare_function "get_card" intsect_set the_module in
+  let print_set : L.lltype =
+      L.var_arg_function_type void_t [| void_ptr_t |] in
+  let print_set_func : L.llvalue = 
+      L.declare_function "print_set" printf_t the_module in
   
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
@@ -254,7 +256,9 @@ let translate (globals, functions) =
       | SCall ("printbig", [(_, e)]) ->
 	    L.build_call printf_func [| char_format_str;  (expr builder e) |] "printbig" builder
       | SCall ("printf", [(_, e)]) -> 
-	    L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
+        L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
+      | SCall ("print_set", [(_,e)]) ->
+        L.build_call print_set_func [| expr builder e |] "print_set" builder
       | SCall ("add", [(_,e1); (_,e2)]) ->
 	    L.build_call add_set_func [| (expr builder e1) ; (expr builder e2) |] "add_set" builder
       | SCall (f, args) ->
