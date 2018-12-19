@@ -105,7 +105,6 @@ int compare_set(const void *data_sought, const void *against){
 }
 
 int has(void *set_ptr, void *value){    
-    /*
     struct set *s = (struct set *) set_ptr;                          
 
     struct List *nodes = &(s->list);
@@ -119,10 +118,8 @@ int has(void *set_ptr, void *value){
     if (findNode(nodes, value, compar) != 0){
         return 1;
     }
-    
-    */
      
-    return 1;
+    return 0;
 }
 
 int has_const(void *set_ptr, int value){
@@ -134,12 +131,9 @@ void *adds(void *set_ptr, void *value){
     struct set *s = (struct set *) set_ptr;                          
     struct List nodes = s->list;
 
-    /*
     if (!has(s,value)){                                              
         addFront(&nodes, value);
     }
-
-    */
 
     return (void *) s;
 }
