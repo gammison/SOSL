@@ -38,14 +38,14 @@ let check (globals, functions) =
       fname = name; 
       parameters = [(ty, "x")];
       locals = []; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", Int);
-			                         ("printb", Boolean);
-			                         ("printf", String);
-				                 ("prints", String);
-                                                 ("print_set", Set(Int));
-                                                 ("print_set", Set(Boolean));
-                                                 ("print_set", Set(String));
-                                                 ("print_set", Set(Char));
+    in List.fold_left add_bind StringMap.empty [ ("print", [Int]);
+                                                 ("printb", [Boolean]);
+                                                 ("printf", [String]);
+                                                 ("prints", [String]);
+                                                 ("print_set",[Set(Int)]);
+                                                 ("print_set",[Set(Boolean)]);
+                                                 ("print_set",[Set(String)]);
+                                                 ("print_set",[Set(Char)]);
                                                  (* ("print_set", Set(Set(_)));*)
                                                  ("adds",     [Set(Int);Int]);
                                                  ("adds",     [Set(Boolean);Boolean]);
