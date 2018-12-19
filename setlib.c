@@ -1,6 +1,6 @@
 #include<string.h>
 #include<stdlib.h>
-#include "linkedlist.h" 
+#include<stdio.h>
 #include "setlib.h"
 
 /* type = 0 -> int
@@ -121,7 +121,7 @@ struct set* add(struct set *s, void *value){
     return s;
 }
 
-void remove(struct set *s, void *value){                              
+struct set *remove_elm(struct set *s, void *value){                              
     struct Node *tmpNode = (s->list).head;
     struct Node *prev;
 
@@ -130,10 +130,11 @@ void remove(struct set *s, void *value){
         tmpNode = tmpNode->next; 
     }
 
-    if (tmpNode == 0) return; 
+    if (tmpNode == 0) return s; 
 
     prev->next = tmpNode->next; 
     free(tmpNode);
+    return s;
 }
 
 
@@ -237,4 +238,37 @@ struct set *cartesian(struct set *A, struct set *B){                // not done 
     struct Node *bCurr = bNodes.head;
 
     return tmp;
+}
+
+void print_set(struct set *A){
+    printf(":{");
+    struct Node *Acurr = A->list.head;
+    for(int i = 0; i<get_card(A); i++){
+        int typ = A->type;
+        if(i < get_card(A) - 1){
+            if(typ == 0)
+                printf("%d,",Acurr->data);
+            else if(typ == 1)
+                printf(Acurr->data == 0 ? "false," : "true,");
+            else if(typ == 2)
+                printf("%c,",Acurr->data);
+            else if(typ == 3)
+                printf("%s,",Acurr->data);
+            else if(typ == 4)
+                print_set(Acurr->data);
+        }
+        else{
+            if(typ == 0)
+                printf("%d",Acurr->data);
+            else if(typ == 1)
+                printf(Acurr->data == 0 ? "false" : "true");
+            else if(typ == 2)
+                printf("%c",Acurr->data);
+            else if(typ == 3)
+                printf("%s",Acurr->data);
+            else if(typ == 4)
+                print_set(Acurr->data);
+        }
+        Acurr = Acurr->next;
+    }
 }

@@ -79,6 +79,7 @@ let translate (globals, functions) =
       L.var_arg_function_type (L.pointer_type void_t) [|[|] in
   let create_set_func : L.llvalue = 
       L.declare_function "create" create_set the_module in *)
+
   let get_head : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
   let get_head_func : L.llvalue = 
@@ -104,7 +105,7 @@ let translate (globals, functions) =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let compare_set_func : L.llvalue = 
       L.declare_function "comare_set" compare_set the_module in 
-  
+
   let add_set : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
   let add_set_func : L.llvalue = 
@@ -139,8 +140,9 @@ let translate (globals, functions) =
       L.declare_function "intersect" intsect_set the_module in
   let get_card : L.lltype =
       L.var_arg_function_type i32_t [|void_ptr_t |] in
+
   let get_card_func : L.llvalue =
-      L.declare_function "getCard" get_card the_module in
+      L.declare_function "getCard" intsect_set the_module in
   
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
@@ -262,8 +264,6 @@ let translate (globals, functions) =
                 (match fdecl.sftype with 
                     _ -> f ^ "_result") in
             L.build_call fdef (Array.of_list llargs) result builder
-
-
     in
     
     (* LLVM insists each basic block end with exactly one "terminator" 
