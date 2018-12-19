@@ -247,25 +247,25 @@ void print_set(struct set *A){
         int typ = A->type;
         if(i < get_card(A) - 1){
             if(typ == 0)
-                printf("%d,",Acurr->data);
+                printf("%d,",*((int *)Acurr->data));
             else if(typ == 1)
-                printf(Acurr->data == 0 ? "false," : "true,");
+                printf(*((int *)Acurr->data) == 0 ? "false," : "true,");
             else if(typ == 2)
-                printf("%c,",Acurr->data);
+                printf("%c,",*((char *)Acurr->data));
             else if(typ == 3)
-                printf("%s,",Acurr->data);
+                printf("%s,",(char *)(Acurr->data));
             else if(typ == 4)
                 print_set(Acurr->data);
         }
         else{
             if(typ == 0)
-                printf("%d",Acurr->data);
+                printf("%d",*((int *)Acurr->data));
             else if(typ == 1)
-                printf(Acurr->data == 0 ? "false" : "true");
+                printf((*(int *)Acurr->data) == 0 ? "false" : "true");
             else if(typ == 2)
-                printf("%c",Acurr->data);
+                printf("%c",*((char *)Acurr->data));
             else if(typ == 3)
-                printf("%s",Acurr->data);
+                printf("%s",(char *)(Acurr->data));
             else if(typ == 4)
                 print_set(Acurr->data);
         }
