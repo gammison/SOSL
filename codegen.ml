@@ -108,7 +108,10 @@ let translate (globals, functions) =
       L.var_arg_function_type i32_t [|set_t|] in
   let get_card_func : L.llvalue =
       L.declare_function "getCard" intsect_set the_module in
-
+  (* let get_ : L.lltype =
+      L.var_arg_function_type i32_t [|set_t|] in
+  let get_card_func : L.llvalue =
+        L.declare_function "getCard" intsect_set the_module in *)
 
    let function_decls : (L.llvalue * sfdecl) StringMap.t =
     let function_decl m fdecl =
@@ -276,14 +279,45 @@ let translate (globals, functions) =
             let set_ptr = expr builder e2 in 
             let counter = L.build_alloca i32_t "counter" builder in
             ignore(L.build_store (L.const_int i32_t 0) counter builder);
+            
             let size = L.build_call get_card_func [| set_ptr |] "size" builder in
-            let set_var = L.build_alloca set_t n builder in
+            let node_var = L.build_alloca set_t n builder in
             let vars = StringMap.add n set_var vars in
 
-            let current_vertex_ptr = L.build_alloca void_ptr_t "current" builder in
-            let head_vertex = L.build_call get_head_vertex_func [| graph_ptr |] "head" builder in
-            ignore(L.build_store head_vertex current_vertex_ptr builder);
+            let current_node_ptr = L.build_alloca void_ptr_t "current" builder in
+            let head_node = L.build_call get_head_func [| set_ptr |] "head" builder in
+            ignore(L.build_store head_node current_node_ptr builder);
 
+            let body_bb = L.append_block context "while_body" the_function in
+            let body_builder = L.builder_at_end context body_bb in
+
+            (* load value of current vertex *)
+            let current_node = L.build_load current_node_ptr "current_tmp" body_builder in
+            
+            (* get node data pointer from current vertex struct *)
+            let data_ptr = L.build_call get_data_from_vertex_func [| current_node |] (n ^ "_tmp") body_builder in
+            ignore(L.build_store data_ptr node_var body_builder);
+            
+            (* change current_vertex to be pointer to next_vertex *)
+            let next_node = L.build_call get_next_vertex_func [| current_node |] "next" body_builder in
+            ignore(L.build_store next_node current_node_ptr body_builder);
+            
+            (* increment counter *)
+            let counter_val = L.build_load counter "counter_tmp" body_builder in
+            let counter_incr = L.build_add (L.const_int i32_t 1) counter_val "counter_incr" body_builder in
+            ignore(L.build_store counter_incr counter body_builder);
+            
+            (* build body of loop *)
+            add_terminal (stmt vars body_builder body) (L.build_br pred_bb);
+
+            (* branch to while_body iff counter < size *)
+            let pred_builder = L.builder_at_end context pred_bb in
+            let counter_val = L.build_load counter "counter_tmp" pred_builder in
+            let done_bool_val = L.build_icmp L.Icmp.Slt counter_val size "done" pred_builder in
+
+            let merge_bb = L.append_block context "merge" the_function in
+            ignore (L.build_cond_br done_bool_val body_bb merge_bb pred_builder);
+            L.builder_at_end context merge_bb
 
         *)
       (* Implement for loops as while loops *)
