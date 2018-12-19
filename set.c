@@ -42,6 +42,10 @@ void *get_data_from_node(struct Node *data){
     return data->data;
 }
 
+struct Node *get_next_node(struct Node *data){
+    return data->next;
+}
+
 void destroy(struct set *s){                                            
     struct List nodes = s->list;
     struct Node *next = nodes.head;
