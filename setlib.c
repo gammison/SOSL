@@ -1,7 +1,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include "linkedlist.h" 
-#include "set.h"
+#include "setlib.h"
 
 /* type = 0 -> int
  *      = 1 -> boolean
@@ -139,7 +139,7 @@ void remove(struct set *s, void *value){
 
 
 struct set* complement(struct set *A, struct set* U){
-    struct set *tmp;
+    struct set *tmp = create_set(A->type);
     struct List tmpNodes = tmp->list;
     struct Node *tmpCurr = tmpNodes.head;
 
@@ -150,17 +150,12 @@ struct set* complement(struct set *A, struct set* U){
     struct set *AiU = intersect(A,U);
     for(int i=0; i<(U->card); i++){
         
-        if(!has(AiU, uCurr)){
-            tmpCurr->next = uCurr;
-            tmpCurr = tmpCurr->next;
-            uCurr = uCurr->next;
-            (tmp->card)++;
+        if(!has(AiU, uCurr->data)){
+            add(tmp, uCurr->data); 
         }
-        else{
-             uCurr = uCurr->next;
-        }
+        uCurr = uCurr->next;
     }
-
+    destroy(AiU);
     return tmp;
 }
 struct set* copy(struct set *A){                //maybe put in a set_lib.c?
@@ -190,27 +185,31 @@ struct set* set_union(struct set *A, struct set *B){
 
     return AuB;
 }
-
+int compare(void *Adata, void *Bdata, int type){
+    if(type == 0 || type == 1 || type == 2)
+        return compare_int_bool_char(Adata,Bdata);
+}
 struct set *intersect(struct set *A, struct set *B){                  
-    struct set *tmp; 
-    struct List tmpNodes = tmp->list;
-    struct Node *tmpCurr = tmpNodes.head;
+    struct set *tmp = create_set(A->type); 
 
     struct List aNodes = A->list;
     struct Node *aCurr = aNodes.head;
 
     struct List bNodes = B->list;
     struct Node *bCurr = bNodes.head;
-
-    for (int i=0; i<(A->card); i++){
-        for (int j=0; j<(B->card); j++){
-            if(aCurr == bCurr){
-                tmpCurr->next = aCurr;
-                tmpCurr = tmpCurr->next;
+    
+    int larger_card; 
+    A->card > B->card ? (larger_card = A->card):(larger_card = B-> card);
+    int smaller_card; 
+    A->card <= B->card ? (smaller_card = A->card) : (smaller_card = B->card);
+    for (int i=0; i<smaller_card; i++){
+        for (int j=0; j<larger_card; j++){
+            if(compare(aCurr->data,bCurr->data, A->type) == 0){
+                add(tmp, A->card > B->card ? aCurr->data: bCurr->data);
             }
-            bCurr = bCurr->next;
+            A->card > A->card ? (bCurr = bCurr->next):(aCurr = aCurr->next);
         }
-        aCurr = aCurr->next;
+        A->card <= B->card ? (aCurr = aCurr->next):(bCurr = bCurr->next);
     }
 
     return tmp;
