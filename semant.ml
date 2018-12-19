@@ -33,23 +33,23 @@ let check (globals, functions) =
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls = 
-    let add_bind map (name, ty) = StringMap.add name {
+      let add_bind map (name, ty) = StringMap.add name { (* ty should be [ty]? or [(_,ty)] *)
       ftype = ty;
       fname = name; 
       parameters = [(ty, "x")];
       locals = []; body = [] } map
 
-      in List.fold_left add_bind StringMap.empty [ ("print",       [Int]);
-                                                 ("printb",        [Boolean]);
-                                                 ("printf",        [String]);
-                                                 ("prints",        [String]);
-                                                 ("printc",        [Char]);
-                                                 ("print_set_int", [Set(Int)]);
+      in List.fold_left add_bind StringMap.empty [ ("print",       Int);
+                                                 ("printb",        Boolean);
+                                                 ("printf",        String);
+                                                 ("prints",        String);
+                                                 ("printc",        Char);]
+                                                 (*("print_set_int", [Set(Int)]);
                                                  ("print_set_bool",[Set(Boolean)]);
                                                  ("print_set_string",[Set(String)]);
-                                                 ("print_set_char",[Set(Char)]);
+                                                 ("print_set_char",[Set(Char)]);*)
                                                  (*("print_set_set", [Set(Set(_))]);*)
-                                                 ("adds_int",      [Set(Int),Int]);
+                                                 (*("adds_int",      [Set(Int),Int]);
                                                  ("adds_bool",     [Set(Boolean)]);
                                                  ("adds_string",   [Set(String)]);
                                                  ("adds_char",     [Set(Char)]);
@@ -57,7 +57,7 @@ let check (globals, functions) =
                                                  ("rems_int",      [Set(Int),Int]);
                                                  ("rems_bool",     [Set(Boolean)]);
                                                  ("rems_string",   [Set(String)]);
-                                                 ("rems_char",     [Set(Char)]);]
+                                                 ("rems_char",     [Set(Char)]);]*)
                                                  (*("rems_set",   Set(Set(_)),Set(_))]*)
 
   in
