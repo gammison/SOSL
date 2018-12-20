@@ -215,7 +215,8 @@ let translate (globals, functions) =
                 |A.Char      -> L.build_call create_set_func [| L.const_int i32_t 1 |] "tmp" builder
                 |A.Boolean   -> L.build_call create_set_func [| L.const_int i32_t 2 |] "tmp" builder
                 |A.String    -> L.build_call create_set_func [| L.const_int i32_t 3 |] "tmp" builder
-                |A.Set(_)    -> L.build_call create_set_func [| L.const_int i32_t 4 |] "tmp" builder ) in 
+                |A.Set(_)    -> L.build_call create_set_func [| L.const_int i32_t 4 |] "tmp" builder   
+                |A.Void      -> raise(Failure ("Void is not a supported set type"))) in
             let addNodes ex = 
                 let (_, e2) = ex in
                     L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
@@ -246,8 +247,8 @@ let translate (globals, functions) =
                        |A.Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
                        |A.Boolean  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
                        |A.String ->     L.build_call has_elmt_func [| e1'; e2' |] "has" builder
-                       |A.Set(_)->   L.build_call has_elmt_func[| e1' ; e2' |] "has" builder)
-
+                       |A.Set(_)->   L.build_call has_elmt_func[| e1' ; e2' |] "has" builder
+                       |A.Void ->    raise(Failure("Void cannot be an element of a Set")))
         | A.Comp    -> L.build_call complement_set_func [| e1' ; e2' |] "complement" builder
         | A.Isec    -> L.build_call intsect_set_func [| e1' ; e2' |] "intersect" builder
         | A.Union   -> L.build_call union_set_func [| e1' ; e2' |] "set_union" builder)
@@ -328,7 +329,7 @@ let translate (globals, functions) =
 	      SBlock sl       -> List.fold_left stmt builder sl
       | SExpr (_, e)    -> ignore(expr builder e); builder 
       | SReturn (_, e)       -> ignore(match fdecl.sftype with
-                   Void         -> L.build_ret_void builder (* Special "return nothing" instr *)
+                   A.Void         -> L.build_ret_void builder (* Special "return nothing" instr *)
                   | _           -> L.build_ret (expr builder e) builder ); builder
 
       | SIf ((_, predicate), then_stmt, else_stmt) ->
