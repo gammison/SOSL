@@ -36,17 +36,7 @@ let translate (globals, functions) =
   and str_t          = L.pointer_type (L.i8_type context)
   and void_ptr_t     = L.pointer_type (L.i8_type context) in
   
-  (*
-  and set_t	         = L.named_struct_type context "set" 
-  
-  in
-  let void_ptr_t  = L.pointer_type set_t
-  (* and array_t    = L.array_type*)
- 
-  in
-  *)
-
-  let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
+    let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a SOSL type *)
   let ltype_of_typ = function
@@ -81,33 +71,7 @@ let translate (globals, functions) =
   let create_set : L.lltype =
       L.var_arg_function_type void_ptr_t [| i32_t |] in
   let create_set_func : L.llvalue = 
-      L.declare_function "create_set" create_set the_module in
-  (*let get_head : L.lltype =
-      L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
-  let get_head_func : L.llvalue = 
-      L.declare_function "get_head" get_head the_module in   
-  let get_data_from_node : L.lltype =
-      L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
-  let get_data_from_node_func : L.llvalue = 
-      L.declare_function "get_data_from_node" get_data_from_node the_module in 
-  let get_next_node : L.lltype =
-      L.var_arg_function_type void_ptr_t [| void_ptr_t |] in
-  let get_next_node_func : L.llvalue = 
-      L.declare_function "get_next_node" get_next_node the_module in *)
-
-  (*let compare_int_bool_char : L.lltype =
-      L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
-  let compare_int_bool_char_func : L.llvalue = 
-      L.declare_function "compare_int_bool_char" compare_int_bool_char the_module in 
-  let compare_string : L.lltype =
-      L.var_arg_function_type i32_t [| void_ptr_t ; void_ptr_t |] in
-  let compare_string_func : L.llvalue =
-      L.declare_function "compare_string" compare_string the_module in 
-  let compare_set : L.lltype =
-      L.var_arg_function_type void_ptr_t [| void_ptr_t ; void_ptr_t |] in
-  let compare_set_func : L.llvalue = 
-      L.declare_function "comare_set" compare_set the_module in *)
-
+      L.declare_function "create_set" create_set the_module in 
   let add_set : L.lltype =
       L.var_arg_function_type void_ptr_t [| void_ptr_t ; i32_t |] in
   let add_set_func : L.llvalue = 
@@ -270,6 +234,7 @@ let translate (globals, functions) =
         L.build_call print_set_func [| expr builder e |] "print_set" builder
       | SCall ("destory_seti", [(_,e)]) ->
         L.build_call destroy_set_func [| expr builder e|] "destory_set" builder
+     (*Unfinished SCalls for library functionality *)
       (*| SCall ("print_set_bool", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder
       | SCall ("print_set_char", [(_,e)]) ->
@@ -364,7 +329,7 @@ let translate (globals, functions) =
           ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
           L.builder_at_end context merge_bb
 
-        (*
+        (* Could not achieve recursive set functionality, here is our attempt
         | SForEach (e1, e2, s) -> 
             let set_ptr = expr builder e2 in 
             let counter = L.build_alloca i32_t "counter" builder in
