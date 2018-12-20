@@ -49,7 +49,7 @@ let translate (globals, functions) =
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a SOSL type *)
-  let ltype_of_typ = function
+  let rec ltype_of_typ = function
       A.Int      	   -> i32_t
     | A.Boolean  	   -> i1_t
     | A.Char     	   -> i8_t 
