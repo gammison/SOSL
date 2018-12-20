@@ -25,10 +25,10 @@ int get_card(void *A_ptr);
 void *get_head(void *set_ptr);
 void *get_data_from_node(void *node_ptr);
 void *get_next_node(void *data);
-
+void add_card(struct set *s);
 void* adds(void *s_ptr, void *value);
 void* remove_elm(void *s_ptr, void *value);
-
+void print_int(void *i);
 void print_set(void *A_ptr);
 
 void *complement(void *A_ptr, void *U);

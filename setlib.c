@@ -32,7 +32,7 @@ void *create_set(int dType){  //not necessairly from llvm
     struct set *newset = malloc(sizeof(struct set));
     initList(&(newset->list));
     newset->card = 0;
-    newset->type = 1;
+    newset->type = dType;
     return (void *) newset;
 }
 
@@ -103,19 +103,20 @@ int compare_set(const void *data_sought, const void *against){
     return 0;
 
 }
-
+void print_int(void *i){
+    printf("%d",*(int *)i);
+}
 int has(void *set_ptr, void *value){    
     struct set *s = (struct set *) set_ptr;                          
-
-    struct List *nodes = &(s->list);
     int (*compar)(const void *, const void *);
+    struct List *l = &(s->list);
     if(s->type == 0 || s->type==1 || s->type == 2)
         compar = compare_int_bool_char;
     else if(s->type == 3)
         compar = compare_string;
     else if(s->type == 4)
         compar = compare_set;
-    if (findNode(nodes, value, compar) != 0){
+    if (findNode(l, value, compar) != NULL){
         return 1;
     }
      
@@ -123,18 +124,21 @@ int has(void *set_ptr, void *value){
 }
 
 int has_const(void *set_ptr, int value){
+    print_set(set_ptr);
     return has(set_ptr, &value);
 }
 
-
+void add_card(struct set *s){
+    (s->card)++;
+}
 void *adds(void *set_ptr, void *value){  
-    struct set *s = (struct set *) set_ptr;                          
+    struct set *s = (struct set *) set_ptr;
     struct List nodes = s->list;
-
-    if (!has(s,value)){                                              
+    if (!has(s,value)){
         addFront(&nodes, value);
+        add_card(s);
+        
     }
-
     return (void *) s;
 }
 
@@ -189,21 +193,21 @@ void* set_union(void *A_ptr, void *B_ptr){
     struct set *B = (struct set *) B_ptr; 
 
     struct List aNodes = A->list;
-    struct Node *aCurr = aNodes.head;
 
+    struct Node *aCurr = aNodes.head;//null, not good why null
     struct List bNodes = B->list;
     struct Node *bCurr = bNodes.head;
     
-    struct set *AuB=create_set(A->type); 
+    struct set *AuB=(struct set *)create_set(A->type); 
         
     int bigger_card = (A->card > B->card) ? A->card : B->card;
     for (int i=0; i<bigger_card; i++){
-        if(i<A->card){
-            adds(AuB,aCurr);
+       if(aCurr != NULL){
+            adds(AuB,aCurr->data);
             aCurr = aCurr->next;
         }
-        if(i< B->card){
-            adds(AuB,bCurr);
+      if(bCurr != NULL){
+            adds(AuB,bCurr->data);
             bCurr = bCurr->next;
         }
     }
@@ -305,4 +309,5 @@ void print_set(void *A_ptr){
         }
         Acurr = Acurr->next;
     }
+    printf("}:");
 }
