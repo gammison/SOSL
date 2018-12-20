@@ -49,14 +49,13 @@ let translate (globals, functions) =
   let br_block    = ref (L.block_of_value (L.const_int i32_t 0)) in 
 
   (* Return the LLVM type for a SOSL type *)
-  let rec ltype_of_typ = function
+  let ltype_of_typ = function
       A.Int      	   -> i32_t
     | A.Boolean  	   -> i1_t
     | A.Char     	   -> i8_t 
     | A.String	 	   -> str_t 
     | A.Void               -> void_t
-    | A.Set(ltype_of_typ)  -> void_ptr_t
-    | _ -> raise (Failure "not a supported data type")
+    | A.Set(_)  -> void_ptr_t
   in
 
   (* Create a map of global variables after creating each *)
@@ -212,13 +211,13 @@ let translate (globals, functions) =
             let (ty1, _) = hd in
             let s =  
                 (match ty1 with
-                Int         -> L.build_call create_set_func [| L.const_int i32_t 0 |] "tmp" builder
-                | Char      -> L.build_call create_set_func [| L.const_int i32_t 1 |] "tmp" builder
-                | Boolean   -> L.build_call create_set_func [| L.const_int i32_t 2 |] "tmp" builder
-                | String    -> L.build_call create_set_func [| L.const_int i32_t 3 |] "tmp" builder
-                | Set(_)    -> L.build_call create_set_func [| L.const_int i32_t 4 |] "tmp" builder ) in 
+                A.Int         -> L.build_call create_set_func [| L.const_int i32_t 0 |] "tmp" builder
+                |A.Char      -> L.build_call create_set_func [| L.const_int i32_t 1 |] "tmp" builder
+                |A.Boolean   -> L.build_call create_set_func [| L.const_int i32_t 2 |] "tmp" builder
+                |A.String    -> L.build_call create_set_func [| L.const_int i32_t 3 |] "tmp" builder
+                |A.Set(_)    -> L.build_call create_set_func [| L.const_int i32_t 4 |] "tmp" builder ) in 
             let addNodes ex = 
-                let (ty, e2) = ex in
+                let (_, e2) = ex in
                     L.build_call add_set_func [| s; expr builder e2 |] "s" builder in
                     List.map addNodes sl;  s)
       | SNoexpr       -> L.const_int i32_t 0
@@ -243,11 +242,11 @@ let translate (globals, functions) =
         | A.MoreEq  -> L.build_icmp L.Icmp.Sge e1' e2' "tmp" builder
         | A.Mod     -> L.build_frem e1' e2' "tmp" builder
         | A.Elof    -> (match tyy with
-                       Int  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder
-                       | Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
-                       | Boolean  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
-                       | String ->     L.build_call has_elmt_func [| e1'; e2' |] "has" builder
-                       | Set(_)->     L.build_call has_elmt_func[| e1'; e2' |] "has" builder )
+                       A.Int  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder
+                       |A.Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
+                       |A.Boolean  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
+                       |A.String ->     L.build_call has_elmt_func [| e1'; e2' |] "has" builder
+                       |A.Set(_)->   L.build_call has_elmt_func[| e1' ; e2' |] "has" builder)
 
         | A.Comp    -> L.build_call complement_set_func [| e1' ; e2' |] "complement" builder
         | A.Isec    -> L.build_call intsect_set_func [| e1' ; e2' |] "intersect" builder
@@ -268,6 +267,8 @@ let translate (globals, functions) =
         L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
       | SCall ("print_set_int", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder
+      | SCall ("destory_seti", [(_,e)]) ->
+        L.build_call destroy_set_func [| expr builder e|] "destory_set" builder
       (*| SCall ("print_set_bool", [(_,e)]) ->
         L.build_call print_set_func [| expr builder e |] "print_set" builder
       | SCall ("print_set_char", [(_,e)]) ->
