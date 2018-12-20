@@ -8,27 +8,20 @@ and sx =
           | SStrLit              of string 
           | SSetLit              of sexpr list
           | SVariable            of string
-          (*| SSetAccess           of string * sexpr *)
-	        (*| SArrLit		 of sexpr list*)
-          (*| SArrayAccess         of string * sexpr *)
           | SCall                of string * sexpr list 
           | SBinop               of sexpr * op * sexpr 
           | SUnop                of unop * sexpr (* if we do string or array slicing, their syntactic sugar here *)
           | SNoexpr               
           | SAssign              of string * sexpr
 
-(*and arr = SArrLit of sexpr list*)
 and sstmt = 
 	   SBlock                of sstmt list 
          | SExpr                 of sexpr 
          | SIf                   of sexpr * sstmt * sstmt
-	       | SWhile                of sexpr * sstmt  
+	 | SWhile                of sexpr * sstmt  
          | SFor                  of sexpr * sexpr * sexpr * sstmt 
-         | SForEach              of sexpr * sexpr * sstmt
          | SReturn               of sexpr
          | SBreak                
-         (*| SSetElementAssign     of string * sexpr * sexpr not done and we probably will just do remove and ins ops*)
-         (*| SArrayElementAssign   of string * sexpr * sexpr we dont have arrays rn*)
 
 type sfdecl = { (* function declaration *)
                 sftype : elmTypes;
@@ -57,8 +50,6 @@ let rec string_of_sexpr (t , e) =
     | SUnop(o, e)            -> string_of_sunop o ^ string_of_sexpr e
     | SCall(f, e1)           -> f ^ "(" ^ String.concat", "(List.map string_of_sexpr e1)^ ")"              
     | SNoexpr                -> "noexpr"
-    (*| SSetAccess (s,e)       -> s ^ "{" ^ string_of_sexpr e ^ "}"
-    | SArrayAccess (s,e)     -> s ^ "[" ^ string_of_sexpr e ^ "]"*)
 		) ^ ")"
 
 let rec string_of_sstmt = function
@@ -68,9 +59,6 @@ let rec string_of_sstmt = function
     | SIf(e,s1,s2)               -> "if(" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2 (*if else*)
     | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
     | SFor(e1,e2,e3,s)           -> "for(" ^ string_of_sexpr e1 ^ "; " ^ string_of_sexpr e2 ^ "; " ^ string_of_sexpr e3 ^ ")\n" ^ string_of_sstmt s
-    | SForEach(e1,e2,s)          -> "foreach(" ^ string_of_sexpr e1 ^ " in " ^ string_of_sexpr e2 ^ ")\n" ^ string_of_sstmt s
-    (*| SSetElementAssign(s,e1,e2)     -> s ^ "{" ^ string_of_sexpr e1 ^"} = " ^ string_of_sexpr e2 ^";\n"
-    | SArrayElementAssign(a,e1,e2)   -> a ^"[" ^ string_of_sexpr e1 ^"] = " ^ string_of_sexpr e2 ^";\n"*)
     | SBreak                     -> "break;\n"
 
 let string_of_vinit (s, e) = s ^ " = " ^ string_of_sexpr e ^ ";\n"

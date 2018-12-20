@@ -109,7 +109,6 @@ stmt:
   | IF LPAREN expr RPAREN stmt %prec NOELSE                     { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt                        { If($3, $5, $7) }
   | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt             { For($3, $5, $7, $9) } /* Consider optional expressions */
-  | FOREACH LPAREN expr IN expr RPAREN stmt                     { ForEach($3, $5, $7) }
 
 literals:
     NUM_LIT                                                     { IntLit($1) }
