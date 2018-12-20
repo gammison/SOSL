@@ -134,11 +134,11 @@ void add_card(struct set *s){
 void *adds(void *set_ptr, void *value){  
     struct set *s = (struct set *) set_ptr;
     struct List nodes = s->list;
-    if (!has(s,value)){
+    /*if (!has(s,value)){*/
         addFront(&nodes, value);
         add_card(s);
         
-    }
+   // }
     return (void *) s;
 }
 
