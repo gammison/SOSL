@@ -243,11 +243,11 @@ let translate (globals, functions) =
         | A.MoreEq  -> L.build_icmp L.Icmp.Sge e1' e2' "tmp" builder
         | A.Mod     -> L.build_frem e1' e2' "tmp" builder
         | A.Elof    -> (match tyy with
-                       Int  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder
-                       | Char  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
-                       | Boolean  ->     L.build_call has_elmt_func_const [| e1'; e2' |] "has_const" builder 
-                       | String ->     L.build_call has_elmt_func [| e1'; e2' |] "has" builder
-                       | Set(_)->     L.build_call has_elmt_func[| e1'; e2' |] "has" builder )
+                       Int  ->     L.build_call has_elmt_func_const [| e2'; e1' |] "has_const" builder
+                       | Char  ->     L.build_call has_elmt_func_const [| e2'; e1' |] "has_const" builder 
+                       | Boolean  ->     L.build_call has_elmt_func_const [| e2'; e1' |] "has_const" builder 
+                       | String ->     L.build_call has_elmt_func [| e2'; e1' |] "has" builder
+                       | Set(_)->     L.build_call has_elmt_func[| e2'; e1' |] "has" builder )
 
         | A.Comp    -> L.build_call complement_set_func [| e1' ; e2' |] "complement" builder
         | A.Isec    -> L.build_call intsect_set_func [| e1' ; e2' |] "intersect" builder
